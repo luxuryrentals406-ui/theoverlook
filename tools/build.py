@@ -19,7 +19,8 @@ import os, re, sys, json, hashlib, datetime
 import html as ihtml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from shell import (SITE, BIZ, NAV, IMG, THMB, rel, img, eyebrow, btn, tlink,
+from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER,
+                   img, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, honeybook_form, spec, experiences,
                    driftwood,
@@ -86,10 +87,10 @@ R_GREG = ("This is officially the best spot in Montana. The views are unreal&hel
 # same list into FAQPage structured data, so the two can never drift.
 FAQ_WEDDINGS = [
     ("Where is the venue located?",
-     "<p>The estate sits above Flathead Lake in Lakeside, Montana, 35 minutes from "
-     "Glacier Park International Airport (FCA), about 45 minutes from Whitefish "
-     "Mountain Resort and about an hour from West Glacier, the west entrance to "
-     "Glacier National Park.</p>"),
+     f"<p>The estate sits above Flathead Lake in Lakeside, Montana, {FCA['time']} "
+     f"from {FCA['name']}, {WHITEFISH['time']} from {WHITEFISH['name']} and "
+     f"{GLACIER['time']} from {GLACIER['entrance']}, the west entrance to "
+     f"{GLACIER['name']}.</p>"),
     ("How many guests can it hold?",
      "<p>Up to 200 guests for the celebration itself. Separately, up to 28 people "
      "sleep on the property across the five accommodations &mdash; usually the couple "
@@ -135,9 +136,9 @@ FAQ_RETREATS = [
     # No claim about which cities fly into FCA: the route map is the airport's to
     # change, not ours, and it is not a fact we hold.
     ("How far is the nearest airport?",
-     "<p>Glacier Park International Airport (FCA) is 35 minutes from the estate. "
-     "Whitefish Mountain Resort is about 45 minutes away, and West Glacier, the west "
-     "entrance to Glacier National Park, about an hour.</p>"),
+     f"<p>{FCA['name']} is {FCA['time']} from the estate. {WHITEFISH['name']} is "
+     f"{WHITEFISH['time']} away, and {GLACIER['entrance']}, the west entrance to "
+     f"{GLACIER['name']}, {GLACIER['time']}.</p>"),
     ("How do we get a custom proposal?",
      "<p>Send your dates, your group size and what the gathering needs to accomplish. "
      "You will get a tailored proposal rather than a rate sheet.</p>"),
@@ -347,9 +348,9 @@ def page_weddings():
             "Heated pool, hot tub, barrel sauna and putting green",
         ]),
         ("Getting here", [
-            "<b>35 min</b> from Glacier Park International Airport (FCA)",
-            "<b>45 min</b> from Whitefish Mountain Resort",
-            "<b>1 hr</b> to West Glacier, the park's west entrance",
+            f"<b>{FCA['brief']}</b> from {FCA['name']}",
+            f"<b>{WHITEFISH['brief']}</b> from {WHITEFISH['name']}",
+            f"<b>{GLACIER['brief']}</b> to {GLACIER['entrance']}, the park&rsquo;s west entrance",
         ]),
     ]
 
@@ -609,9 +610,9 @@ def page_retreats():
          "not end when the session does &mdash; it carries from the pavilion to the fire "
          "pit to the kitchen island, without anyone getting in a car."),
         ("A destination, not a conference room",
-         "Flathead Lake is out the window. Whitefish Mountain Resort is about 45 "
-         "minutes away and Glacier National Park about an hour. For a distributed "
-         "team, that is a reason to actually get on the plane."),
+         f"Flathead Lake is out the window. {WHITEFISH['name']} is "
+         f"{WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}. For a "
+         f"distributed team, that is a reason to actually get on the plane."),
         ("Built to function as a venue",
          "This is not a large rental that has to be built out for the week. The "
          "gathering space, the power, the connectivity and the grounds are permanent "
@@ -703,7 +704,7 @@ def page_retreats():
                 "On-site water",
                 "Parking for 75 cars",
                 "Vendor and load-in access within 50 feet of the venue",
-                "35 minutes from Glacier Park International Airport (FCA)",
+                f"{FCA['time']} from {FCA['name']}",
                 "Starlink internet in all five houses and the venue"])}
       </div>
     </div>
@@ -733,12 +734,12 @@ def page_retreats():
       {split(img("heli-new.jpg", "A helicopter over the Flathead valley"),
         f'''{eyebrow("Getting here")}
         <h2>Fly in and be working by afternoon</h2>
-        <p class="lede" style="margin:1.4rem 0">Glacier Park International Airport is 35
-          minutes from the gate. A team on a morning flight is in the pavilion after
+        <p class="lede" style="margin:1.4rem 0">{FCA["short_name"]} is {FCA["time"]}
+          from the gate. A team on a morning flight is in the pavilion after
           lunch.</p>
-        <p>West Glacier, the west entrance to Glacier National Park, is about an hour
-          out for groups extending the trip, and helicopter arrivals are available
-          through WestSlope Helicopters.</p>''',
+        <p>{GLACIER["entrance"]}, the west entrance to {GLACIER["name"]}, is
+          {GLACIER["time"]} out for groups extending the trip, and helicopter arrivals
+          are available through WestSlope Helicopters.</p>''',
         flip=True)}
     </div>
   </section>
@@ -1156,9 +1157,9 @@ def page_contact():
 
           <div style="margin-top:2.5rem;border-top:1px solid var(--line);padding-top:2rem">
             <h4 style="font-family:var(--sans);font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:1.2rem">Getting here</h4>
-            <p style="color:var(--ink-soft);font-size:.98rem">Lakeside, Montana &mdash; 35
-              minutes from Glacier Park International Airport (FCA), about 45 minutes from
-              Whitefish Mountain Resort and about an hour from West Glacier.</p>
+            <p style="color:var(--ink-soft);font-size:.98rem">Lakeside, Montana &mdash;
+              {FCA["time"]} from {FCA["name"]}, {WHITEFISH["time"]} from
+              {WHITEFISH["name"]} and {GLACIER["time"]} from {GLACIER["entrance"]}.</p>
           </div>
         </div>
 
@@ -1286,8 +1287,8 @@ def page_wellness():
         ("The setting", [
             "<b>15</b> private acres above Flathead Lake",
             "Walking trails across the property",
-            "<b>35 min</b> from Glacier Park International Airport",
-            "<b>1 hr</b> to West Glacier, the park's west entrance",
+            f"<b>{FCA['brief']}</b> from {FCA['short_name']}",
+            f"<b>{GLACIER['brief']}</b> to {GLACIER['entrance']}, the park&rsquo;s west entrance",
         ]),
     ]
 
@@ -1460,32 +1461,65 @@ def page_privacy(base):
     #   - the contact address is BIZ["email"], not the Hello@ address on the
     #     live page, so a deletion request reaches a monitored mailbox.
     s = [
+        # REWRITTEN from the live text, which said "when you submit an inquiry
+        # through our website, we collect…". This site is static and has no
+        # server; the form is HoneyBook's, in a frame, and the data never
+        # touches us. Describing it the old way named the wrong controller.
         ("Information We Collect",
-         ["<p>When you submit an inquiry through our website, we collect the "
-          "following information:</p>",
+         ["<p>These pages are static. This website has no database and no server "
+          "of its own, so nothing you type is received or stored by the site "
+          "itself.</p>",
+          "<p>The inquiry form on the contact page is hosted by HoneyBook, the "
+          "client-management service we run the business on, and is embedded here "
+          "in a frame. What you enter goes to HoneyBook and reaches us as an "
+          "inquiry there. The form asks for:</p>",
           ilist(["Name", "Email address", "Phone number", "Preferred event dates",
                  "Estimated guest count",
-                 "Any additional information you provide in your message"])]),
+                 "Any additional information you provide in your message"]),
+          "<p>If you would rather email or call, we hold what you send in our "
+          "mailbox and our phone records instead.</p>"]),
         ("How We Use Your Information",
          ["<p>We use the information you provide to:</p>",
           ilist(["Respond to your venue inquiry",
                  "Provide information about our services and availability",
                  "Send relevant updates about " + BIZ["name"],
                  "Improve our website and services"])]),
+        # REWRITTEN: the processor is now named rather than implied.
         ("Information Sharing",
          ["<p>We do not sell, trade, or otherwise transfer your personal "
-          "information to outside parties. This does not include trusted third "
-          "parties who assist us in operating our website or conducting our "
-          "business, provided they agree to keep this information confidential.</p>"]),
+          "information to outside parties.</p>",
+          "<p>Your inquiry does sit with the providers we use to run the business: "
+          "HoneyBook, which hosts the inquiry form and holds the inquiry itself, "
+          "and the email and telephone providers behind the addresses on this site. "
+          "Each is bound to handle it confidentially and to use it only to provide "
+          "that service to us.</p>"]),
         ("Data Security",
          ["<p>We implement appropriate security measures to protect your personal "
           "information against unauthorized access, alteration, disclosure, or "
           "destruction. All data is stored securely and access is restricted to "
           "authorized personnel only.</p>"]),
+        # REWRITTEN: the live text hedged about first-party cookies that do not
+        # exist and said nothing about the three embeds that do.
         ("Cookies and Tracking",
-         ["<p>Our website may use cookies to enhance your browsing experience. You "
-          "can choose to disable cookies through your browser settings, though this "
-          "may affect some website functionality.</p>"]),
+         ["<p>This site sets no cookies of its own. It runs no analytics, no "
+          "advertising tags and no tracking scripts, and it does not build a "
+          "profile of your visit.</p>",
+          "<p>One thing is kept in your browser: if you dismiss the inquiry bar at "
+          "the foot of the page, that choice is stored in your browser&rsquo;s "
+          "session storage so the bar stays closed. Your browser discards it when "
+          "you close the tab, and it never leaves your device.</p>",
+          "<p>Three third parties are embedded in these pages. When their content "
+          "loads, each receives your IP address and basic browser information, and "
+          "each may set cookies of its own under its own policy, which we neither "
+          "control nor read:</p>",
+          ilist(["<b>Google Fonts</b> (fonts.googleapis.com and fonts.gstatic.com), "
+                 "on every page, to load the two typefaces the site is set in.",
+                 "<b>Google Maps</b>, on the contact page only, for the map of "
+                 "Lakeside.",
+                 "<b>HoneyBook</b> (hbportal.co), on the contact page only, for the "
+                 "inquiry form."]),
+          "<p>You can block any of these in your browser. The pages still work "
+          "without them; the type and the map are what change.</p>"]),
         ("Third-Party Links",
          ["<p>Our website may contain links to third-party websites. We are not "
           "responsible for the privacy practices of these external sites and "
@@ -1636,16 +1670,19 @@ def body_buyout(base):
              "looks happen wherever the light is best. Nobody is managing the awkward "
              "overlap of two weddings sharing one parking lot."),
         h2("Your closest people sleep where the wedding happens"),
-        para("The single biggest difference between a buyout and a banquet-hall "
-             "rental is lodging. The estate sleeps up to 28 guests onsite, across "
-             "five accommodations:"),
         # CORRECTED: the live article listed three kinds of accommodation and
-        # left out the cabin. FACTS.md names all five.
+        # left out the cabin. The count is phrased exactly as weddings.html
+        # phrases it, so a reader moving between the two pages is never asked to
+        # reconcile five names against six buildings.
+        para("The single biggest difference between a buyout and a banquet-hall "
+             "rental is lodging. The estate sleeps up to 28 guests onsite &mdash; a "
+             "four-bedroom main house, a cabin, two tiny homes and two treehouses, "
+             "all on the same fifteen acres:"),
         blist([
-            "<b>The Swan</b> &mdash; the main house, and the anchor of the property.",
-            "<b>The Glacier</b> &mdash; a modern cabin with a sleeping loft and its own patio.",
+            "<b>The Swan</b> &mdash; the four-bedroom main house, and the anchor of the property.",
+            "<b>The Glacier</b> &mdash; a cabin with a sleeping loft and its own patio.",
             "<b>The Lakeside</b> &mdash; two modern tiny homes, private and thoughtfully designed.",
-            "<b>The Summit</b> and <b>The Ridge</b> &mdash; elevated treehouses, the kind of stay guests talk about long after the weekend ends."]),
+            "<b>The Summit</b> and <b>The Ridge</b> &mdash; two treehouses in the canopy, the kind of stay guests talk about long after the weekend ends."]),
         para("Practically, this removes an entire category of wedding-day logistics. "
              "No shuttle timing for the wedding party. No one driving back to a hotel "
              "at midnight. No parents missing the last hour because the ride is "
@@ -1661,6 +1698,12 @@ def body_buyout(base):
              "the welcome afternoon, open lawn for ceremony and lawn games, and long "
              "mountain views that mean your photographer never has to hunt for a "
              "backdrop."),
+        # CORRECTED: the live article had tables and chairs as a rental. FACTS.md
+        # has them on site with four head tables, and the bar built in — which
+        # makes them part of what is already standing, not part of what you bring.
+        para("Some of what a tented field would have you rent is already standing. "
+             "Tables and chairs are on site, including four head tables, and the bar "
+             "is built in and ready to run."),
         h2("A weekend, not a time slot"),
         para("A traditional venue sells you a window &mdash; often eight or ten "
              "hours, with load-in and load-out squeezed at either end. An estate "
@@ -1675,20 +1718,17 @@ def body_buyout(base):
              "Contracts here are written to a 200-guest maximum and an 11:00 p.m. "
              "event end."),
         h2("What you still bring in"),
-        # CORRECTED: the live article said tables and chairs are rented rather
-        # than included, and called the caterers "approved partners". FACTS.md
-        # has tables and chairs on site with four head tables, and a preferred
-        # vendor list couples are not required to use.
+        # CORRECTED: the live article called the caterers "approved partners".
+        # FACTS.md has a preferred vendor list couples are not required to use.
+        # Nothing here says who staffs the bar, because nothing we hold says it.
         para("A buyout gives you the canvas; you and your team fill it. Couples at "
              "The Overlook work with a day-of coordinator (required), carry event "
-             "insurance, and arrange restroom rentals for larger guest counts. Tables "
-             "and chairs are on site, including four head tables, and the bar is "
-             "built in &mdash; catering and bar service are arranged separately. We "
-             "keep a preferred vendor list of Flathead Valley planners, caterers, "
-             "florists and photographers who know the property, and several extend a "
-             "partner discount, but you are not required to book from it. A full "
-             "planner is available if you&rsquo;d rather hand the details to someone "
-             "else entirely."),
+             "insurance, and arrange restroom rentals for larger guest counts. "
+             "Catering is arranged separately. We keep a preferred vendor list of "
+             "Flathead Valley planners, caterers, florists and photographers who know "
+             "the property, and several extend a partner discount, but you are not "
+             "required to book from it. A full planner is available if you&rsquo;d "
+             "rather hand the details to someone else entirely."),
         h2("Is a buyout right for you?"),
         para("If your priority is a single beautiful evening with minimal moving "
              "parts, a traditional venue may serve you well. If you want your "
@@ -1763,8 +1803,8 @@ def body_travel(base):
              "Here&rsquo;s the guide to share with your guest list."),
         h2("Fly into Glacier Park International (FCA)"),
         para("The closest airport is Glacier Park International Airport in Kalispell, "
-             "Montana &mdash; airport code FCA. From FCA, the estate is roughly a "
-             "35-minute drive. That&rsquo;s the single most useful fact to put on "
+             "Montana &mdash; airport code FCA. From FCA, the estate is roughly "
+             f"{FCA['drive']}. That&rsquo;s the single most useful fact to put on "
              "your wedding website, because it tells guests immediately that they "
              "won&rsquo;t be spending half a day in a car after landing."),
         para("FCA is a small, easy airport: short walks, quick baggage claim, rental "
@@ -1802,21 +1842,23 @@ def body_travel(base):
              "obvious draw &mdash; boating, swimming, waterfront dining, and cherries "
              "in late summer. The valley also offers alpine adventure, hiking, and "
              "small-town Montana worth an unhurried afternoon."),
-        para("Glacier National Park is the other great reason to stay longer. West "
-             "Glacier, the park&rsquo;s west entrance, is roughly a one-hour drive "
-             "from the estate &mdash; about 49 miles. That&rsquo;s close enough for a "
+        para(f"{GLACIER['name']} is the other great reason to stay longer. "
+             f"{GLACIER['entrance']}, the park&rsquo;s west entrance, is "
+             f"{GLACIER['drive']} from the estate &mdash; about {GLACIER['miles']}. "
+             "That&rsquo;s close enough for a "
              "day in the park and back, though guests should plan a full day for it "
              "rather than squeezing it around wedding events, and should check the "
              "park&rsquo;s own website before going, since entry requirements and "
              "park conditions change from year to year."),
         h2("A simple note to send your guests"),
         para("Feel free to borrow this: &ldquo;Fly into Glacier Park International "
-             "Airport (FCA) in Kalispell, Montana &mdash; the venue is about 35 "
-             "minutes away. Reserve a rental car early if you&rsquo;d like to "
+             f"Airport (FCA) in Kalispell, Montana &mdash; the venue is about "
+             f"{FCA['time']} away. Reserve a rental car early if you&rsquo;d like to "
              "explore, and watch for shuttle details for the wedding evening. If you "
-             "can, stay an extra day or two: Flathead Lake is right here, and West "
-             "Glacier &mdash; the west entrance to Glacier National Park &mdash; is "
-             "about an hour&rsquo;s drive, roughly 49 miles.&rdquo;"),
+             f"can, stay an extra day or two: Flathead Lake is right here, and "
+             f"{GLACIER['entrance']} &mdash; the west entrance to {GLACIER['name']} "
+             f"&mdash; is {GLACIER['time']} away, roughly "
+             f"{GLACIER['miles']}.&rdquo;"),
     ])
 
 
@@ -1870,8 +1912,8 @@ ARTICLES = [
      "crumb": "Getting to The Overlook: A Travel Guide for Wedding Guests",
      "title": "Getting to The Overlook: A Travel Guide for Wedding Guests",
      "desc": "How wedding guests reach The Overlook at Flathead Lake: Glacier Park "
-             "International (FCA) is 35 minutes away. Rental cars, shuttles, and "
-             "where guests stay.",
+             f"International (FCA) is {FCA['time']} away. Rental cars, shuttles, "
+             "and where guests stay.",
      "kicker": "Guest travel &middot; 5 min read",
      "lede": "The logistics you can hand straight to your guest list, from the airport "
              "to the last shuttle of the night.",
@@ -1978,7 +2020,8 @@ PAGES = [
     ("retreats.html", page_retreats, "venue-overview.jpg", True,
      "Montana Corporate Retreat Venue | The Overlook at Flathead Lake",
      "A private 15-acre estate above Flathead Lake for leadership teams, boards and "
-     "company gatherings. Full-property buyout, Starlink throughout, 35 minutes from FCA."),
+     f"company gatherings. Full-property buyout, Starlink throughout, {FCA['time']} "
+     "from FCA."),
 
     ("wellness.html", page_wellness, "pool-wide.jpg", True,
      "Montana Wellness Retreat Venue | The Overlook at Flathead Lake",
@@ -2124,7 +2167,10 @@ def venue_node():
          "url": f"{SITE}/", "telephone": BIZ["tel"], "email": BIZ["email"],
          "address": ADDRESS, "geo": GEO, "areaServed": "Flathead Valley, Montana",
          "maximumAttendeeCapacity": 200,
-         "petsAllowed": False,
+         # No petsAllowed key: there is no pets policy in FACTS.md or anywhere on
+         # the site, and this node is now on all 14 pages — an unsourced "no pets"
+         # would be the single most machine-readable claim we make. If Eric sets a
+         # policy, it goes in FACTS.md first and here second.
          "numberOfRooms": {"@type": "QuantitativeValue", "value": 5,
                            "unitText": "accommodations"},
          "logo": f"{SITE}/{IMG}overlook-logo-main.png",
@@ -2258,9 +2304,9 @@ def llms_txt():
 - That package is five nights across two estates: The Overlook (sleeps 28) plus The
   Driftwood, a 14,000 sq ft lakefront home at Woods Bay (sleeps 26), for a combined 54.
   Helicopter transfer between the two is available through WestSlope Helicopters.
-- Travel: 35 minutes from Glacier Park International Airport (FCA); about 45 minutes
-  from Whitefish Mountain Resort; about an hour (49 miles) to West Glacier, the west
-  entrance to Glacier National Park
+- Travel: {FCA['time']} from {FCA['name']}; {WHITEFISH['time']} from
+  {WHITEFISH['name']}; {GLACIER['time']} ({GLACIER['miles']}) to {GLACIER['entrance']},
+  the west entrance to {GLACIER['name']}
 - The event spaces: a 3,200 sq ft reception pavilion with panoramic lake views; a
   40 × 80 ft tent, clear-top or white-top, with full sides; separate ceremony, cocktail
   and reception areas; a built-in bar; tables and chairs on site including four head
@@ -2278,8 +2324,8 @@ def llms_txt():
   family-style service, grazing tables or a food truck on the lawn can all be arranged.
   The bar is built in.
 - Activities: Flathead Lake boating and swimming minutes away; helicopter arrivals and
-  private lake flights through WestSlope Helicopters; Whitefish Mountain Resort about
-  45 minutes away and Glacier National Park about an hour
+  private lake flights through WestSlope Helicopters; {WHITEFISH['name']}
+  {WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}
 - Contact: {BIZ['phone']} / {BIZ['email']}
 - Owners: Claudia and Eric, who answer inquiries personally
 - Sister brand: Flathead Lake Luxury Lodging

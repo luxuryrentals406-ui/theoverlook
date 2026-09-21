@@ -54,17 +54,51 @@ BOOT = ('<script>(function(d,w){var h=d.documentElement;h.className+=" js";'
 IMG  = "assets/img/"
 THMB = "assets/thumb/"
 
-# Drive times, stated once so no two pages can disagree.
+# Drive times. Every statement of one on this site interpolates from here —
+# prose, spec lists, the FAQ, llms.txt and the travel guide — so changing a
+# figure changes it everywhere, which is the only version of "stated once" that
+# is worth anything.
 #
-# Glacier is an hour, not the 45 minutes the old site claimed. West Glacier is
-# the park's west entrance and the nearest way in: 49 miles from the estate,
-# which is not a 45-minute drive at any legal speed on US-93 through Kalispell
-# and Columbia Falls. The travel guide has always said an hour; the rest of the
-# site now says the same thing.
-DRIVE_FCA       = "35 minutes"
-DRIVE_WHITEFISH = "about 45 minutes"
-DRIVE_GLACIER   = "about an hour"
-GLACIER_MILES   = "49 miles"
+# Verified 2026-09-20: Glacier. West Glacier is the park's west entrance and the
+# nearest way in, 49 miles out, which is not a 45-minute drive at any legal
+# speed on US-93 through Kalispell and Columbia Falls; an independent routing
+# check puts it at 1 h 02. The old site's "45 minutes to Glacier National Park"
+# was wrong and is gone.
+#
+# NOT verified: FCA and Whitefish. Both are carried from FACTS.md as published.
+# The Whitefish figure looks short — Lakeside to Whitefish town is roughly 30
+# miles, and Big Mountain Road adds another 5 to 6 up to the resort — so "about
+# 45 minutes" may describe the town rather than the ski hill. Eric's to confirm;
+# it is one edit here when he does.
+DRIVE = {
+    "fca": {
+        "name":  "Glacier Park International Airport (FCA)",
+        "short_name": "Glacier Park International Airport",
+        "time":  "35 minutes",          # "… is 35 minutes from the estate"
+        "brief": "35 min",              # spec lists
+        "drive": "a 35-minute drive",
+    },
+    "whitefish": {
+        "name":  "Whitefish Mountain Resort",
+        "time":  "about 45 minutes",
+        "brief": "45 min",
+    },
+    "glacier": {
+        "name":     "Glacier National Park",
+        "entrance": "West Glacier",
+        "time":     "about an hour",
+        "brief":    "1 hr",
+        "drive":    "roughly a one-hour drive",
+        "miles":    "49 miles",
+    },
+}
+
+FCA, WHITEFISH, GLACIER = DRIVE["fca"], DRIVE["whitefish"], DRIVE["glacier"]
+
+
+def cap(s):
+    """First letter up, for a table cell. 'about an hour' -> 'About an hour'."""
+    return s[:1].upper() + s[1:]
 
 
 def rel(path):
@@ -295,9 +329,9 @@ def getting_here():
     The map is centred on Lakeside rather than the estate itself — this is a
     private property and the exact pin is not published.
     """
-    legs = [("Glacier Park International Airport (FCA)", "35 minutes"),
-            ("Whitefish Mountain Resort", "About 45 minutes"),
-            ("Glacier National Park (West Glacier)", "About an hour")]
+    legs = [(FCA["name"], cap(FCA["time"])),
+            (WHITEFISH["name"], cap(WHITEFISH["time"])),
+            (f"{GLACIER['name']} ({GLACIER['entrance']})", cap(GLACIER["time"]))]
     li = "".join(f'<li><span>{a}</span><b>{b}</b></li>' for a, b in legs)
     return f"""<section class="sect sect--paper2" id="getting-here">
     <div class="wrap">

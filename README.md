@@ -1,8 +1,13 @@
 # The Overlook at Flathead Lake — website
 
-Static site. No build step to host, no dependencies, no database. Seven HTML pages,
-one stylesheet, one script, 67 photographs. Runs on Netlify, Vercel, Cloudflare Pages,
-GitHub Pages, or plain shared hosting over FTP.
+Static site. No build step to host, no dependencies, no database. Fourteen pages,
+one stylesheet, one script, 63 gallery photographs. Deployed on Render from
+`render.yaml`; also runs on Netlify, Vercel, Cloudflare Pages or plain shared hosting.
+
+This site **replaces a live, indexed React site** on the same domain. All 19 of that
+site's URLs are accounted for: twelve redirect via `render.yaml`, six are preserved
+as real pages at their exact paths, one is the home page. Do not remove a redirect
+or rename a ported directory without checking the old sitemap first.
 
 ```
 index.html          Home — orient, then split wedding vs corporate
@@ -12,7 +17,14 @@ retreats.html       Corporate retreats — new, and the gap in the old site
 estate.html         Shared lodging + grounds reference, linked from both
 gallery.html        63 photos, filterable, with lightbox
 story.html          Claudia & Eric
-contact.html        Single inquiry form, event-type routing
+contact.html        Inquiry page — embedded HoneyBook lead form
+wellness.html       Wellness retreats
+
+  Ported from the old site, URLs preserved exactly — these must not move:
+privacy/index.html  Privacy policy        -> /privacy
+terms/index.html    Terms of service      -> /terms
+journal/index.html  Journal index         -> /journal
+journal/<slug>/index.html   Three planning guides -> /journal/<slug>
 
 assets/css/site.css Hand-written. No framework.
 assets/js/site.js   Progressive enhancement only — the site works without it.
@@ -21,8 +33,10 @@ assets/thumb/       Gallery thumbnails (4.8 MB)
 
 tools/build.py      Regenerates every page.  python3 tools/build.py
 tools/shell.py      Header, footer, <head>, shared components
-tools/lint.py       Copy-rule + SEO linter.  python3 tools/lint.py
-sitemap.xml robots.txt
+tools/lint.py       Copy-rule + SEO linter, walks subdirectories.
+tools/lastmod.json  Per-page content hashes — sitemap lastmod state. Commit it.
+render.yaml         Render blueprint: build, redirects, headers
+sitemap.xml robots.txt llms.txt
 ```
 
 Edit `tools/*.py`, never the `.html` directly — the HTML is generated and your
@@ -52,10 +66,17 @@ cd ~/theoverlook
 python3 tools/build.py && python3 tools/lint.py
 ```
 
-### 2. Wire the inquiry form
+### 2. Wire the inquiry form — DONE
 
-The form posts nowhere until you pick one of these. It lives in `page_contact()`
-in `tools/build.py`.
+`INQUIRY_MODE = "honeybook"` in `tools/build.py`, which embeds the live HoneyBook
+lead form on `contact.html`, so a submission becomes a real HoneyBook inquiry.
+The hand-built `own_form()` below is the unused fallback path.
+
+**Known gap:** 18 CTAs link to `contact.html?type=wedding|corporate|wellness`, and
+`site.js` reads that param to preselect `#eventType` — a field that only exists in
+`own_form()`. Under HoneyBook the param is silently ignored.
+
+The options below apply only if you switch `INQUIRY_MODE` back to `"own"`.
 
 **Option A — HoneyBook or any CRM webhook (recommended).** Set `data-endpoint` to
 your webhook URL. The script POSTs JSON with every field plus `source` and
@@ -128,5 +149,5 @@ adding one line to that list.
   currently says "our sister property" — name it if you want the SEO.
 - **Shoulder-season corporate rates** are deliberately unpublished, per the brief.
   The line reads "available on request" so nothing is overpromised.
-- **Real reviews only.** The three on the site are the three real Google reviews.
+- **Real reviews only.** The six on the site are the six real Google reviews.
   Do not add invented ones.

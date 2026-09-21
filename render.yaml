@@ -21,8 +21,9 @@ services:
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
     # The domain currently serves a live, indexed site with 19 URLs, none of
-    # which exist in this build. These preserve the ten that have a clear
-    # equivalent. Render's routes do not glob, so each path is explicit.
+    # which exist in this build. These preserve the twelve that have a clear
+    # equivalent; the other six are generated as real pages at their exact
+    # paths. Render's routes do not glob, so each path is explicit.
     routes:
       - type: redirect
         source: /wedding-experiences
