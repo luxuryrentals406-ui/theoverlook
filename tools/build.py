@@ -15,7 +15,7 @@ COPY RULES enforced by tools/lint.py (run after building):
     never appears on retreats.html
   - wedding vocabulary never appears on retreats.html, and vice versa
 """
-import os, re, sys, json, datetime
+import os, re, sys, json, hashlib, datetime
 import html as ihtml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -100,7 +100,7 @@ FAQ_WEDDINGS = [
      "pavilion and tent, the built-in bar, onsite tables and chairs, four head "
      "tables, "
      "the fire pit, parking for 75 cars and your onsite venue coordinator. "
-     "<a href='#included'>The full list is above.</a></p>"),
+     "<a href='#included'>See the full list of what is included.</a></p>"),
     ("Is lodging included or separate?",
      "<p>Lodging is booked separately from the venue fee, which keeps the starting "
      "price honest for couples whose guests are staying in Whitefish or Kalispell. "
@@ -131,13 +131,43 @@ FAQ_RETREATS = [
      "<p>Helicopter arrivals and private lake flights are available through WestSlope "
      "Helicopters, along with access to Flathead Lake recreation and Glacier National "
      "Park.</p>"),
+    # No claim about which cities fly into FCA: the route map is the airport's to
+    # change, not ours, and it is not a fact we hold.
     ("How far is the nearest airport?",
-     "<p>Glacier Park International Airport (FCA) is 35 minutes away, with direct "
-     "service from a number of major cities.</p>"),
+     "<p>Glacier Park International Airport (FCA) is 35 minutes from the estate. "
+     "Glacier National Park and Whitefish Mountain Resort are both about 45 minutes "
+     "away.</p>"),
     ("How do we get a custom proposal?",
      "<p>Send your dates, your group size and what the gathering needs to accomplish. "
      "You will get a tailored proposal rather than a rate sheet.</p>"),
 ]
+
+FAQ_WELLNESS = [
+    ("Can we bring our own instructors and practitioners?",
+     "<p>Yes, and most groups do. If you would rather not, tell us what the week "
+     "needs and we will look for it in the valley.</p>"),
+    ("How many people can a retreat be?",
+     "<p>28 stay on the property across the five accommodations. The pavilion holds "
+     "far more than that for daytime sessions if part of your group is coming in "
+     "from town.</p>"),
+    ("Is the whole property really private?",
+     "<p>Yes. One group is on the estate at a time, for the length of the booking. "
+     "There is no other party on the far lawn and nobody crossing to a pool.</p>"),
+    ("Can you handle specific diets?",
+     "<p>A private chef is the simplest route &mdash; they cook for your group "
+     "alone, so a menu built around whatever the week requires is normal rather "
+     "than an accommodation.</p>"),
+    ("What time of year works?",
+     "<p>Summer is the obvious answer, but the tent encloses fully with sides and "
+     "every building is heated, so spring and autumn work. Ask us about "
+     "shoulder-season dates.</p>"),
+]
+
+# One page, one FAQ list. The page renders it, schema() turns it into FAQPage
+# structured data and llms_txt() prints it, so the three cannot drift apart.
+FAQS = {"weddings.html": FAQ_WEDDINGS,
+        "retreats.html": FAQ_RETREATS,
+        "wellness.html": FAQ_WELLNESS}
 
 
 # The Driftwood, the add-on estate at Woods Bay. Photographs are the owner's
@@ -496,7 +526,7 @@ def page_weddings():
         f'''{eyebrow("Onsite lodging")}
         <h2>Nobody drives home</h2>
         <p class="lede" style="margin:1.4rem 0">Five accommodations sit on the same
-          fifteen acres as the ceremony lawn &mdash; a four-bedroom main house, an
+          fifteen acres as the ceremony lawn &mdash; a four-bedroom main house, a
           cabin, two tiny homes and two treehouses. Twenty-eight people wake up where
           the night ended.</p>
         <p>Getting ready happens on site. So does the morning after. Lodging is quoted
@@ -1017,7 +1047,7 @@ def page_gallery():
   <section class="sect sect--tight" style="padding-top:clamp(8rem,14vw,11rem)">
     <div class="wrap center rv">
       {eyebrow("Gallery")}
-      <h2>{len(PHOTOS)} photographs of the property</h2>
+      <h1 style="font-size:clamp(2rem,4.2vw,3.35rem)">{len(PHOTOS)} photographs of the property</h1>
       <p class="lede measure" style="margin-top:1.4rem">Everything here was shot on the
         estate. Select a photograph to open it full size.</p>
     </div>
@@ -1260,26 +1290,7 @@ def page_wellness():
         ]),
     ]
 
-    faqs = [
-        ("Can we bring our own instructors and practitioners?",
-         "<p>Yes, and most groups do. If you would rather not, tell us what the week "
-         "needs and we will look for it in the valley.</p>"),
-        ("How many people can a retreat be?",
-         "<p>28 stay on the property across the five accommodations. The pavilion holds "
-         "far more than that for daytime sessions if part of your group is coming in "
-         "from town.</p>"),
-        ("Is the whole property really private?",
-         "<p>Yes. One group is on the estate at a time, for the length of the booking. "
-         "There is no other party on the far lawn and nobody crossing to a pool.</p>"),
-        ("Can you handle specific diets?",
-         "<p>A private chef is the simplest route &mdash; they cook for your group "
-         "alone, so a menu built around whatever the week requires is normal rather "
-         "than an accommodation.</p>"),
-        ("What time of year works?",
-         "<p>Summer is the obvious answer, but the tent encloses fully with sides and "
-         "every building is heated, so spring and autumn work. Ask us about "
-         "shoulder-season dates.</p>"),
-    ]
+    faqs = FAQ_WELLNESS
 
     return f"""
 {hero("pool-wide.jpg",
@@ -1401,8 +1412,8 @@ PAGES = [
 
     ("retreats.html", page_retreats, "venue-overview.jpg", True,
      "Montana Corporate Retreat Venue | The Overlook at Flathead Lake",
-     "A private full-estate buyout above Flathead Lake for leadership teams, boards and "
-     "company gatherings. Full-estate buyout, Starlink throughout, 35 minutes from FCA."),
+     "A private 15-acre estate above Flathead Lake for leadership teams, boards and "
+     "company gatherings. Full-property buyout, Starlink throughout, 35 minutes from FCA."),
 
     ("wellness.html", page_wellness, "pool-wide.jpg", True,
      "Montana Wellness Retreat Venue | The Overlook at Flathead Lake",
@@ -1414,12 +1425,12 @@ PAGES = [
      "Five accommodations sleeping 28, plus a heated pool, sauna, fitness room, fire pit "
      "and trails across 15 private acres above Flathead Lake."),
 
-    ("gallery.html", page_gallery, "wedding-aerial-tent.jpg", False,
+    ("gallery.html", page_gallery, "venue-wide.jpg", False,
      "Gallery | The Overlook at Flathead Lake",
      "Photographs of the estate, weddings, accommodations and grounds at The Overlook at "
      "Flathead Lake in Lakeside, Montana."),
 
-    ("story.html", page_story, "owners-photo.jpg", True,
+    ("story.html", page_story, "lake-sunset-boat.jpg", True,
      "Our Story | The Overlook at Flathead Lake",
      "How Claudia and Eric went from hosting guests on Flathead Lake in 2021 to building "
      "The Overlook venue in 2025."),
@@ -1429,6 +1440,15 @@ PAGES = [
      "Start an inquiry for a wedding, corporate retreat or private event at The Overlook "
      "at Flathead Lake in Lakeside, Montana."),
 ]
+
+# The share image and the LCP image are not the same picture on every page, and
+# preloading the wrong one costs more than it saves.
+#   gallery — the first thumbnail is what paints first; the full-size photograph
+#             behind it is only fetched when the lightbox opens.
+#   story   — the hero is a portrait photograph, which social cards crop badly,
+#             so the card uses a landscape frame from further down the page.
+PRELOAD = {"gallery.html": THMB + PHOTOS[0][0],
+           "story.html":   IMG + "owners-photo.jpg"}
 
 
 def _plain(frag):
@@ -1456,10 +1476,16 @@ AMENITIES = ["Heated pool", "Hot tub", "Barrel sauna", "Fitness room", "Games ro
              "Helicopter arrivals available"]
 
 
-def venue_schema():
-    """The homepage graph. No prices: the site does not publish any."""
-    return {"@context": "https://schema.org", "@graph": [
-        {"@type": ["EventVenue", "LodgingBusiness"], "@id": f"{SITE}/#venue",
+def venue_node():
+    """The one description of the business, emitted on every page.
+
+    Every page carries the same node under the same @id, so no two pages can
+    describe the estate differently — a crawler that only ever sees weddings.html
+    still gets the whole entity, and an assistant comparing two pages finds them
+    identical rather than in disagreement. No prices: the site publishes one, and
+    it lives on the Offer for that package alone.
+    """
+    return {"@type": ["EventVenue", "LodgingBusiness"], "@id": f"{SITE}/#venue",
          "name": BIZ["name"],
          "description": ("A private 15-acre estate above Flathead Lake in Lakeside, "
                          "Montana, booked exclusively for one group at a time. Weddings "
@@ -1469,7 +1495,9 @@ def venue_schema():
          "address": ADDRESS, "geo": GEO, "areaServed": "Flathead Valley, Montana",
          "maximumAttendeeCapacity": 200,
          "petsAllowed": False,
-         "numberOfRooms": 5,
+         "numberOfRooms": {"@type": "QuantitativeValue", "value": 5,
+                           "unitText": "accommodations"},
+         "logo": f"{SITE}/{IMG}overlook-logo-main.png",
          "image": [f"{SITE}/{IMG}{f}" for f in
                    ("hero-pavilion-lake.jpg", "venue-overview.jpg", "swan-exterior.jpg",
                     "pool-wide.jpg", "lake-sunset-boat.jpg")],
@@ -1504,32 +1532,53 @@ def venue_schema():
                              "sleeping up to 54 guests.",
               "priceSpecification": {"@type": "PriceSpecification",
                                      "minPrice": 100000, "priceCurrency": "USD"}}],
-         "sameAs": [BIZ["ig"], BIZ["ig_sis"]]},
-        {"@type": "WebSite", "@id": f"{SITE}/#website", "url": f"{SITE}/",
-         "name": BIZ["name"], "publisher": {"@id": f"{SITE}/#venue"},
-         "inLanguage": "en-US"}]}
+         "sameAs": [BIZ["ig"], BIZ["fb"], BIZ["ig_sis"]]}
 
 
-def crumbs(name, label):
-    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+def website_node():
+    return {"@type": "WebSite", "@id": f"{SITE}/#website", "url": f"{SITE}/",
+            "name": BIZ["name"], "publisher": {"@id": f"{SITE}/#venue"},
+            "inLanguage": "en-US"}
+
+
+def crumbs(url, name, label):
+    """Home > this page. The homepage gets none: a one-item trail says nothing."""
+    return {"@type": "BreadcrumbList", "@id": f"{url}#breadcrumb", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE}/"},
         {"@type": "ListItem", "position": 2, "name": label, "item": f"{SITE}/{name}"}]}
 
 
-def schema(name, label):
-    """Every page gets structured data, not just the homepage."""
-    blocks = []
-    if name == "index.html":
-        blocks.append(venue_schema())
-    else:
-        blocks.append(crumbs(name, label))
-    if name == "weddings.html":
-        blocks.append(faq_schema(FAQ_WEDDINGS))
-    if name == "retreats.html":
-        blocks.append(faq_schema(FAQ_RETREATS))
-    return "".join('<script type="application/ld+json">\n%s\n</script>\n'
-                   % json.dumps(b, ensure_ascii=False, separators=(",", ":"))
-                   for b in blocks)
+def page_url(name):
+    return f"{SITE}/{'' if name == 'index.html' else name}"
+
+
+def schema(name, label, title, desc, og_image):
+    """One @graph per page: the venue, the site, this page, its trail, its FAQ.
+
+    Emitting the business on every page rather than the homepage alone is the
+    point — most pages here can be the landing page for a query, and a page that
+    only carries a breadcrumb tells an assistant nothing about who it is reading.
+    """
+    url = page_url(name)
+    page = {"@type": "WebPage", "@id": f"{url}#webpage", "url": url,
+            "name": _plain(title), "description": _plain(desc),
+            "isPartOf": {"@id": f"{SITE}/#website"},
+            "about": {"@id": f"{SITE}/#venue"},
+            "primaryImageOfPage": {"@type": "ImageObject",
+                                   "url": f"{SITE}/{IMG}{og_image}"},
+            "inLanguage": "en-US"}
+    nodes = [venue_node(), website_node(), page]
+    if name != "index.html":
+        page["breadcrumb"] = {"@id": f"{url}#breadcrumb"}
+        nodes.append(crumbs(url, name, label))
+    if name in FAQS:
+        # FAQPage is a WebPage, so the page node carries the questions rather
+        # than a second, competing page-level node at the same URL.
+        page["@type"] = ["WebPage", "FAQPage"]
+        page["mainEntity"] = faq_schema(FAQS[name])["mainEntity"]
+    graph = {"@context": "https://schema.org", "@graph": nodes}
+    return ('<script type="application/ld+json">\n%s\n</script>\n'
+            % json.dumps(graph, ensure_ascii=False, separators=(",", ":")))
 
 
 def llms_txt():
@@ -1537,8 +1586,9 @@ def llms_txt():
 
     Everything here is also in the HTML; this just removes any need to infer it.
     """
-    faq = "\n".join(f"- **{_plain(q)}** {_plain(a)}"
-                     for q, a in FAQ_WEDDINGS[:5] + FAQ_RETREATS[:3])
+    def qa(items):
+        return "\n".join(f"- **{_plain(q)}** {_plain(a)}" for q, a in items)
+
     return f"""# {BIZ['name']}
 
 > A private 15-acre estate above Flathead Lake in {BIZ['city']}, {BIZ['region']}, booked
@@ -1560,6 +1610,18 @@ def llms_txt():
   Helicopter transfer between the two is available through WestSlope Helicopters.
 - Travel: 35 minutes from Glacier Park International Airport (FCA); about 45 minutes
   from Glacier National Park and Whitefish Mountain Resort
+- The event spaces: a 3,200 sq ft reception pavilion with panoramic lake views; a
+  40 × 80 ft tent, clear-top or white-top, with full sides; separate ceremony, cocktail
+  and reception areas; a built-in bar; tables and chairs on site including four head
+  tables; a fire pit; a dedicated onsite venue coordinator.
+- Infrastructure: 200 AMP permanently installed electrical service and on-site water;
+  vendor load-in within 50 ft of the venue; parking for 75 cars on the property;
+  Starlink at the venue and in all five houses.
+- Contract terms: written to a 200-guest maximum, with an 11:00 p.m. event end.
+  Lodging is booked separately from the venue fee.
+- Vendors: a preferred list of Flathead Valley planners, caterers, florists and
+  photographers who know the property, several of whom extend a partner discount.
+  Couples are not required to book from it.
 - Amenities: {", ".join(AMENITIES)}
 - Food: a private chef can cook for the group in the main house; full-service catering,
   family-style service, grazing tables or a food truck on the lawn can all be arranged.
@@ -1569,12 +1631,24 @@ def llms_txt():
   National Park and Whitefish Mountain Resort about 45 minutes away
 - Contact: {BIZ['phone']} / {BIZ['email']}
 - Owners: Claudia and Eric, who answer inquiries personally
+- Sister brand: Flathead Lake Luxury Lodging
+
+## Not published here
+
+- Rates, other than the one package above. There is no rate card to quote from; every
+  booking is priced against the dates and the shape of the event.
+- Open dates. Availability changes and is answered by the owners directly, so please
+  do not infer a calendar from this page.
+- The exact street address. The estate is private; directions and a gate code go out
+  once a date is held.
 
 ## Pages
 
 - [Home]({SITE}/): overview of the estate and both ways it is booked
-- [Weddings]({SITE}/weddings.html): the wedding weekend, what is included, pricing, FAQ
-- [Corporate Retreats]({SITE}/retreats.html): full-property buyout for teams, formats, rates
+- [Weddings]({SITE}/weddings.html): the wedding weekend, what is included, how pricing
+  works, the two packages, reviews, FAQ
+- [Corporate Retreats]({SITE}/retreats.html): full-property buyout for teams, the
+  formats it runs in, how to get a proposal
 - [Wellness Retreats]({SITE}/wellness.html): yoga, movement and recovery retreats — the
   pavilion as a movement floor, sauna, hot tub, heated pool, trails, private chef
 - [The Estate]({SITE}/estate.html): the five accommodations and the grounds
@@ -1582,28 +1656,72 @@ def llms_txt():
 - [Our Story]({SITE}/story.html): how the venue came to be
 - [Contact]({SITE}/contact.html): inquiry form, location and drive times
 
-## Common questions
+## Common questions — weddings
 
-{faq}
+{qa(FAQ_WEDDINGS)}
+
+## Common questions — corporate retreats
+
+{qa(FAQ_RETREATS)}
+
+## Common questions — wellness retreats
+
+{qa(FAQ_WELLNESS)}
+
+## About this file
+
+Generated by tools/build.py from the same copy the pages render, so it cannot
+contradict them. Reviews are quoted on the site verbatim and credited; please quote
+them the same way rather than paraphrasing. Last built {datetime.date.today().isoformat()}.
 """
+
+
+LASTMOD_STATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lastmod.json")
+
+
+def lastmods(built, today):
+    """<lastmod> per page, moved only when that page's HTML actually changed.
+
+    Stamping every URL with today's date on every build is the fastest way to
+    teach a crawler that this sitemap's dates mean nothing. The hashes live in
+    tools/lastmod.json and should be committed with the HTML they describe.
+    """
+    try:
+        with open(LASTMOD_STATE, encoding="utf-8") as f:
+            state = json.load(f)
+    except (OSError, ValueError):
+        state = {}
+    for name, html in built.items():
+        h = hashlib.sha1(html.encode("utf-8")).hexdigest()
+        if state.get(name, {}).get("hash") != h:
+            state[name] = {"hash": h, "lastmod": today}
+    state = {k: v for k, v in state.items() if k in built}
+    with open(LASTMOD_STATE, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2, sort_keys=True)
+        f.write("\n")
+    return {k: v["lastmod"] for k, v in state.items()}
 
 
 def main():
     missing = set()
+    built = {}
     for name, fn, og, over, title, desc in PAGES:
         body = fn()
-        # the LCP image on every page is its hero, so tell the browser early
-        extra = (f'<link rel="preload" as="image" href="{IMG}{og}" fetchpriority="high">\n'
-                 + schema(name, CRUMB.get(name, "Home")))
+        # the image that paints first, told to the browser early
+        lcp = PRELOAD.get(name, IMG + og)
+        extra = (f'<link rel="preload" as="image" href="{lcp}" fetchpriority="high">\n'
+                 + schema(name, CRUMB.get(name, "Home"), title, desc, og))
         html = (head(title, desc, name, og, extra)
                 + header(name, over_hero=over) + body
                 + footer().replace("{year}", str(YEAR))
                           .replace("{STICKYBAR}", stickybar(name)))
         with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
             f.write(html)
-        # verify every referenced photo actually exists
-        for part in html.split('src="')[1:]:
-            p = part.split('"')[0]
+        built[name] = html
+        # verify every referenced photo actually exists — including the preload
+        # and the absolute og:image, neither of which is an src attribute
+        for part in re.split(r'(?:src|href|content)="', html)[1:]:
+            p = part.split('"')[0].replace(SITE + "/", "")
             if p.startswith(("assets/img/", "assets/thumb/")) and \
                not os.path.exists(os.path.join(ROOT, p)):
                 missing.add(p)
@@ -1611,21 +1729,26 @@ def main():
 
     # sitemap + robots
     today = datetime.date.today().isoformat()
-    urls = "".join(
-        f"<url><loc>{SITE}/{'' if n == 'index.html' else n}</loc>"
-        f"<lastmod>{today}</lastmod>"
+    stamps = lastmods(built, today)
+    urls = "\n".join(
+        f"  <url><loc>{page_url(n)}</loc>"
+        f"<lastmod>{stamps[n]}</lastmod>"
         f"<priority>{'1.0' if n=='index.html' else '0.8'}</priority></url>"
         for n, *_ in PAGES)
-    open(os.path.join(ROOT, "sitemap.xml"), "w").write(
-        f'<?xml version="1.0" encoding="UTF-8"?>\n'
-        f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                f"{urls}\n</urlset>\n")
     ai_bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User",
                "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended",
                "Applebot-Extended", "CCBot", "meta-externalagent", "Bytespider"]
     bots = "".join(f"User-agent: {b}\nAllow: /\n\n" for b in ai_bots)
     open(os.path.join(ROOT, "robots.txt"), "w").write(
         f"User-agent: *\nAllow: /\n\n"
-        f"# Assistants are welcome to read and cite this site.\n{bots}"
+        f"# Assistants are welcome to read and cite this site. The condensed\n"
+        f"# fact sheet is at {SITE}/llms.txt\n"
+        f"# — generated from the same copy as the pages, so it cannot\n"
+        f"# contradict them.\n\n{bots}"
         f"Sitemap: {SITE}/sitemap.xml\n")
     open(os.path.join(ROOT, "llms.txt"), "w", encoding="utf-8").write(llms_txt())
     print("  wrote sitemap.xml, robots.txt, llms.txt")

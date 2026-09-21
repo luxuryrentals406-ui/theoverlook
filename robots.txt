@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
 
-# Assistants are welcome to read and cite this site.
+# Assistants are welcome to read and cite this site. The condensed
+# fact sheet is at https://theoverlookatflatheadlake.com/llms.txt
+# — generated from the same copy as the pages, so it cannot
+# contradict them.
+
 User-agent: GPTBot
 Allow: /
 

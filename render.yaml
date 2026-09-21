@@ -18,3 +18,37 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+    # The domain currently serves a live, indexed site with 19 URLs, none of
+    # which exist in this build. These preserve the ten that have a clear
+    # equivalent. Render's routes do not glob, so each path is explicit.
+    routes:
+      - type: redirect
+        source: /wedding-experiences
+        destination: /weddings.html
+      - type: redirect
+        source: /wedding-venues-montana
+        destination: /weddings.html
+      - type: redirect
+        source: /helicopter-experiences
+        destination: /weddings.html
+      - type: redirect
+        source: /corporate-retreats
+        destination: /retreats.html
+      - type: redirect
+        source: /wellness-retreats
+        destination: /wellness.html
+      - type: redirect
+        source: /stay-onsite
+        destination: /estate.html
+      - type: redirect
+        source: /gallery
+        destination: /gallery.html
+      - type: redirect
+        source: /about
+        destination: /story.html
+      - type: redirect
+        source: /contact
+        destination: /contact.html
+      - type: redirect
+        source: /book
+        destination: /contact.html

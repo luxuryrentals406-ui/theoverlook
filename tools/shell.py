@@ -8,6 +8,7 @@ drift. Page bodies live in build.py.
 import hashlib
 import os
 import re
+import struct
 
 SITE = "https://theoverlookatflatheadlake.com"
 
@@ -20,7 +21,10 @@ BIZ = {
     "tel":     "+14068856064",
     "email":   "theoverlook@luxurylodgingvip.com",
     "ig":      "https://www.instagram.com/theoverlookatflatheadlake",
-    "ig_sis":  "https://www.instagram.com/flatheadlakeluxurylodging",
+    # The sister brand's handle carries a dot. Verified against the account and
+    # against the old site's own sameAs block — the dotless spelling 404s.
+    "ig_sis":  "https://www.instagram.com/flatheadlake.luxurylodging",
+    "fb":      "https://www.facebook.com/61584158843820",
     "handle":  "@theoverlookatflatheadlake",
 }
 
@@ -60,6 +64,42 @@ def _ver(relpath):
             return hashlib.md5(f.read()).hexdigest()[:8]
     except OSError:
         return "1"
+
+
+_SOF = {0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF}
+
+
+def imgsize(relpath):
+    """(width, height) of a JPEG or PNG, or None. No dependencies.
+
+    Used for og:image:width/height: without them Facebook and LinkedIn render a
+    small card on the first scrape of a URL they have never seen — which is every
+    URL on this site, the week it launches.
+    """
+    full = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), relpath)
+    try:
+        with open(full, "rb") as f:
+            d = f.read(2 << 20)
+    except OSError:
+        return None
+    if d[:8] == b"\x89PNG\r\n\x1a\n":
+        return struct.unpack(">II", d[16:24])
+    if d[:2] != b"\xff\xd8":
+        return None
+    i = 2
+    while i + 9 < len(d):
+        if d[i] != 0xFF:
+            i += 1
+            continue
+        m = d[i + 1]
+        if m in _SOF:
+            h, w = struct.unpack(">HH", d[i + 5:i + 9])
+            return w, h
+        if m == 0xD8 or m == 0xD9 or 0xD0 <= m <= 0xD7:
+            i += 2
+            continue
+        i += 2 + struct.unpack(">H", d[i + 2:i + 4])[0]
+    return None
 
 
 def img(name, alt, cls="", ratio=None, eager=False, sizes=None):
@@ -513,6 +553,14 @@ def stickybar(page=""):
 
 # ------------------------------------------------------------------ chrome
 def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
+    url = f"{SITE}/{'' if canonical == 'index.html' else canonical}"
+    alt = f"{BIZ['name']}, Lakeside, Montana"
+    dims = imgsize(f"{IMG}{og_image}")
+    wh = ""
+    if dims:
+        wh = (f'<meta property="og:image:width" content="{dims[0]}">\n'
+              f'<meta property="og:image:height" content="{dims[1]}">\n')
+    mime = "image/png" if og_image.lower().endswith(".png") else "image/jpeg"
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -520,7 +568,8 @@ def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="{SITE}/{'' if canonical == 'index.html' else canonical}">
+<link rel="canonical" href="{url}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#1B1E1B">
 <meta name="geo.region" content="US-MT">
 <meta name="geo.placename" content="Lakeside, Montana">
@@ -532,13 +581,16 @@ def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
 <meta property="og:site_name" content="{BIZ['name']}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:url" content="{SITE}/{'' if canonical == 'index.html' else canonical}">
+<meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}/{IMG}{og_image}">
-<meta property="og:image:alt" content="{BIZ['name']}, Lakeside, Montana">
+<meta property="og:image:secure_url" content="{SITE}/{IMG}{og_image}">
+{wh}<meta property="og:image:type" content="{mime}">
+<meta property="og:image:alt" content="{alt}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="{SITE}/{IMG}{og_image}">
+<meta name="twitter:image:alt" content="{alt}">
 
 <link rel="icon" href="{IMG}overlook-logo.png">
 <link rel="apple-touch-icon" href="{IMG}overlook-logo-main.png">
@@ -616,6 +668,7 @@ def footer():
           <li><a href="tel:{BIZ['tel']}">{BIZ['phone']}</a></li>
           <li>{BIZ['city']}, {BIZ['state']}</li>
           <li style="margin-top:1.2rem"><a href="{BIZ['ig']}" rel="noopener">Instagram {BIZ['handle']}</a></li>
+          <li><a href="{BIZ['fb']}" rel="noopener">Facebook</a></li>
           <li><a href="{BIZ['ig_sis']}" rel="noopener">Flathead Lake Luxury Lodging</a></li>
         </ul>
       </div>
