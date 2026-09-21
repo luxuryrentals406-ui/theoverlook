@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Copy-rule linter. Run after tools/build.py.
+
+Checks the rules the rebuild was commissioned to enforce. Exits non-zero on a
+violation so it can gate a deploy.
+"""
+import os, re, sys, glob, html as ihtml
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FAILS, WARNS = [], []
+
+WEDDING_WORDS = ["ceremony", "bride", "groom", " ring ", "aisle", "bridal", "altar",
+                 "wedding party", "honeymoon", "elopement"]
+FILLER = ["unparalleled", "once-in-a-lifetime", "once in a lifetime", "magical",
+          "breathtaking", "stunning", "nestled", "world-class"]
+
+# Verbatim Google reviews — exempt from the exclamation-point and filler rules.
+QUOTE_RE = re.compile(r"<blockquote.*?</blockquote>", re.S | re.I)
+
+
+def visible(path, strip_chrome=True):
+    """Return page text with tags removed. strip_chrome drops nav + footer so the
+    word 'Weddings' in the navigation doesn't trip the retreats check."""
+    src = open(path, encoding="utf-8").read()
+    if strip_chrome:
+        src = re.sub(r"<header.*?</header>", " ", src, flags=re.S | re.I)
+        src = re.sub(r"<nav.*?</nav>", " ", src, flags=re.S | re.I)
+        src = re.sub(r"<footer.*?</footer>", " ", src, flags=re.S | re.I)
+        src = re.sub(r"<head>.*?</head>", " ", src, flags=re.S | re.I)
+        src = re.sub(r"<script.*?</script>", " ", src, flags=re.S | re.I)
+    return src
+
+
+def text_of(src):
+    t = re.sub(r"<[^>]+>", " ", src)
+    return re.sub(r"\s+", " ", ihtml.unescape(t))
+
+
+pages = sorted(glob.glob(os.path.join(ROOT, "*.html")))
+if not pages:
+    sys.exit("no pages built — run tools/build.py first")
+
+site_text = ""
+for p in pages:
+    name = os.path.basename(p)
+    src = visible(p)
+    body = text_of(src)
+    body_noquote = text_of(QUOTE_RE.sub(" ", src))
+    low = body.lower()
+    low_nq = body_noquote.lower()
+    site_text += " " + low
+
+    # 1 — retired phrases
+    for phrase in ["begin your story", "your story awaits"]:
+        if phrase in low:
+            FAILS.append(f"{name}: retired phrase '{phrase}'")
+
+    # 2 — sleeping capacity: the estate sleeps 28, and the corporate page does
+    #     not discuss beds at all (owner's call, 2026-09-19 — the $100k two-estate
+    #     package sleeping 56 is the same 28 counted twice)
+    for m in re.finditer(r"(sleep\w*|accommodat\w*|capacity|overnight)\D{0,24}\b(24|12)\b", low):
+        FAILS.append(f"{name}: stale sleeping capacity — '{m.group(0).strip()}'")
+    if name == "retreats.html":
+        for m in re.finditer(r"(sleeps?|sleeping|overnight|double occupancy|beds?)\b", low):
+            FAILS.append(f"{name}: sleeping capacity on the corporate page — '{m.group(0)}'")
+
+    # 2b — no published pricing anywhere (owner's call, 2026-09-19). Every
+    #      booking is quoted directly, so a figure on the page is a regression.
+    ALLOWED_PRICES = {"$100,000"}          # the Ultimate weekend, and nothing else
+    for m in re.finditer(r"\$\s?[\d,]+", body):
+        if m.group(0).strip() not in ALLOWED_PRICES:
+            FAILS.append(f"{name}: published price — '{m.group(0).strip()}'")
+
+    # 3 — vocabulary separation
+    if name == "retreats.html":
+        for w in WEDDING_WORDS:
+            if w in low:
+                FAILS.append(f"{name}: wedding vocabulary '{w.strip()}' on the corporate page")
+    if name == "weddings.html":
+        for w in ["meeting space", "general session", "breakout", "offsite"]:
+            if w in low:
+                FAILS.append(f"{name}: corporate vocabulary '{w}' on the wedding page")
+
+    # 4 — filler, max one per page (quotes exempt)
+    for w in FILLER:
+        n = low_nq.count(w)
+        if n > 1:
+            FAILS.append(f"{name}: filler '{w}' x{n} (max 1)")
+        elif n == 1:
+            WARNS.append(f"{name}: filler '{w}' used once")
+
+    # 5 — exclamation points outside real reviews
+    n_excl = body_noquote.count("!")
+    if n_excl:
+        FAILS.append(f"{name}: {n_excl} exclamation point(s) outside quoted reviews")
+
+    # 6 — SEO basics
+    raw = open(p, encoding="utf-8").read()
+    title = re.search(r"<title>(.*?)</title>", raw, re.S)
+    desc = re.search(r'name="description" content="(.*?)"', raw, re.S)
+    if not title:
+        FAILS.append(f"{name}: no <title>")
+    elif not (15 <= len(title.group(1)) <= 70):
+        WARNS.append(f"{name}: title is {len(title.group(1))} chars (aim 15–70)")
+    if not desc:
+        FAILS.append(f"{name}: no meta description")
+    elif not (70 <= len(desc.group(1)) <= 170):
+        WARNS.append(f"{name}: meta description is {len(desc.group(1))} chars (aim 70–170)")
+    for m in re.finditer(r'"price[A-Za-z]*"\s*:\s*"?([\d,]+)', raw):
+        if m.group(1) != "100000":
+            FAILS.append(f"{name}: price in structured data — '{m.group(0)[:40]}'")
+    if raw.count("<h1") > 1:
+        WARNS.append(f"{name}: {raw.count('<h1')} <h1> tags")
+    for m in re.finditer(r"<img (?![^>]*\balt=)[^>]*>", raw):
+        FAILS.append(f"{name}: <img> without alt — {m.group(0)[:60]}")
+
+# 7 — site-wide 'dream' budget
+n_dream = len(re.findall(r"\bdream", site_text))
+if n_dream > 1:
+    FAILS.append(f"site-wide: 'dream' appears {n_dream}x (max 1)")
+
+# ---------------------------------------------------------------- report
+print(f"\n  linted {len(pages)} pages\n")
+for w in WARNS:
+    print(f"  warn  {w}")
+if WARNS:
+    print()
+if FAILS:
+    for f in FAILS:
+        print(f"  FAIL  {f}")
+    print(f"\n  {len(FAILS)} violation(s)\n")
+    sys.exit(1)
+print("  all copy rules pass\n")

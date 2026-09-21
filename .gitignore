@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Stray screenshot accidentally saved as "--help"
+--help
+
+# Render build output (assembled at deploy time)
+dist/
+
+# Local editor / agent state
+.claude/settings.local.json
