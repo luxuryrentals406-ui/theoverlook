@@ -19,7 +19,7 @@ import os, re, sys, json, hashlib, datetime
 import html as ihtml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from shell import (SITE, BIZ, NAV, IMG, THMB, img, eyebrow, btn, tlink,
+from shell import (SITE, BIZ, NAV, IMG, THMB, rel, img, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, honeybook_form, spec, experiences,
                    driftwood,
@@ -87,8 +87,9 @@ R_GREG = ("This is officially the best spot in Montana. The views are unreal&hel
 FAQ_WEDDINGS = [
     ("Where is the venue located?",
      "<p>The estate sits above Flathead Lake in Lakeside, Montana, 35 minutes from "
-     "Glacier Park International Airport (FCA) and about 45 minutes from Glacier "
-     "National Park and Whitefish Mountain Resort.</p>"),
+     "Glacier Park International Airport (FCA), about 45 minutes from Whitefish "
+     "Mountain Resort and about an hour from West Glacier, the west entrance to "
+     "Glacier National Park.</p>"),
     ("How many guests can it hold?",
      "<p>Up to 200 guests for the celebration itself. Separately, up to 28 people "
      "sleep on the property across the five accommodations &mdash; usually the couple "
@@ -135,8 +136,8 @@ FAQ_RETREATS = [
     # change, not ours, and it is not a fact we hold.
     ("How far is the nearest airport?",
      "<p>Glacier Park International Airport (FCA) is 35 minutes from the estate. "
-     "Glacier National Park and Whitefish Mountain Resort are both about 45 minutes "
-     "away.</p>"),
+     "Whitefish Mountain Resort is about 45 minutes away, and West Glacier, the west "
+     "entrance to Glacier National Park, about an hour.</p>"),
     ("How do we get a custom proposal?",
      "<p>Send your dates, your group size and what the gathering needs to accomplish. "
      "You will get a tailored proposal rather than a rate sheet.</p>"),
@@ -347,8 +348,8 @@ def page_weddings():
         ]),
         ("Getting here", [
             "<b>35 min</b> from Glacier Park International Airport (FCA)",
-            "<b>45 min</b> from Glacier National Park",
             "<b>45 min</b> from Whitefish Mountain Resort",
+            "<b>1 hr</b> to West Glacier, the park's west entrance",
         ]),
     ]
 
@@ -608,9 +609,9 @@ def page_retreats():
          "not end when the session does &mdash; it carries from the pavilion to the fire "
          "pit to the kitchen island, without anyone getting in a car."),
         ("A destination, not a conference room",
-         "Flathead Lake is out the window. Glacier National Park and Whitefish Mountain "
-         "Resort are both about 45 minutes away. For a distributed team, that is a "
-         "reason to actually get on the plane."),
+         "Flathead Lake is out the window. Whitefish Mountain Resort is about 45 "
+         "minutes away and Glacier National Park about an hour. For a distributed "
+         "team, that is a reason to actually get on the plane."),
         ("Built to function as a venue",
          "This is not a large rental that has to be built out for the week. The "
          "gathering space, the power, the connectivity and the grounds are permanent "
@@ -733,11 +734,11 @@ def page_retreats():
         f'''{eyebrow("Getting here")}
         <h2>Fly in and be working by afternoon</h2>
         <p class="lede" style="margin:1.4rem 0">Glacier Park International Airport is 35
-          minutes from the gate, with direct service from multiple major cities. A team
-          on a morning flight is in the pavilion after lunch.</p>
-        <p>West Glacier and Glacier National Park sit about 45 minutes out for groups
-          extending the trip, and helicopter arrivals are available through WestSlope
-          Helicopters.</p>''',
+          minutes from the gate. A team on a morning flight is in the pavilion after
+          lunch.</p>
+        <p>West Glacier, the west entrance to Glacier National Park, is about an hour
+          out for groups extending the trip, and helicopter arrivals are available
+          through WestSlope Helicopters.</p>''',
         flip=True)}
     </div>
   </section>
@@ -1157,7 +1158,7 @@ def page_contact():
             <h4 style="font-family:var(--sans);font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:1.2rem">Getting here</h4>
             <p style="color:var(--ink-soft);font-size:.98rem">Lakeside, Montana &mdash; 35
               minutes from Glacier Park International Airport (FCA), about 45 minutes from
-              Glacier National Park and Whitefish Mountain Resort.</p>
+              Whitefish Mountain Resort and about an hour from West Glacier.</p>
           </div>
         </div>
 
@@ -1286,7 +1287,7 @@ def page_wellness():
             "<b>15</b> private acres above Flathead Lake",
             "Walking trails across the property",
             "<b>35 min</b> from Glacier Park International Airport",
-            "<b>45 min</b> from Glacier National Park",
+            "<b>1 hr</b> to West Glacier, the park's west entrance",
         ]),
     ]
 
@@ -1393,6 +1394,570 @@ def page_wellness():
 """
 
 
+# ============================================================ ported pages
+# Six URLs that already exist and are already indexed on the live site:
+# /privacy /terms /journal and three /journal/<slug> articles. They are ported
+# here so the rebuild does not delete them, and they keep their URLs exactly —
+# hence the directory-index output paths.
+#
+# The ports are faithful except where the live text is out of date or
+# contradicts FACTS.md. Every such change is marked below and listed in the
+# handover; nothing new was invented to fill a gap.
+
+LEGAL_UPDATED = "September 2026"     # this revision, not the January original
+
+
+def dcrumb(base, trail):
+    """Visible breadcrumb. trail: [(label, href_or_None), …] after Home.
+
+    The BreadcrumbList in the page's structured data says the same thing; this
+    is the version a reader can click.
+    """
+    parts = [f'<a href="{base}index.html">Home</a>']
+    for label, href in trail:
+        parts.append(f'<a href="{base}{href}">{label}</a>' if href
+                     else f'<span>{label}</span>')
+    return ('<p style="font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;'
+            'color:var(--muted);margin-bottom:1.6rem">'
+            + ' &rsaquo; '.join(parts) + '</p>')
+
+
+def doc_head(base, eyeb, h1, lede, trail=()):
+    """Opening block for a page with no hero photograph."""
+    crumb = dcrumb(base, trail) if trail else ""
+    return f"""
+  <section class="sect sect--tight" style="padding-top:clamp(8rem,14vw,11rem)">
+    <div class="wrap wrap--narrow rv">
+      {crumb}{eyebrow(eyeb)}
+      <h1 style="font-size:clamp(2.1rem,4.4vw,3.3rem);margin-top:1.1rem">{h1}</h1>
+      <p class="lede" style="margin-top:1.5rem">{lede}</p>
+    </div>
+  </section>"""
+
+
+def legal_body(sections):
+    """sections: (heading, [paragraph_or_list_html, …])"""
+    out = []
+    for i, (h, blocks) in enumerate(sections, start=1):
+        inner = "".join(blocks)
+        out.append(f"""<div class="rv" style="margin-top:2.8rem">
+          <h2 style="font-size:clamp(1.15rem,2vw,1.45rem)">{i}. {h}</h2>
+          <div style="margin-top:1rem;color:var(--ink-soft)">{inner}</div>
+        </div>""")
+    return f"""
+  <section class="sect" style="padding-top:0">
+    <div class="wrap wrap--narrow">{"".join(out)}</div>
+  </section>"""
+
+
+def page_privacy(base):
+    # Ported from /privacy. Two changes from the live text, both deliberate:
+    #   - section 10, "Sweepstakes Data Collection", is gone, along with the
+    #     giveaway bullet in section 2 and the Official Rules link in the
+    #     contact section. The Signature Wedding Experience Giveaway closed on
+    #     2026-03-25 and was drawn on 2026-03-27; republishing a live entry
+    #     route for it would be a false statement. Sections renumbered.
+    #   - the contact address is BIZ["email"], not the Hello@ address on the
+    #     live page, so a deletion request reaches a monitored mailbox.
+    s = [
+        ("Information We Collect",
+         ["<p>When you submit an inquiry through our website, we collect the "
+          "following information:</p>",
+          ilist(["Name", "Email address", "Phone number", "Preferred event dates",
+                 "Estimated guest count",
+                 "Any additional information you provide in your message"])]),
+        ("How We Use Your Information",
+         ["<p>We use the information you provide to:</p>",
+          ilist(["Respond to your venue inquiry",
+                 "Provide information about our services and availability",
+                 "Send relevant updates about " + BIZ["name"],
+                 "Improve our website and services"])]),
+        ("Information Sharing",
+         ["<p>We do not sell, trade, or otherwise transfer your personal "
+          "information to outside parties. This does not include trusted third "
+          "parties who assist us in operating our website or conducting our "
+          "business, provided they agree to keep this information confidential.</p>"]),
+        ("Data Security",
+         ["<p>We implement appropriate security measures to protect your personal "
+          "information against unauthorized access, alteration, disclosure, or "
+          "destruction. All data is stored securely and access is restricted to "
+          "authorized personnel only.</p>"]),
+        ("Cookies and Tracking",
+         ["<p>Our website may use cookies to enhance your browsing experience. You "
+          "can choose to disable cookies through your browser settings, though this "
+          "may affect some website functionality.</p>"]),
+        ("Third-Party Links",
+         ["<p>Our website may contain links to third-party websites. We are not "
+          "responsible for the privacy practices of these external sites and "
+          "encourage you to review their privacy policies.</p>"]),
+        ("Your Rights",
+         ["<p>You have the right to:</p>",
+          ilist(["Access the personal information we hold about you",
+                 "Request correction of inaccurate information",
+                 "Request deletion of your personal information",
+                 "Opt out of marketing communications"])]),
+        ("Children&rsquo;s Privacy",
+         ["<p>Our website and services are not directed to individuals under the age "
+          "of 18. We do not knowingly collect personal information from children.</p>"]),
+        ("Changes to This Policy",
+         ["<p>We may update this Privacy Policy from time to time. Changes will be "
+          "posted on this page with an updated revision date. We encourage you to "
+          "review this policy periodically.</p>"]),
+        ("Contact Us",
+         ["<p>If you have questions about this Privacy Policy or wish to exercise "
+          "your rights regarding your personal data, please contact us:</p>",
+          f'<p style="margin-top:1rem">Email: <a href="mailto:{BIZ["email"]}">'
+          f'{BIZ["email"]}</a><br>Location: {BIZ["city"]}, {BIZ["region"]}</p>']),
+    ]
+    return (doc_head(base, f"Last updated: {LEGAL_UPDATED}", "Privacy Policy",
+                     "How we collect, use and protect the information you send us "
+                     "when you inquire about the estate.",
+                     trail=[("Privacy Policy", None)])
+            + legal_body(s))
+
+
+def page_terms(base):
+    # Ported from /terms. Section 3, the Signature Wedding Experience Giveaway,
+    # is gone for the same reason as the privacy section above: the entry period
+    # ended 2026-03-25 and the drawing was held 2026-03-27. Sections renumbered.
+    # Contact address is BIZ["email"] rather than the live Hello@ address.
+    s = [
+        ("Acceptance of Terms",
+         ["<p>By accessing and using " + BIZ["name"] + " website and services, you "
+          "agree to be bound by these Terms of Service. If you do not agree to these "
+          "terms, please do not use our services.</p>"]),
+        ("Venue Rental Services",
+         ["<p>" + BIZ["name"] + " is a private estate wedding venue available "
+          "exclusively through private inquiry. All bookings are subject to "
+          "availability and require a signed rental agreement.</p>",
+          ilist(["All venue rental inquiries are subject to review and approval",
+                 "Pricing and availability are shared privately after initial "
+                 "consultation",
+                 "A signed contract and deposit are required to confirm any booking",
+                 "Cancellation policies are outlined in the rental agreement"])]),
+        ("User Conduct",
+         ["<p>When using our website and services, you agree to:</p>",
+          ilist(["Provide accurate and truthful information",
+                 "Not use the site for any unlawful purpose",
+                 "Not attempt to interfere with the proper functioning of the website",
+                 "Not submit false or misleading information"])]),
+        ("Intellectual Property",
+         ["<p>All content on this website, including images, text, graphics, and "
+          "logos, is the property of " + BIZ["name"] + " or its licensors and is "
+          "protected by copyright laws. You may not reproduce, distribute, or use "
+          "any content without prior written permission.</p>"]),
+        ("Limitation of Liability",
+         ["<p>" + BIZ["name"] + " shall not be liable for any indirect, incidental, "
+          "special, or consequential damages arising from your use of our website or "
+          "services. Our total liability shall not exceed the amount paid for "
+          "services.</p>"]),
+        ("Changes to Terms",
+         ["<p>We reserve the right to modify these terms at any time. Changes will be "
+          "effective immediately upon posting. Your continued use of the website "
+          "constitutes acceptance of the modified terms.</p>"]),
+        ("Governing Law",
+         ["<p>These terms shall be governed by the laws of the State of Montana. Any "
+          "disputes shall be resolved in the courts of Flathead County, Montana.</p>"]),
+        ("Contact Information",
+         ["<p>For questions about these Terms of Service, please contact us at:</p>",
+          f'<p style="margin-top:1rem">Email: <a href="mailto:{BIZ["email"]}">'
+          f'{BIZ["email"]}</a><br>Location: {BIZ["city"]}, {BIZ["region"]}</p>']),
+    ]
+    return (doc_head(base, f"Last updated: {LEGAL_UPDATED}", "Terms of Service",
+                     "The terms that apply to this website and to an inquiry made "
+                     "through it.",
+                     trail=[("Terms of Service", None)])
+            + legal_body(s))
+
+
+# ---------------------------------------------------------------- the journal
+# Three articles ported from /journal. Facts were checked against FACTS.md
+# rather than carried over on trust; the three corrections are marked CORRECTED
+# and are listed in the handover.
+
+A_BUYOUT, A_SEASON, A_TRAVEL = (
+    "whats-included-estate-buyout-wedding-venue",
+    "best-time-of-year-montana-lake-wedding",
+    "getting-to-the-overlook-travel-guide")
+
+
+def art_body(paras):
+    """Article prose. paras: html strings, already marked up."""
+    return f"""
+  <section class="sect" style="padding-top:0">
+    <div class="wrap wrap--narrow">{"".join(paras)}</div>
+  </section>"""
+
+
+def h2(t):
+    return f'<h2 class="rv" style="font-size:clamp(1.5rem,2.8vw,2.1rem);margin-top:3rem">{t}</h2>'
+
+
+def para(t):
+    return f'<p class="rv" style="margin-top:1.3rem;color:var(--ink-soft)">{t}</p>'
+
+
+def blist(items):
+    return f'<div class="rv" style="margin-top:1.3rem">{ilist(items)}</div>'
+
+
+def related(base, slugs):
+    li = "".join(
+        f'<li style="margin-bottom:.9rem"><a class="tlink" href="{base}journal/{sl}">'
+        f'{ARTICLE_TITLE[sl]} <span>&rarr;</span></a></li>' for sl in slugs)
+    return f"""
+  <section class="sect sect--paper2">
+    <div class="wrap wrap--narrow rv">
+      {eyebrow("Keep reading")}
+      <ul style="list-style:none;padding:0;margin:1.6rem 0 0">{li}</ul>
+    </div>
+  </section>"""
+
+
+def body_buyout(base):
+    return art_body([
+        para("Most couples begin their venue search with a familiar mental picture: a "
+             "beautiful room, a set block of hours, a hard stop at the end of the "
+             "night. An estate buyout works differently. Instead of renting a space "
+             "inside someone else&rsquo;s schedule, you take the whole property "
+             "&mdash; every acre, every building, every quiet corner &mdash; and the "
+             "celebration unfolds at your pace."),
+        para("Here&rsquo;s what that actually means at The Overlook, and how it "
+             "compares to the traditional venue model."),
+        h2("The whole property, only yours"),
+        para("The Overlook sits on 15 private acres above Flathead Lake. When you "
+             "book, that acreage isn&rsquo;t shared with another party, another "
+             "ceremony running an hour behind, or a lobby full of strangers passing "
+             "through your cocktail hour. There is no second event on the other side "
+             "of a folding wall. The gate closes behind your people and the estate is "
+             "simply yours."),
+        para("That privacy changes the texture of the day more than couples expect. "
+             "Getting ready happens in a bedroom rather than a rented suite. First "
+             "looks happen wherever the light is best. Nobody is managing the awkward "
+             "overlap of two weddings sharing one parking lot."),
+        h2("Your closest people sleep where the wedding happens"),
+        para("The single biggest difference between a buyout and a banquet-hall "
+             "rental is lodging. The estate sleeps up to 28 guests onsite, across "
+             "five accommodations:"),
+        # CORRECTED: the live article listed three kinds of accommodation and
+        # left out the cabin. FACTS.md names all five.
+        blist([
+            "<b>The Swan</b> &mdash; the main house, and the anchor of the property.",
+            "<b>The Glacier</b> &mdash; a modern cabin with a sleeping loft and its own patio.",
+            "<b>The Lakeside</b> &mdash; two modern tiny homes, private and thoughtfully designed.",
+            "<b>The Summit</b> and <b>The Ridge</b> &mdash; elevated treehouses, the kind of stay guests talk about long after the weekend ends."]),
+        para("Practically, this removes an entire category of wedding-day logistics. "
+             "No shuttle timing for the wedding party. No one driving back to a hotel "
+             "at midnight. No parents missing the last hour because the ride is "
+             "leaving. Your inner circle wakes up on the property, has coffee "
+             "together, and is already exactly where they need to be."),
+        h2("Space built for the celebration itself"),
+        para("The estate hosts receptions for up to 200 guests, centered on a 3,200 "
+             "square-foot reception pavilion. Because the pavilion is permanent "
+             "infrastructure rather than a tent trucked in for the weekend, it holds "
+             "up to Montana weather and doesn&rsquo;t need to be rebuilt from scratch "
+             "for every event."),
+        para("Around it, the grounds do the rest of the work: a pool and hot tub for "
+             "the welcome afternoon, open lawn for ceremony and lawn games, and long "
+             "mountain views that mean your photographer never has to hunt for a "
+             "backdrop."),
+        h2("A weekend, not a time slot"),
+        para("A traditional venue sells you a window &mdash; often eight or ten "
+             "hours, with load-in and load-out squeezed at either end. An estate "
+             "buyout sells you the property for the duration of your stay. Rehearsal "
+             "dinner, welcome gathering, the wedding day itself, and a slow "
+             "morning-after breakfast all happen in the same place, without anyone "
+             "rushing you toward the door the way a rented banquet hall must."),
+        para("That said, a buyout is not a free-for-all. Quiet hours, music curfews, "
+             "vendor access, and the specifics of your timeline are all set out in "
+             "your agreement &mdash; the difference is that they&rsquo;re shaped "
+             "around your weekend rather than around the event booked after yours. "
+             "Contracts here are written to a 200-guest maximum and an 11:00 p.m. "
+             "event end."),
+        h2("What you still bring in"),
+        # CORRECTED: the live article said tables and chairs are rented rather
+        # than included, and called the caterers "approved partners". FACTS.md
+        # has tables and chairs on site with four head tables, and a preferred
+        # vendor list couples are not required to use.
+        para("A buyout gives you the canvas; you and your team fill it. Couples at "
+             "The Overlook work with a day-of coordinator (required), carry event "
+             "insurance, and arrange restroom rentals for larger guest counts. Tables "
+             "and chairs are on site, including four head tables, and the bar is "
+             "built in &mdash; catering and bar service are arranged separately. We "
+             "keep a preferred vendor list of Flathead Valley planners, caterers, "
+             "florists and photographers who know the property, and several extend a "
+             "partner discount, but you are not required to book from it. A full "
+             "planner is available if you&rsquo;d rather hand the details to someone "
+             "else entirely."),
+        h2("Is a buyout right for you?"),
+        para("If your priority is a single beautiful evening with minimal moving "
+             "parts, a traditional venue may serve you well. If you want your "
+             "favorite people in one place for a few days &mdash; unhurried, "
+             "uninterrupted, and genuinely together &mdash; an estate buyout is the "
+             "model built for that."),
+    ])
+
+
+def body_season(base):
+    return art_body([
+        para("Northwest Montana doesn&rsquo;t do subtle seasons. The difference "
+             "between a June evening and an October one isn&rsquo;t a few degrees "
+             "&mdash; it&rsquo;s a different landscape, a different light, and a "
+             "different kind of wedding. Choosing your date here is less about "
+             "finding the &lsquo;best&rsquo; weather and more about deciding which "
+             "version of Montana you want your guests to remember."),
+        h2("Summer: the reliable choice"),
+        para("Roughly June through September is the heart of the season, and for good "
+             "reason. This stretch tends to bring the mildest, most settled weather "
+             "of the year and the longest daylight &mdash; which matters more than "
+             "most couples realize. Long evenings mean a ceremony that isn&rsquo;t "
+             "racing the sunset, golden-hour portraits that actually happen at a "
+             "civilized hour, and dinner outdoors while it&rsquo;s still light."),
+        para("The lake is at its best in these months, the grounds are fully green, "
+             "and outdoor everything &mdash; cocktail hour on the lawn, a swim before "
+             "the rehearsal dinner, late drinks under string lights &mdash; is "
+             "realistic rather than aspirational."),
+        para("The trade-off is simple: this is also when everyone else wants to marry "
+             "here. Peak-season Saturdays go early, often more than a year out. If "
+             "your heart is set on a July or August weekend, treat your date search "
+             "as the first thing you do, not the last."),
+        h2("Late spring and early fall: the shoulders"),
+        para("The weeks bracketing peak season are where thoughtful couples often "
+             "find the sweet spot. You trade a measure of weather certainty for "
+             "meaningful gains elsewhere:"),
+        blist([
+            "Better availability &mdash; more dates open, and more flexibility on which nights you hold the property.",
+            "Different scenery &mdash; spring green and running water on one side, larch and cottonwood color on the other.",
+            "Fewer crowds regionally, which makes travel and side trips easier for out-of-town guests.",
+            "A softer, lower light that many photographers quietly prefer."]),
+        para("The honest caveat: shoulder-season weather in the mountains is genuinely "
+             "variable. A gorgeous afternoon and a cold, wet one are both plausible. "
+             "That&rsquo;s not a reason to avoid these months &mdash; it&rsquo;s a "
+             "reason to plan for both. A permanent covered reception space, a real "
+             "indoor-capable plan, and warm layers for guests turn "
+             "&lsquo;unpredictable&rsquo; into &lsquo;handled.&rsquo;"),
+        h2("Winter: for a specific kind of couple"),
+        para("Winter weddings in Montana are a deliberate aesthetic choice &mdash; "
+             "snow, candlelight, small guest counts, everyone indoors and close. They "
+             "ask more of your guests in travel and more of your plan in "
+             "contingencies, but the couples who choose them almost never want "
+             "anything else. If this is you, build extra travel margin into "
+             "everyone&rsquo;s arrival day and keep the celebration compact."),
+        h2("How to actually decide"),
+        para("Work backward from what you care about most:"),
+        blist([
+            "Want the safest bet on an outdoor ceremony and long golden light? Aim for the heart of summer and book far ahead.",
+            "Want more date choice, a quieter valley, and dramatic scenery? Look at the shoulders and build a genuine weather plan.",
+            "Have a fixed guest list traveling from far away? Prioritize the months with the easiest travel, then choose the date.",
+            "Have a meaningful date already? Choose it, and design the weekend around whatever that season does best."]),
+        para("There&rsquo;s no wrong answer here &mdash; only a plan that matches the "
+             "month."),
+    ])
+
+
+def body_travel(base):
+    return art_body([
+        para("A destination wedding asks something of your guests, and the kindest "
+             "thing you can do is make the logistics feel easy. The good news: "
+             "getting to The Overlook is simpler than most Montana destinations. "
+             "Here&rsquo;s the guide to share with your guest list."),
+        h2("Fly into Glacier Park International (FCA)"),
+        para("The closest airport is Glacier Park International Airport in Kalispell, "
+             "Montana &mdash; airport code FCA. From FCA, the estate is roughly a "
+             "35-minute drive. That&rsquo;s the single most useful fact to put on "
+             "your wedding website, because it tells guests immediately that they "
+             "won&rsquo;t be spending half a day in a car after landing."),
+        para("FCA is a small, easy airport: short walks, quick baggage claim, rental "
+             "counters right there. Encourage anyone arriving for the wedding day "
+             "itself to build in buffer &mdash; small regional airports leave less "
+             "room to recover from a missed connection."),
+        h2("Renting a car vs. arranging shuttles"),
+        para("Both work. Which is right depends on your guest list."),
+        para("Rental cars make sense when guests are arriving on different days, want "
+             "to explore the valley on their own schedule, or are extending the trip. "
+             "Rentals at FCA are limited in peak season, so tell guests to reserve "
+             "early &mdash; earlier than feels necessary. It&rsquo;s the most common "
+             "travel regret we hear."),
+        para("Group shuttles make sense when a large block of guests arrives in a "
+             "similar window, when you&rsquo;d rather not manage a parking lot full "
+             "of cars, or &mdash; most importantly &mdash; when there&rsquo;s a bar. "
+             "A shuttle for the wedding evening is the simplest way to make sure "
+             "nobody drives after the reception. Many couples arrange a rental car "
+             "for a handful of key people and a shuttle for everyone else."),
+        blist([
+            "Book shuttle service well ahead; regional operators fill up in summer.",
+            "Give the driver one point of contact from your side, not five.",
+            "Plan the last shuttle for after your music curfew, not at it.",
+            "Share the parking situation in advance &mdash; the estate accommodates onsite parking for 75 cars."]),
+        h2("Where guests stay"),
+        para("The estate sleeps 28 guests onsite across the main house, the cabin, "
+             "the tiny homes and the treehouses &mdash; typically reserved for family "
+             "and the wedding party. Everyone else stays nearby in the Lakeside and "
+             "Flathead Valley area, and we&rsquo;re glad to point you toward partner "
+             "accommodations so you can send guests a short, curated list rather than "
+             "an overwhelming one."),
+        h2("Extending the trip"),
+        para("Many guests turn a wedding weekend here into a proper Montana trip, and "
+             "the estate is a natural home base for it. Flathead Lake itself is the "
+             "obvious draw &mdash; boating, swimming, waterfront dining, and cherries "
+             "in late summer. The valley also offers alpine adventure, hiking, and "
+             "small-town Montana worth an unhurried afternoon."),
+        para("Glacier National Park is the other great reason to stay longer. West "
+             "Glacier, the park&rsquo;s west entrance, is roughly a one-hour drive "
+             "from the estate &mdash; about 49 miles. That&rsquo;s close enough for a "
+             "day in the park and back, though guests should plan a full day for it "
+             "rather than squeezing it around wedding events, and should check the "
+             "park&rsquo;s own website before going, since entry requirements and "
+             "park conditions change from year to year."),
+        h2("A simple note to send your guests"),
+        para("Feel free to borrow this: &ldquo;Fly into Glacier Park International "
+             "Airport (FCA) in Kalispell, Montana &mdash; the venue is about 35 "
+             "minutes away. Reserve a rental car early if you&rsquo;d like to "
+             "explore, and watch for shuttle details for the wedding evening. If you "
+             "can, stay an extra day or two: Flathead Lake is right here, and West "
+             "Glacier &mdash; the west entrance to Glacier National Park &mdash; is "
+             "about an hour&rsquo;s drive, roughly 49 miles.&rdquo;"),
+    ])
+
+
+ARTICLES = [
+    {"slug": A_BUYOUT,
+     "h1": "What&rsquo;s included in an estate-buyout wedding venue",
+     "crumb": "What’s Included in an Estate-Buyout Wedding Venue",
+     "title": "What&rsquo;s Included in an Estate-Buyout Wedding Venue | The Overlook",
+     "desc": "How an estate buyout differs from a traditional venue rental: 15 private "
+             "acres, 28 sleeping onsite, a 3,200 sq ft pavilion, and a weekend "
+             "instead of a time slot.",
+     "kicker": "Planning guide &middot; 5 min read",
+     "lede": "A traditional venue sells you a room and a block of hours. A buyout sells "
+             "you the property, and the weekend runs at your pace.",
+     "img": ("tent-front.jpg", "The reception tent from the lawn"),
+     "cta_img": ("venue-overview.jpg", "The ceremony lawn and tent across the grounds"),
+     "body": body_buyout,
+     "cta": ("See what your weekend would look like",
+             "We&rsquo;re happy to walk you through what a weekend at The Overlook "
+             "could look like for your guest count and your season. Reach out and "
+             "we&rsquo;ll send details and current availability.",
+             "Check Your Date", "contact.html?type=wedding"),
+     "summary": "How an estate buyout differs from a traditional venue rental, and "
+                "what is and is not included at The Overlook.",
+     "related": [A_SEASON, A_TRAVEL]},
+
+    {"slug": A_SEASON,
+     "h1": "Best time of year for a Montana lake wedding",
+     "crumb": "Best Time of Year for a Montana Lake Wedding",
+     "title": "Best Time of Year for a Montana Lake Wedding | The Overlook",
+     "desc": "Choosing a wedding date in northwest Montana: what summer, the shoulder "
+             "seasons and winter each give you, and what each one asks of your "
+             "guests and your plan.",
+     "kicker": "Planning guide &middot; 5 min read",
+     "lede": "Choosing a date here is less about finding the best weather and more "
+             "about deciding which version of Montana your guests remember.",
+     "img": ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate"),
+     "cta_img": ("ceremony-setup.jpg", "Chairs set on the ceremony lawn before guests arrive"),
+     "body": body_season,
+     "cta": ("Tell us the season you have in mind",
+             "Tell us the season you&rsquo;re imagining and we&rsquo;ll let you know "
+             "what&rsquo;s still open and what a weekend looks like at that time of "
+             "year.",
+             "Check Your Date", "contact.html?type=wedding"),
+     "summary": "What summer, the shoulder seasons and winter each give you for a "
+                "wedding in northwest Montana.",
+     "related": [A_BUYOUT, A_TRAVEL]},
+
+    {"slug": A_TRAVEL,
+     "h1": "Getting to The Overlook: a travel guide for wedding guests",
+     "crumb": "Getting to The Overlook: A Travel Guide for Wedding Guests",
+     "title": "Getting to The Overlook: A Travel Guide for Wedding Guests",
+     "desc": "How wedding guests reach The Overlook at Flathead Lake: Glacier Park "
+             "International (FCA) is 35 minutes away. Rental cars, shuttles, and "
+             "where guests stay.",
+     "kicker": "Guest travel &middot; 5 min read",
+     "lede": "The logistics you can hand straight to your guest list, from the airport "
+             "to the last shuttle of the night.",
+     "img": ("venue-wide.jpg", "The estate grounds from across the lawn"),
+     "cta_img": ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate"),
+     "body": body_travel,
+     "cta": ("Help with guest travel",
+             "If you&rsquo;re planning a weekend at The Overlook and want help "
+             "thinking through guest travel, reach out &mdash; we&rsquo;ve walked a "
+             "lot of couples through it.",
+             "Start Your Inquiry", "contact.html"),
+     "summary": "The airport, rental cars versus shuttles, where guests stay, and how "
+                "far Glacier National Park really is.",
+     "related": [A_BUYOUT, A_SEASON]},
+]
+
+ARTICLE_TITLE = {a["slug"]: a["h1"] for a in ARTICLES}
+ARTICLE_BY_SLUG = {a["slug"]: a for a in ARTICLES}
+
+# The live articles are all dated 2 September 2026. They were edited on the port
+# — the expired CTA came out and three facts were corrected — so dateModified is
+# today rather than the publication date.
+ARTICLE_PUBLISHED = "2026-09-02"
+ARTICLE_PUBLISHED_HUMAN = "September 2, 2026"
+
+
+def page_article(base, slug):
+    a = ARTICLE_BY_SLUG[slug]
+    ch, clede, clabel, chref = a["cta"]
+    return f"""
+  <section class="sect sect--tight" style="padding-top:clamp(8rem,14vw,11rem);padding-bottom:0">
+    <div class="wrap wrap--narrow rv">
+      {dcrumb(base, [("Journal", "journal"), (a["crumb"], None)])}
+      {eyebrow(a["kicker"])}
+      <h1 style="font-size:clamp(2.1rem,4.4vw,3.3rem);margin-top:1.1rem">{a["h1"]}</h1>
+      <p class="lede" style="margin-top:1.5rem">{a["lede"]}</p>
+      <p style="margin-top:1.6rem;font-size:.82rem;letter-spacing:.06em;color:var(--muted)">
+        <time datetime="{ARTICLE_PUBLISHED}">{ARTICLE_PUBLISHED_HUMAN}</time>
+        &middot; {BIZ["name"]}</p>
+    </div>
+  </section>
+
+  <section class="sect" style="padding-top:clamp(2.5rem,5vw,3.5rem);padding-bottom:0">
+    <div class="wrap wrap--narrow rv rv--wipe">
+      <figure style="margin:0">{img(a["img"][0], a["img"][1], base=base)}</figure>
+    </div>
+  </section>
+
+  {a["body"](base)}
+
+  {band(a["cta_img"][0], a["cta_img"][1], ch, clede,
+        btn(base + chref, clabel, "btn btn--light btn--lg"), base=base)}
+
+  {related(base, a["related"])}
+"""
+
+
+def page_journal(base):
+    cards = ""
+    for a in ARTICLES:
+        cards += f"""<article class="rv" style="border-top:1px solid var(--line);padding:2.4rem 0">
+          <p style="font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted)">
+            {a["kicker"]}</p>
+          <h2 style="font-size:clamp(1.4rem,2.6vw,2rem);margin-top:1rem">
+            <a href="{base}journal/{a["slug"]}" style="text-decoration:none">{a["h1"]}</a></h2>
+          <p style="margin-top:1rem;color:var(--ink-soft);max-width:62ch">{a["summary"]}</p>
+          <p style="margin-top:1.4rem">{tlink(base + "journal/" + a["slug"], "Read it")}</p>
+        </article>"""
+    return (doc_head(base, "Journal", "Planning guides and travel notes",
+                     "What we find ourselves explaining on the phone, written down "
+                     "once: how an estate buyout works, how to choose a month in "
+                     "northwest Montana, and how to get your guests here.",
+                     trail=[("Journal", None)])
+            + f"""
+  <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
+    <div class="wrap wrap--narrow">{cards}</div>
+  </section>
+
+  {band("venue-overview.jpg", "The ceremony lawn and tent across the grounds",
+        "Ask us the question that is not answered here",
+        "Claudia or Eric will write back personally. Send the dates you are "
+        "considering and what you are planning.",
+        btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
+        base=base)}
+""")
+
 # ================================================================== assembly
 CRUMB = {"weddings.html": "Weddings", "retreats.html": "Corporate Retreats",
          "wellness.html": "Wellness Retreats",
@@ -1449,6 +2014,71 @@ PAGES = [
 #             so the card uses a landscape frame from further down the page.
 PRELOAD = {"gallery.html": THMB + PHOTOS[0][0],
            "story.html":   IMG + "owners-photo.jpg"}
+
+
+# The six ported URLs. `fn` takes the depth prefix and returns the body; the
+# output path is what fixes the URL, so /privacy stays /privacy.
+DOCS = [
+    {"path": "journal/index.html", "fn": page_journal,
+     "og": "venue-overview.jpg", "sticky": True, "priority": "0.6",
+     "title": "Journal | Wedding Planning Guides | The Overlook at Flathead Lake",
+     "desc": "Planning guides and travel notes from The Overlook at Flathead Lake "
+             "— estate buyouts, Montana wedding seasons, and getting guests to the "
+             "valley.",
+     "trail": [("Journal", "journal/index.html")]},
+
+    {"path": "privacy/index.html", "fn": page_privacy,
+     "og": "hero-pavilion-lake.jpg", "sticky": False, "priority": "0.3",
+     "title": "Privacy Policy | The Overlook at Flathead Lake",
+     "desc": "How The Overlook at Flathead Lake collects, uses, and protects the "
+             "personal information you send with an inquiry.",
+     "trail": [("Privacy Policy", "privacy/index.html")]},
+
+    {"path": "terms/index.html", "fn": page_terms,
+     "og": "hero-pavilion-lake.jpg", "sticky": False, "priority": "0.3",
+     "title": "Terms of Service | The Overlook at Flathead Lake",
+     "desc": "The terms of service that apply to the website of The Overlook at "
+             "Flathead Lake and to inquiries made through it.",
+     "trail": [("Terms of Service", "terms/index.html")]},
+]
+
+for _a in ARTICLES:
+    DOCS.append({
+        "path": f"journal/{_a['slug']}/index.html",
+        "fn": (lambda sl: lambda base: page_article(base, sl))(_a["slug"]),
+        "og": _a["img"][0], "sticky": True, "priority": "0.6",
+        "title": _a["title"], "desc": _a["desc"], "article": _a["slug"],
+        "trail": [("Journal", "journal/index.html"),
+                  (_a["crumb"], f"journal/{_a['slug']}/index.html")]})
+
+
+def blog_nodes(path, article_slug):
+    """BlogPosting for an article, or the blogPost list for the index."""
+    if article_slug:
+        a = ARTICLE_BY_SLUG[article_slug]
+        url = url_of(path)
+        return [{"@type": "BlogPosting", "@id": f"{url}#article",
+                 "headline": _plain(a["h1"]), "description": _plain(a["desc"]),
+                 "url": url,
+                 "datePublished": ARTICLE_PUBLISHED,
+                 "dateModified": datetime.date.today().isoformat(),
+                 "author": {"@id": f"{SITE}/#venue"},
+                 "publisher": {"@id": f"{SITE}/#venue"},
+                 "mainEntityOfPage": {"@id": f"{url}#webpage"},
+                 "isPartOf": {"@id": f"{SITE}/journal#webpage"},
+                 "image": [f"{SITE}/{IMG}{a['img'][0]}"],
+                 "articleSection": _plain(a["kicker"].split("&middot;")[0]),
+                 "inLanguage": "en-US"}]
+    return []
+
+
+def blog_index_extra():
+    return {"blogPost": [
+        {"@type": "BlogPosting",
+         "@id": f"{url_of('journal/' + a['slug'] + '/index.html')}#article",
+         "headline": _plain(a["h1"]),
+         "url": url_of(f"journal/{a['slug']}/index.html"),
+         "datePublished": ARTICLE_PUBLISHED} for a in ARTICLES]}
 
 
 def _plain(frag):
@@ -1541,41 +2171,61 @@ def website_node():
             "inLanguage": "en-US"}
 
 
-def crumbs(url, name, label):
-    """Home > this page. The homepage gets none: a one-item trail says nothing."""
-    return {"@type": "BreadcrumbList", "@id": f"{url}#breadcrumb", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE}/"},
-        {"@type": "ListItem", "position": 2, "name": label, "item": f"{SITE}/{name}"}]}
+def url_of(path):
+    """Output file -> the URL it is served at.
+
+    "index.html"                 -> https://…/
+    "weddings.html"              -> https://…/weddings.html
+    "privacy/index.html"         -> https://…/privacy
+    "journal/<slug>/index.html"  -> https://…/journal/<slug>
+
+    The six ported pages keep the extensionless URLs they are already indexed
+    under; a directory index is what makes that work without a redirect.
+    """
+    if path.endswith("/index.html"):
+        path = path[:-len("/index.html")]
+    elif path == "index.html":
+        path = ""
+    return f"{SITE}/{path}"
 
 
-def page_url(name):
-    return f"{SITE}/{'' if name == 'index.html' else name}"
+def crumbs(url, trail):
+    """trail: [(label, path), …] after Home. The homepage gets no trail at all."""
+    items = [{"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE}/"}]
+    for i, (label, path) in enumerate(trail, start=2):
+        items.append({"@type": "ListItem", "position": i, "name": label,
+                      "item": url_of(path)})
+    return {"@type": "BreadcrumbList", "@id": f"{url}#breadcrumb",
+            "itemListElement": items}
 
 
-def schema(name, label, title, desc, og_image):
+def schema(path, title, desc, og_image, trail=(), extra=None, page_type=None,
+           page_extra=None):
     """One @graph per page: the venue, the site, this page, its trail, its FAQ.
 
     Emitting the business on every page rather than the homepage alone is the
     point — most pages here can be the landing page for a query, and a page that
     only carries a breadcrumb tells an assistant nothing about who it is reading.
     """
-    url = page_url(name)
-    page = {"@type": "WebPage", "@id": f"{url}#webpage", "url": url,
+    url = url_of(path)
+    page = {"@type": page_type or "WebPage", "@id": f"{url}#webpage", "url": url,
             "name": _plain(title), "description": _plain(desc),
             "isPartOf": {"@id": f"{SITE}/#website"},
             "about": {"@id": f"{SITE}/#venue"},
             "primaryImageOfPage": {"@type": "ImageObject",
                                    "url": f"{SITE}/{IMG}{og_image}"},
             "inLanguage": "en-US"}
+    page.update(page_extra or {})
     nodes = [venue_node(), website_node(), page]
-    if name != "index.html":
+    if trail:
         page["breadcrumb"] = {"@id": f"{url}#breadcrumb"}
-        nodes.append(crumbs(url, name, label))
-    if name in FAQS:
+        nodes.append(crumbs(url, trail))
+    if path in FAQS:
         # FAQPage is a WebPage, so the page node carries the questions rather
         # than a second, competing page-level node at the same URL.
         page["@type"] = ["WebPage", "FAQPage"]
-        page["mainEntity"] = faq_schema(FAQS[name])["mainEntity"]
+        page["mainEntity"] = faq_schema(FAQS[path])["mainEntity"]
+    nodes.extend(extra or [])
     graph = {"@context": "https://schema.org", "@graph": nodes}
     return ('<script type="application/ld+json">\n%s\n</script>\n'
             % json.dumps(graph, ensure_ascii=False, separators=(",", ":")))
@@ -1609,7 +2259,8 @@ def llms_txt():
   Driftwood, a 14,000 sq ft lakefront home at Woods Bay (sleeps 26), for a combined 54.
   Helicopter transfer between the two is available through WestSlope Helicopters.
 - Travel: 35 minutes from Glacier Park International Airport (FCA); about 45 minutes
-  from Glacier National Park and Whitefish Mountain Resort
+  from Whitefish Mountain Resort; about an hour (49 miles) to West Glacier, the west
+  entrance to Glacier National Park
 - The event spaces: a 3,200 sq ft reception pavilion with panoramic lake views; a
   40 × 80 ft tent, clear-top or white-top, with full sides; separate ceremony, cocktail
   and reception areas; a built-in bar; tables and chairs on site including four head
@@ -1627,8 +2278,8 @@ def llms_txt():
   family-style service, grazing tables or a food truck on the lawn can all be arranged.
   The bar is built in.
 - Activities: Flathead Lake boating and swimming minutes away; helicopter arrivals and
-  private lake flights through WestSlope Helicopters; Glacier
-  National Park and Whitefish Mountain Resort about 45 minutes away
+  private lake flights through WestSlope Helicopters; Whitefish Mountain Resort about
+  45 minutes away and Glacier National Park about an hour
 - Contact: {BIZ['phone']} / {BIZ['email']}
 - Owners: Claudia and Eric, who answer inquiries personally
 - Sister brand: Flathead Lake Luxury Lodging
@@ -1655,6 +2306,20 @@ def llms_txt():
 - [Gallery]({SITE}/gallery.html): photographs of the property
 - [Our Story]({SITE}/story.html): how the venue came to be
 - [Contact]({SITE}/contact.html): inquiry form, location and drive times
+
+## Guides
+
+- [What is included in an estate-buyout wedding venue]({SITE}/journal/{A_BUYOUT}):
+  how a buyout differs from a traditional venue rental, and what you still bring in.
+- [Best time of year for a Montana lake wedding]({SITE}/journal/{A_SEASON}): what
+  summer, the shoulder seasons and winter each give you here.
+- [Getting to The Overlook: a travel guide for wedding guests]({SITE}/journal/{A_TRAVEL}):
+  the airport, rental cars versus shuttles, and how far the park really is.
+
+## Policies
+
+- {SITE}/privacy
+- {SITE}/terms
 
 ## Common questions — weddings
 
@@ -1702,39 +2367,68 @@ def lastmods(built, today):
     return {k: v["lastmod"] for k, v in state.items()}
 
 
+def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
+               missing, built):
+    """Assemble, write, and check one page at any depth."""
+    base = rel(path)
+    extra = ""
+    if lcp:
+        extra = f'<link rel="preload" as="image" href="{base}{lcp}" fetchpriority="high">\n'
+    html = (head(title, desc, url_of(path), og, extra + ld, base)
+            + header(current, over_hero=over, base=base) + body
+            + footer(base).replace("{year}", str(YEAR))
+                          .replace("{STICKYBAR}",
+                                   stickybar(current, base) if sticky else ""))
+    full = os.path.join(ROOT, path)
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    with open(full, "w", encoding="utf-8") as f:
+        f.write(html)
+    built[path] = html
+    # verify every referenced photo actually exists — including the preload
+    # and the absolute og:image, neither of which is an src attribute
+    for part in re.split(r'(?:src|href|content)="', html)[1:]:
+        p = part.split('"')[0].replace(SITE + "/", "")
+        if base and p.startswith(base):
+            p = p[len(base):]
+        if p.startswith(("assets/img/", "assets/thumb/")) and \
+           not os.path.exists(os.path.join(ROOT, p)):
+            missing.add(p)
+    print(f"  wrote {path:38s} {len(html)//1024:>3d} KB")
+
+
 def main():
     missing = set()
     built = {}
+    priority = {}
     for name, fn, og, over, title, desc in PAGES:
-        body = fn()
-        # the image that paints first, told to the browser early
-        lcp = PRELOAD.get(name, IMG + og)
-        extra = (f'<link rel="preload" as="image" href="{lcp}" fetchpriority="high">\n'
-                 + schema(name, CRUMB.get(name, "Home"), title, desc, og))
-        html = (head(title, desc, name, og, extra)
-                + header(name, over_hero=over) + body
-                + footer().replace("{year}", str(YEAR))
-                          .replace("{STICKYBAR}", stickybar(name)))
-        with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
-            f.write(html)
-        built[name] = html
-        # verify every referenced photo actually exists — including the preload
-        # and the absolute og:image, neither of which is an src attribute
-        for part in re.split(r'(?:src|href|content)="', html)[1:]:
-            p = part.split('"')[0].replace(SITE + "/", "")
-            if p.startswith(("assets/img/", "assets/thumb/")) and \
-               not os.path.exists(os.path.join(ROOT, p)):
-                missing.add(p)
-        print(f"  wrote {name:16s} {len(html)//1024:>3d} KB")
+        trail = () if name == "index.html" else ((CRUMB[name], name),)
+        write_page(name, fn(), title, desc, og, over, name, True,
+                   schema(name, title, desc, og, trail),
+                   PRELOAD.get(name, IMG + og), missing, built)
+        priority[name] = "1.0" if name == "index.html" else "0.8"
+
+    for d in DOCS:
+        path, base = d["path"], rel(d["path"])
+        slug = d.get("article")
+        ld = schema(path, d["title"], d["desc"], d["og"], d["trail"],
+                    extra=blog_nodes(path, slug),
+                    page_type=(["CollectionPage", "Blog"]
+                               if path == "journal/index.html" else None),
+                    page_extra=(blog_index_extra()
+                                if path == "journal/index.html" else None))
+        write_page(path, d["fn"](base), d["title"], d["desc"], d["og"],
+                   False, "", d["sticky"], ld,
+                   IMG + d["og"] if slug else None, missing, built)
+        priority[path] = d["priority"]
 
     # sitemap + robots
     today = datetime.date.today().isoformat()
     stamps = lastmods(built, today)
     urls = "\n".join(
-        f"  <url><loc>{page_url(n)}</loc>"
+        f"  <url><loc>{url_of(n)}</loc>"
         f"<lastmod>{stamps[n]}</lastmod>"
-        f"<priority>{'1.0' if n=='index.html' else '0.8'}</priority></url>"
-        for n, *_ in PAGES)
+        f"<priority>{priority[n]}</priority></url>"
+        for n in built)
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -1758,7 +2452,8 @@ def main():
         for m in sorted(missing):
             print("     ", m)
         return 1
-    print(f"\n  {len(PAGES)} pages, {len(PHOTOS)} gallery photos, all images present.")
+    print(f"\n  {len(built)} pages ({len(DOCS)} at ported URLs), "
+          f"{len(PHOTOS)} gallery photos, all images present.")
     return 0
 
 

@@ -37,13 +37,32 @@ def text_of(src):
     return re.sub(r"\s+", " ", ihtml.unescape(t))
 
 
-pages = sorted(glob.glob(os.path.join(ROOT, "*.html")))
+def all_pages():
+    """Every built page, including the directory-index pages two levels deep.
+
+    The ported /journal and legal URLs are site copy like any other page, so
+    they answer to the same rules; globbing the root only would have let six
+    pages through unlinted.
+    """
+    out = []
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = [d for d in dirnames
+                       if d not in ("dist", "assets", "tools", ".git", ".claude")]
+        for f in filenames:
+            if f.endswith(".html"):
+                out.append(os.path.join(dirpath, f))
+    return sorted(out)
+
+
+pages = all_pages()
 if not pages:
     sys.exit("no pages built — run tools/build.py first")
 
 site_text = ""
 for p in pages:
-    name = os.path.basename(p)
+    # the name a rule matches on is the path from the site root, so
+    # "retreats.html" still means the corporate page and nothing else
+    name = os.path.relpath(p, ROOT)
     src = visible(p)
     body = text_of(src)
     body_noquote = text_of(QUOTE_RE.sub(" ", src))

@@ -54,6 +54,35 @@ BOOT = ('<script>(function(d,w){var h=d.documentElement;h.className+=" js";'
 IMG  = "assets/img/"
 THMB = "assets/thumb/"
 
+# Drive times, stated once so no two pages can disagree.
+#
+# Glacier is an hour, not the 45 minutes the old site claimed. West Glacier is
+# the park's west entrance and the nearest way in: 49 miles from the estate,
+# which is not a 45-minute drive at any legal speed on US-93 through Kalispell
+# and Columbia Falls. The travel guide has always said an hour; the rest of the
+# site now says the same thing.
+DRIVE_FCA       = "35 minutes"
+DRIVE_WHITEFISH = "about 45 minutes"
+DRIVE_GLACIER   = "about an hour"
+GLACIER_MILES   = "49 miles"
+
+
+def rel(path):
+    """Prefix that turns a root-relative path into a link from a page at `path`.
+
+    "weddings.html"                 -> ""
+    "privacy/index.html"            -> "../"
+    "journal/<slug>/index.html"     -> "../../"
+
+    Every link and every asset on a page is written as prefix + path-from-root,
+    never as a traversal from where the reader happens to be. That is what makes
+    the extensionless URLs safe: a host may serve /journal/<slug> or
+    /journal/<slug>/, and the two resolve relative links differently, but
+    "../../assets/x" lands on /assets/x under both because the browser clamps at
+    the root. A shortcut like "../other-slug" would not.
+    """
+    return "../" * path.count("/")
+
 
 # ------------------------------------------------------------------ helpers
 def _ver(relpath):
@@ -102,12 +131,12 @@ def imgsize(relpath):
     return None
 
 
-def img(name, alt, cls="", ratio=None, eager=False, sizes=None):
+def img(name, alt, cls="", ratio=None, eager=False, sizes=None, base=""):
     """A plain <img>. Photography is real and already optimised."""
     c = f' class="{cls}"' if cls else ""
     load = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy" decoding="async"'
     s = f' sizes="{sizes}"' if sizes else ""
-    return f'<img src="{IMG}{name}" alt="{alt}"{c} {load}{s}>'
+    return f'<img src="{base}{IMG}{name}" alt="{alt}"{c} {load}{s}>'
 
 
 def eyebrow(t):
@@ -191,9 +220,9 @@ def hero(image, alt, eyeb, h1, sub, ctas="", extra="", short=False, slides=None)
   </section>"""
 
 
-def band(image, alt, h2, lede, ctas):
+def band(image, alt, h2, lede, ctas, base=""):
     return f"""<section class="sect band">
-    <div class="band__bg" data-drift>{img(image, alt)}</div>
+    <div class="band__bg" data-drift>{img(image, alt, base=base)}</div>
     <div class="wrap wrap--narrow rv">
       <h2>{h2}</h2>
       <p class="lede" style="margin-top:1.4rem">{lede}</p>
@@ -268,7 +297,7 @@ def getting_here():
     """
     legs = [("Glacier Park International Airport (FCA)", "35 minutes"),
             ("Whitefish Mountain Resort", "About 45 minutes"),
-            ("Glacier National Park", "About 45 minutes")]
+            ("Glacier National Park (West Glacier)", "About an hour")]
     li = "".join(f'<li><span>{a}</span><b>{b}</b></li>' for a, b in legs)
     return f"""<section class="sect sect--paper2" id="getting-here">
     <div class="wrap">
@@ -526,7 +555,7 @@ def driftwood(shots, kind="wedding"):
   </section>"""
 
 
-def stickybar(page=""):
+def stickybar(page="", base=""):
     """Slim inquiry bar that slides in once someone is invested in the page.
 
     The corporate buyer is not checking a Saturday in June, so that page gets
@@ -545,15 +574,15 @@ def stickybar(page=""):
 <div class="sbar" hidden>
   <div class="wrap sbar__in">
     <p class="sbar__txt"><b>{lead}</b> <span>{tail}</span></p>
-    <a class="btn sbar__cta" href="{href}">{cta}</a>
+    <a class="btn sbar__cta" href="{base}{href}">{cta}</a>
     <button class="sbar__x" aria-label="Dismiss">&times;</button>
   </div>
 </div>"""
 
 
 # ------------------------------------------------------------------ chrome
-def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
-    url = f"{SITE}/{'' if canonical == 'index.html' else canonical}"
+def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base=""):
+    """url is the absolute canonical URL; base is the depth prefix from rel()."""
     alt = f"{BIZ['name']}, Lakeside, Montana"
     dims = imgsize(f"{IMG}{og_image}")
     wh = ""
@@ -592,12 +621,12 @@ def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
 <meta name="twitter:image" content="{SITE}/{IMG}{og_image}">
 <meta name="twitter:image:alt" content="{alt}">
 
-<link rel="icon" href="{IMG}overlook-logo.png">
-<link rel="apple-touch-icon" href="{IMG}overlook-logo-main.png">
+<link rel="icon" href="{base}{IMG}overlook-logo.png">
+<link rel="apple-touch-icon" href="{base}{IMG}overlook-logo-main.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v={_ver("assets/css/site.css")}">
+<link rel="stylesheet" href="{base}assets/css/site.css?v={_ver("assets/css/site.css")}">
 {extra}
 </head>
 <body>
@@ -607,23 +636,23 @@ def head(title, desc, canonical, og_image="hero-pavilion-lake.jpg", extra=""):
 <div class="prog" aria-hidden="true"><i></i></div>"""
 
 
-def header(current, over_hero=True):
+def header(current, over_hero=True, base=""):
     """over_hero: page opens on a full-bleed image, so the header sits on top of it."""
     cls = "hdr hdr--over" if over_hero else "hdr"
     links = ""
     for href, label in NAV:
         cur = ' aria-current="page"' if href == current else ""
-        links += f'<a href="{href}"{cur}>{label}</a>'
-    mob = "".join(f'<a href="{h}">{l}</a>' for h, l in NAV)
+        links += f'<a href="{base}{href}"{cur}>{label}</a>'
+    mob = "".join(f'<a href="{base}{h}">{l}</a>' for h, l in NAV)
     return f"""
 <header class="{cls}">
   <div class="wrap hdr__in">
-    <a class="brand" href="index.html" aria-label="{BIZ['name']} — home">
-      <img src="{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
+    <a class="brand" href="{base}index.html" aria-label="{BIZ['name']} — home">
+      <img src="{base}{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
     </a>
     <nav class="nav" aria-label="Primary">
       {links}
-      <a class="btn" href="contact.html">Start Your Inquiry</a>
+      <a class="btn" href="{base}contact.html">Start Your Inquiry</a>
     </nav>
     <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobnav">
       <span></span><span></span><span></span>
@@ -631,15 +660,15 @@ def header(current, over_hero=True):
   </div>
 </header>
 <nav class="mobnav" id="mobnav" aria-label="Mobile">
-  <a href="index.html">Home</a>
+  <a href="{base}index.html">Home</a>
   {mob}
-  <a class="btn" href="contact.html">Start Your Inquiry</a>
+  <a class="btn" href="{base}contact.html">Start Your Inquiry</a>
 </nav>
 <main id="main">"""
 
 
-def footer():
-    nav_li = "".join(f'<li><a href="{h}">{l}</a></li>' for h, l in NAV)
+def footer(base=""):
+    nav_li = "".join(f'<li><a href="{base}{h}">{l}</a></li>' for h, l in NAV)
     return f"""</main>
 <div class="lbox" role="dialog" aria-modal="true" aria-label="Photograph">
   <button class="lbox__x" aria-label="Close">&times;</button>
@@ -653,13 +682,14 @@ def footer():
   <div class="wrap">
     <div class="ftr__top">
       <div class="ftr__brandcol">
-        <img class="ftr__logo" src="{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
+        <img class="ftr__logo" src="{base}{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
         <p style="max-width:38ch">A private 15-acre estate above Flathead Lake in
           {BIZ['city']}, {BIZ['state']} — booked one group at a time.</p>
       </div>
       <div>
         <h4>Explore</h4>
-        <ul>{nav_li}<li><a href="contact.html">Contact</a></li></ul>
+        <ul>{nav_li}<li><a href="{base}journal">Journal</a></li>
+            <li><a href="{base}contact.html">Contact</a></li></ul>
       </div>
       <div>
         <h4>Get in touch</h4>
@@ -675,10 +705,12 @@ def footer():
     </div>
     <div class="ftr__bot">
       <span>&copy; {{year}} {BIZ['name']}. All rights reserved.</span>
+      <span style="display:inline-flex;gap:1.5rem"><a href="{base}privacy">Privacy Policy</a>
+        <a href="{base}terms">Terms of Service</a></span>
       <span>Lakeside, Montana</span>
     </div>
   </div>
 </footer>
-<script src="assets/js/site.js?v={_ver("assets/js/site.js")}" defer></script>
+<script src="{base}assets/js/site.js?v={_ver("assets/js/site.js")}" defer></script>
 </body>
 </html>"""
