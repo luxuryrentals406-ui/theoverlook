@@ -182,7 +182,7 @@
       }).then(function (r) {
         if (!r.ok) throw new Error(r.status);
         form.reset();
-        status.textContent = "Thank you — your inquiry is in. You'll hear back from Claudia or Eric personally, usually within one business day.";
+        status.textContent = "Thank you — your inquiry is in. You'll hear back personally, usually within one business day.";
         status.classList.add("is-on");
       }).catch(function () {
         status.textContent = "Something went wrong sending that. Please email us directly and we'll pick it up from there.";

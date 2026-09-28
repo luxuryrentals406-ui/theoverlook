@@ -1123,8 +1123,8 @@ def page_gallery():
 def page_story():
     return f"""
 {hero("owners-photo.jpg", "Claudia and Eric on the estate", "Our Story",
-      "Claudia &amp; Eric", "The two people who answer your inquiry are the two people "
-      "who built the place.", short=True)}
+      "Claudia &amp; Eric", "The two people who built the place, and the reason it is "
+      "run the way it is.", short=True)}
 
   <section class="sect">
     <div class="wrap wrap--narrow rv">
@@ -1173,7 +1173,7 @@ def page_story():
 
   {band("lake-sunset-boat.jpg", "The lake at sunset",
         "Come and see it",
-        "Send us your dates. Claudia or Eric will write back personally.",
+        "Send us your dates and we will write back personally.",
         btn("contact.html", "Start Your Inquiry", "btn btn--light btn--lg"))}
 """
 
@@ -1188,7 +1188,7 @@ def page_contact():
           {eyebrow("Contact")}
           <h1 style="font-size:clamp(2.3rem,4.6vw,3.6rem)">Start your inquiry</h1>
           <p class="lede" style="margin-top:1.6rem">Tell us the dates you are considering
-            and the shape of the gathering. Claudia or Eric answers every inquiry
+            and the shape of the gathering. Every inquiry is answered
             personally, usually within one business day.</p>
 
           <div style="margin-top:3rem;border-top:1px solid var(--line);padding-top:2rem">
@@ -2037,8 +2037,8 @@ def page_journal(base):
 
   {band("venue-overview.jpg", "The ceremony lawn and tent across the grounds",
         "Ask us the question that is not answered here",
-        "Claudia or Eric will write back personally. Send the dates you are "
-        "considering and what you are planning.",
+        "Send the dates you are considering and what you are planning, and we "
+        "will write back personally.",
         btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
         base=base)}
 """)
@@ -2192,8 +2192,7 @@ def page_mt_venues(base):
 
   {band("venue-overview.jpg", "The grounds and tent seen across the estate",
         "Check a date",
-        "Send the weekend you have in mind. Claudia or Eric will write back "
-        "personally.",
+        "Send the weekend you have in mind and we will write back personally.",
         btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
         base=base)}
 """)
@@ -2654,7 +2653,8 @@ def llms_txt():
   private lake flights through WestSlope Helicopters; {WHITEFISH['name']}
   {WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}
 - Contact: {BIZ['phone']} / {BIZ['email']}
-- Owners: Claudia and Eric, who answer inquiries personally
+- Owners: Claudia and Eric
+- Inquiries are answered personally, usually within one business day
 - Sister brand: Flathead Lake Luxury Lodging
 
 ## Not published here
