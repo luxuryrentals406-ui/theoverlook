@@ -550,6 +550,17 @@ HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
 
 INQUIRE_ENDPOINT = "/api/inquire"     # the Cloudflare Worker relay (worker/)
 TURNSTILE_SITE_KEY = ""              # set to enable Cloudflare Turnstile on the last step
+# Cloudflare Web Analytics: cookieless page counting, no consent banner. The
+# token is not a secret (it is in the page); blank means no beacon at all.
+# Conversion = inquiries from the relay's /api/stats over these page views.
+CF_ANALYTICS_TOKEN = ""
+
+
+def analytics():
+    if not CF_ANALYTICS_TOKEN:
+        return ""
+    return ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
+            f'data-cf-beacon=\'{{"token": "{CF_ANALYTICS_TOKEN}"}}\'></script>\n')
 
 INQ_TYPES = [("wedding", "Wedding"), ("corporate", "Corporate retreat"),
              ("wellness", "Wellness retreat"), ("other", "Something else")]
@@ -937,5 +948,5 @@ def footer(base="", sheet=True, kind=""):
   </div>
 </footer>
 <script src="{base}assets/js/core.js?v={_ver("assets/js/core.js")}" defer data-base="{base}" data-inquire="{_ver("assets/js/inquire.js")}" data-cinema="{_ver("assets/js/cinema.js")}"></script>
-</body>
+{analytics()}</body>
 </html>"""

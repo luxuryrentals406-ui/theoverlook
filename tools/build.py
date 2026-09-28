@@ -1457,21 +1457,24 @@ def page_privacy(base):
     #   - the contact address is BIZ["email"], not the Hello@ address on the
     #     live page, so a deletion request reaches a monitored mailbox.
     s = [
-        # REWRITTEN from the live text, which said "when you submit an inquiry
-        # through our website, we collect…". This site is static and has no
-        # server; the form is HoneyBook's, in a frame, and the data never
-        # touches us. Describing it the old way named the wrong controller.
+        # REWRITTEN 2026-09-28 for the native inquiry sheet: the form is now
+        # ours, and the relay in worker/ is the only server-side code the site
+        # has. Say exactly where an inquiry goes and for how long.
         ("Information We Collect",
-         ["<p>These pages are static. This website has no database and no server "
-          "of its own, so nothing you type is received or stored by the site "
-          "itself.</p>",
-          "<p>The inquiry form on the contact page is hosted by HoneyBook, the "
-          "client-management service we run the business on, and is embedded here "
-          "in a frame. What you enter goes to HoneyBook and reaches us as an "
-          "inquiry there. The form asks for:</p>",
-          ilist(["Name", "Email address", "Phone number", "Preferred event dates",
-                 "Estimated guest count",
-                 "Any additional information you provide in your message"]),
+         ["<p>These pages are static. This website has no database and no user "
+          "accounts, and reading it sends us nothing.</p>",
+          "<p>The inquiry form is the one thing that does. When you send it, it "
+          "asks for:</p>",
+          ilist(["Name", "Email address", "Phone number, if you give it",
+                 "The dates you have in mind, and whether they are flexible",
+                 "The kind of gathering and an estimated guest count",
+                 "Anything you add in the note"]),
+          "<p>Your inquiry is handled by a small relay we run on Cloudflare, which "
+          "passes it to HoneyBook &mdash; the client-management service we run the "
+          "business on &mdash; and emails us a copy. The relay keeps its own copy for "
+          "90 days so that no inquiry can be lost, then deletes it. If the relay "
+          "cannot be reached, the form offers to send the same details as an "
+          "email from your own mail app instead.</p>",
           "<p>If you would rather email or call, we hold what you send in our "
           "mailbox and our phone records instead.</p>"]),
         ("How We Use Your Information",
@@ -1484,11 +1487,12 @@ def page_privacy(base):
         ("Information Sharing",
          ["<p>We do not sell, trade, or otherwise transfer your personal "
           "information to outside parties.</p>",
-          "<p>Your inquiry does sit with the providers we use to run the business: "
-          "HoneyBook, which hosts the inquiry form and holds the inquiry itself, "
-          "and the email and telephone providers behind the addresses on this site. "
-          "Each is bound to handle it confidentially and to use it only to provide "
-          "that service to us.</p>"]),
+          "<p>Your inquiry does pass through the providers we use to run the "
+          "business: Cloudflare, which hosts the relay and carries the email copy; "
+          "Zapier, which hands the inquiry to HoneyBook; HoneyBook, which holds the "
+          "inquiry itself; and the email and telephone providers behind the "
+          "addresses on this site. Each is bound to handle it confidentially and to "
+          "use it only to provide that service to us.</p>"]),
         ("Data Security",
          ["<p>We implement appropriate security measures to protect your personal "
           "information against unauthorized access, alteration, disclosure, or "
@@ -1497,24 +1501,23 @@ def page_privacy(base):
         # REWRITTEN: the live text hedged about first-party cookies that do not
         # exist and said nothing about the three embeds that do.
         ("Cookies and Tracking",
-         ["<p>This site sets no cookies of its own. It runs no analytics, no "
-          "advertising tags and no tracking scripts, and it does not build a "
-          "profile of your visit.</p>",
+         ["<p>This site sets no cookies of its own. It counts page views with "
+          "Cloudflare Web Analytics, which sets no cookie, stores nothing on your "
+          "device and does not identify you &mdash; we see how many people read a "
+          "page, not who. It runs no advertising tags and no tracking scripts, and "
+          "it does not build a profile of your visit.</p>",
           "<p>One thing is kept in your browser: if you dismiss the inquiry bar at "
           "the foot of the page, that choice is stored in your browser&rsquo;s "
           "session storage so the bar stays closed. Your browser discards it when "
           "you close the tab, and it never leaves your device.</p>",
           "<p>The typefaces are served from this site, not from Google, so "
-          "reading a page contacts no one but us. Two third parties are embedded "
-          "in these pages. When their content loads, each receives your IP "
-          "address and basic browser information, and each may set cookies of "
-          "its own under its own policy, which we neither control nor read:</p>",
-          ilist(["<b>Google Maps</b>, on the contact page only, for the map of "
-                 "Lakeside.",
-                 "<b>HoneyBook</b> (hbportal.co), on the contact page only, for the "
-                 "inquiry form."]),
-          "<p>You can block either of these in your browser. The pages still work "
-          "without them; the map is what changes.</p>"]),
+          "reading a page contacts no one but us and Cloudflare, which serves it. "
+          "One third party is embedded in these pages: <b>Google Maps</b>, on the "
+          "contact page only, for the map of Lakeside. When it loads, Google "
+          "receives your IP address and basic browser information and may set "
+          "cookies of its own under its own policy, which we neither control nor "
+          "read. You can block it in your browser; the page still works, and the "
+          "map is what changes.</p>"]),
         ("Third-Party Links",
          ["<p>Our website may contain links to third-party websites. We are not "
           "responsible for the privacy practices of these external sites and "
