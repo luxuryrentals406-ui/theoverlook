@@ -42,8 +42,10 @@ subsets once; committed). Two files preloaded. `font-display: swap`.
 ### CSS
 `assets/css/site.css` rewritten mobile-first from the same tokens: phone rules
 are the default, `min-width` queries add desktop. Layers: tokens → base →
-components → pages → desktop. Budget ≤ 40 KB. Tap targets ≥ 44px. Sticky CTA
-sits in the thumb zone and never covers content that matters.
+components → pages → desktop. Budget ≤ 14 KB gzipped, which is what a
+phone actually downloads (the old file was 13.9 KB gzipped / 57 KB raw).
+Tap targets ≥ 44px. Sticky CTA sits in the thumb zone and never covers
+content that matters.
 
 ### JS
 - `assets/js/core.js` — everyone. Menu, reveal, accordions, gallery filter,

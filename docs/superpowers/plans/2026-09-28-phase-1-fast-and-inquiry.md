@@ -16,7 +16,7 @@
 - No Node. Worker is plain JS; tests run with `/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc`.
 - `python3 tools/build.py && python3 tools/lint.py` passes before every commit.
 - Copy and facts unchanged. All 16 URLs, 10 redirects, `render.yaml` unchanged except where a task says otherwise.
-- Budgets: home ≤ 500 KB images at 375px; any page ≤ 600 KB; `site.css` ≤ 40 KB; `core.js` ≤ 10 KB.
+- Budgets: home ≤ 500 KB images at 375px; any page ≤ 600 KB; `site.css` ≤ 14 KB gzipped; `core.js` ≤ 10 KB.
 - Tap targets ≥ 44px. `prefers-reduced-motion` respected. No external requests except the analytics beacon.
 - Secrets never in the repo.
 
