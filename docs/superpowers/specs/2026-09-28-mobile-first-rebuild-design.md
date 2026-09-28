@@ -3,6 +3,16 @@
 Date: 2026-09-28. Status: approved direction (Approach A, phased). Eric has
 delegated the design decisions; this file is the fixed target for the build.
 
+**Built, 2026-09-28, on `mobile-first-rebuild`:** Phase 1 in full (images,
+fonts, CSS, JS split, budget lint, sheet, relay, analytics hook, privacy).
+Phase 2 as sticky section navs, folding spec groups, swipe rails and the
+comparison ledger (weddings 16,121px → 12,893px at 375px; retreats 15,637 →
+12,315; estate 7,043 → 4,577). Phase 3 as the property-map swipe tour, the
+"your weekend" builder feeding the inquiry note, review cards and native
+view transitions. Not yet done: switching the relay on (needs Eric's Zapier
+and Cloudflare access), and the deeper weddings re-pace to ~10 screens, which
+would mean restructuring copy rather than presentation.
+
 ## Goal and the one metric
 
 Most visitors are on phones. Success is **an inquiry sent**. Everything below is

@@ -980,7 +980,45 @@ html:not(.js) .rule{transform:none}
   .pkg__card .plist li{padding-block:.55rem;font-size:1.0625rem}
 }
 
-/* ================================================================ 24. respect the setting */
+/* ================================================================ 24. the layer that makes it feel like being there */
+/* pages cross-fade into each other where the browser can do it natively */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .28s var(--ease) forwards}
+::view-transition-new(root){animation:vt-in .34s var(--ease)}
+@keyframes vt-out{to{opacity:0}}
+@keyframes vt-in{from{opacity:0;transform:translateY(6px)}}
+
+/* walk the property: on a phone the panels ride a swipe rail under the map,
+   and the pin for the panel in view lights up */
+.vmap__panels{display:flex;gap:.7rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  margin-inline:calc(var(--gut) * -1);padding:.2rem var(--gut) .6rem;-webkit-overflow-scrolling:touch}
+.vmap__panels::-webkit-scrollbar{display:none}
+.vmap__panel{flex:0 0 86%;scroll-snap-align:center;display:block;border:1px solid var(--line);background:var(--paper);padding:.7rem .7rem 1.1rem}
+.vmap__panel .vmap__shot{margin:-.7rem -.7rem .9rem}
+.vmap__panel .vmap__copy p{font-size:.97rem;line-height:1.6}
+.vmap__hint{margin-top:.6rem}
+@media (min-width:861px){
+  .vmap__panels{display:block;overflow:visible;margin-inline:0;padding:0}
+  .vmap__panel{flex:none;display:grid;border:0;background:none;padding:0}
+  .vmap__panel .vmap__shot{margin:0}
+  .vmap__panel .vmap__copy p{font-size:inherit;line-height:inherit}
+  .vmap__hint{margin-top:1.6rem}
+}
+
+/* your weekend: three days, pick what happens, send it as the inquiry note */
+.wk{display:grid;gap:.9rem}
+.wk__day{border:1px solid var(--line);background:var(--paper);padding:1rem 1rem 1.1rem}
+.wk__day h3{font-size:1.15rem;margin-bottom:.2rem}
+.wk__day p{font-size:.8rem;color:var(--muted);margin-bottom:.7rem;letter-spacing:.04em}
+.wk__day .chips{gap:.4rem}
+.wk__day .chip{font-size:.83rem;padding:.5em .9em;min-height:40px}
+.wk__sum{border-top:1px solid var(--line);padding-top:1rem;margin-top:.4rem;display:flex;flex-direction:column;gap:.9rem}
+.wk__sum p{font-size:.95rem;color:var(--ink-soft);min-height:1.5em}
+.wk__sum .btn{align-self:stretch}
+@media (min-width:641px){.wk{grid-template-columns:repeat(3,1fr)}.wk__sum{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}.wk__sum .btn{align-self:auto}}
+@media (min-width:861px){.wk__day{padding:1.4rem 1.3rem 1.5rem}.wk__day h3{font-size:1.35rem}}
+
+/* ================================================================ 25. respect the setting */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}

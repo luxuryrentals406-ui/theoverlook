@@ -225,19 +225,47 @@
     });
   }
 
-  /* ---- property map ----------------------------------------------------- */
+  /* ---- property map: pins on desktop, a swipe rail of panels on a phone --- */
   var map = document.querySelector(".vmap");
   if (map) {
     var pins = [].slice.call(map.querySelectorAll(".vmap__pin"));
     var panels = [].slice.call(map.querySelectorAll(".vmap__panel"));
-    var select = function (i) {
-      map.classList.add("is-touched");
+    var rail = map.querySelector(".vmap__panels");
+    var wideMap = window.matchMedia && window.matchMedia("(min-width: 861px)");
+    var isRail = function () { return !(wideMap && wideMap.matches); };
+    var mark = function (i) {
       pins.forEach(function (p, n) {
         p.setAttribute("aria-selected", n === i ? "true" : "false");
         p.tabIndex = n === i ? 0 : -1;
       });
-      panels.forEach(function (p, n) { p.hidden = n !== i; });
+      panels.forEach(function (p, n) { p.classList.toggle("is-on", n === i); });
     };
+    var layout = function () {
+      /* desktop shows one panel; the phone rail shows them all and scrolls */
+      panels.forEach(function (p, n) { p.hidden = !isRail() && !p.classList.contains("is-on"); });
+    };
+    var select = function (i, fromScroll) {
+      map.classList.add("is-touched");
+      mark(i);
+      if (isRail()) {
+        if (!fromScroll && panels[i]) panels[i].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      } else {
+        layout();
+      }
+    };
+    layout();
+    if (wideMap && wideMap.addEventListener) wideMap.addEventListener("change", layout);
+    /* on the rail, the panel that swipes into the middle lights its pin */
+    if (rail && "IntersectionObserver" in window) {
+      var mio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting || !isRail()) return;
+          var i = panels.indexOf(en.target);
+          if (i > -1 && pins[i].getAttribute("aria-selected") !== "true") { mark(i); map.classList.add("is-touched"); }
+        });
+      }, { root: rail, rootMargin: "0px -40% 0px -40%", threshold: 0 });
+      panels.forEach(function (p) { mio.observe(p); });
+    }
     pins.forEach(function (pin, i) {
       pin.tabIndex = i === 0 ? 0 : -1;
       pin.addEventListener("click", function () { select(i); });
@@ -494,6 +522,43 @@
       });
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
     targets.forEach(function (t) { if (t) sio.observe(t); });
+  }
+
+  /* ---- your weekend: the picks become the inquiry note --------------------------- */
+  var wk = document.querySelector("[data-weekend]");
+  if (wk) {
+    var sum = wk.querySelector("[data-wk-sum]");
+    var sendBtn = wk.querySelector("[data-wk-send]");
+    var idle = sum.textContent;
+    var compose = function () {
+      var lines = [];
+      wk.querySelectorAll(".wk__day").forEach(function (day) {
+        var picks = [].slice.call(day.querySelectorAll("input:checked")).map(function (i) { return i.value; });
+        if (picks.length) lines.push(day.querySelector("h3").textContent + ": " + picks.join(", "));
+      });
+      return lines;
+    };
+    var refresh = function () {
+      var lines = compose();
+      wk.querySelectorAll(".chip").forEach(function (c) {
+        c.classList.toggle("is-on", c.querySelector("input").checked);
+      });
+      sum.textContent = lines.length ? lines.join(" · ") : idle;
+    };
+    wk.addEventListener("change", refresh);
+    refresh();
+    sendBtn.addEventListener("click", function () {
+      var lines = compose();
+      var note = lines.length ? "The weekend we picture:\n" + lines.join("\n") : "";
+      var tries = 0;
+      var go = function () {
+        if (window.__openInquiry) { window.__openInquiry("wedding", sendBtn, note); return; }
+        if (tries++ === 0 && window.__loadInquire) window.__loadInquire();
+        if (tries < 30) setTimeout(go, 100);            /* the sheet script is still arriving */
+        else location.href = (base || "") + "contact.html?type=wedding";
+      };
+      go();
+    });
   }
 
   /* ---- the other two files ---------------------------------------------------- */

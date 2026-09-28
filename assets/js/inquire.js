@@ -183,7 +183,7 @@
   }
 
   var trigger = null, closing = null;
-  function open(type, from) {
+  function open(type, from, note) {
     trigger = from || null;
     clearTimeout(closing);
     sheet.hidden = false;
@@ -191,6 +191,8 @@
     /* a button with no type of its own takes the page's: wedding on the
        wedding page, corporate on the retreats page */
     ctl.prefill(type || sheet.dataset.default || "");
+    /* the weekend builder hands over its picks as the note */
+    if (typeof note === "string" && note) form.elements.note.value = note;
     sheet.classList.add("is-open");
     setTimeout(function () { sheet.classList.add("is-in"); }, 20);
     var first = form.querySelector("input:not([type=hidden])");

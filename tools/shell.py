@@ -389,9 +389,10 @@ def vmap(base, alt, eyeb, title, lede, spots):
                  f'aria-controls="panel{i}" style="left:{x}%;top:{y}%" '
                  f'data-i="{i}"><span class="vmap__dot"></span>'
                  f'<span class="vmap__tag">{label}</span></button>')
-        hide = "" if i == 0 else " hidden"
-        panels += (f'<div class="vmap__panel" role="tabpanel" id="panel{i}" '
-                   f'aria-labelledby="pin{i}"{hide}>'
+        # no `hidden` in the markup: without JS every panel stacks and reads;
+        # core.js hides the unselected ones on desktop and rails them on a phone
+        panels += (f'<div class="vmap__panel{" is-on" if i == 0 else ""}" role="tabpanel" id="panel{i}" '
+                   f'aria-labelledby="pin{i}" data-i="{i}">'
                    f'<div class="vmap__shot">{img(photo, palt, sizes=SZ_THIRD)}</div>'
                    f'<div class="vmap__copy"><span class="vmap__step">{label}</span>'
                    f'<h3>{t}</h3><p>{body}</p></div></div>')
@@ -677,6 +678,39 @@ def spec(groups):
                    f'<h3><button type="button" class="spec__t" aria-expanded="{"true" if on else "false"}">'
                    f'{head}</button></h3><ul>{li}</ul></div>')
     return f'<div class="spec rv rv--stagger">{"".join(out)}</div>'
+
+
+WEEKEND = [
+    ("Friday", "Arrive and settle in",
+     ["Guests settle into the five houses", "Rehearsal dinner in the pavilion",
+      "Welcome drinks at the fire pit", "Arrive by helicopter"]),
+    ("Saturday", "The wedding",
+     ["Ceremony on the lawn above the water", "Cocktail hour on the grounds, built-in bar",
+      "Dinner and dancing under the tent", "Late night at the fire pit"]),
+    ("Sunday", "The last morning",
+     ["Brunch cooked in the Swan", "Pool, hot tub and the sauna",
+      "Putting green and the trails", "Nobody drives home"]),
+]
+
+
+def weekend_builder():
+    """Your weekend: three days, pick what happens, and the choices become the
+    note on the inquiry. Every option is something the estate already offers
+    elsewhere on this page; nothing here is a promise the copy does not make."""
+    days = ""
+    for day, sub, opts in WEEKEND:
+        chips = "".join(
+            f'<label class="chip"><input type="checkbox" name="wk-{day.lower()}" value="{o}"> {o}</label>'
+            for o in opts)
+        days += (f'<div class="wk__day"><h3>{day}</h3><p>{sub}</p>'
+                 f'<div class="chips">{chips}</div></div>')
+    return f"""<div class="wk" data-weekend>
+      {days}
+      <div class="wk__sum">
+        <p data-wk-sum>Pick a few things and the weekend writes itself.</p>
+        <button type="button" class="btn" data-wk-send>Send this weekend as my inquiry</button>
+      </div>
+    </div>"""
 
 
 def sectnav(items, base=""):

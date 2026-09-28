@@ -25,6 +25,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, inquiry_form, spec, sectnav, experiences,
+                   weekend_builder,
                    driftwood,
                    head, header, footer)
 
@@ -471,7 +472,7 @@ def page_weddings():
               ("venue-wide.jpg", "The estate grounds from across the lawn")],
       )}
 
-  {sectnav([("weekend", "Weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+  {sectnav([("weekend", "Weekend"), ("your-weekend", "Your weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
 
   <section class="sect" id="weekend">
     <div class="wrap">
@@ -500,6 +501,19 @@ def page_weddings():
             "The evening moves through the property rather than staying in one room. "
             "Select a marker to see where each part of it happens.",
             spots)}
+    </div>
+  </section>
+
+  <section class="sect" id="your-weekend">
+    <div class="wrap">
+      <div class="rv" style="margin-bottom:clamp(1.6rem,4vw,2.6rem);max-width:54ch">
+        {eyebrow("Your weekend")}
+        <h2>Build the weekend, then send it</h2>
+        <p class="lede" style="margin-top:1.2rem">Everything below is already on the
+          property. Pick what you picture happening each day and it becomes the note
+          on your inquiry &mdash; we answer with how it would work.</p>
+      </div>
+      <div class="rv">{weekend_builder()}</div>
     </div>
   </section>
 
