@@ -494,7 +494,7 @@ def page_weddings():
       {vmap("wedding-aerial-tent.jpg",
             "Overhead view of the ceremony lawn and reception tent",
             "How the evening moves",
-            "Five acres of it, in order",
+            "Fifteen acres of it, in order",
             "The evening moves through the property rather than staying in one room. "
             "Select a marker to see where each part of it happens.",
             spots)}
@@ -562,7 +562,7 @@ def page_weddings():
             at Woods Bay when the day is done.</p>
           {plist(["The Overlook &mdash; fifteen acres, pavilion and tent, yours alone",
                   "The Driftwood &mdash; 14,000 sq ft on the lake, private cove and boat slips",
-                  "Fifty-four sleeping across the two",
+                  "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
                   "Helicopter transfer between them, through WestSlope",
                   "Planning support from the first call to the send-off"])}
           {btn("contact.html?type=wedding", "Request the Details", "btn btn--light")}
@@ -1199,7 +1199,6 @@ def page_contact():
           <div style="margin-top:3rem;border-top:1px solid var(--line);padding-top:2rem">
             <h4 style="font-family:var(--sans);font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:1.2rem">Direct</h4>
             {plist([f'<a href="mailto:{BIZ["email"]}" style="text-decoration:none">{BIZ["email"]}</a>',
-                    f'<a href="tel:{BIZ["tel"]}" style="text-decoration:none">{BIZ["phone"]}</a>',
                     f'{BIZ["city"]}, {BIZ["state"]}',
                     f'<a href="{BIZ["ig"]}" rel="noopener" style="text-decoration:none">Instagram {BIZ["handle"]}</a>'])}
           </div>
@@ -1475,8 +1474,8 @@ def page_privacy(base):
           "90 days so that no inquiry can be lost, then deletes it. If the relay "
           "cannot be reached, the form offers to send the same details as an "
           "email from your own mail app instead.</p>",
-          "<p>If you would rather email or call, we hold what you send in our "
-          "mailbox and our phone records instead.</p>"]),
+          "<p>If you would rather email, we hold what you send in our "
+          "mailbox instead.</p>"]),
         ("How We Use Your Information",
          ["<p>We use the information you provide to:</p>",
           ilist(["Respond to your venue inquiry",
@@ -1490,9 +1489,9 @@ def page_privacy(base):
           "<p>Your inquiry does pass through the providers we use to run the "
           "business: Cloudflare, which hosts the relay and carries the email copy; "
           "Zapier, which hands the inquiry to HoneyBook; HoneyBook, which holds the "
-          "inquiry itself; and the email and telephone providers behind the "
-          "addresses on this site. Each is bound to handle it confidentially and to "
-          "use it only to provide that service to us.</p>"]),
+          "inquiry itself; and the email provider behind the address on this "
+          "site. Each is bound to handle it confidentially and to use it only to "
+          "provide that service to us.</p>"]),
         ("Data Security",
          ["<p>We implement appropriate security measures to protect your personal "
           "information against unauthorized access, alteration, disclosure, or "
@@ -2445,7 +2444,7 @@ def venue_node():
                          "Montana, booked exclusively for one group at a time. Weddings "
                          "for up to 200 guests, corporate retreats, and sleeping for 28 "
                          "across five accommodations."),
-         "url": f"{SITE}/", "telephone": BIZ["tel"], "email": BIZ["email"],
+         "url": f"{SITE}/", "email": BIZ["email"],
          "address": ADDRESS, "geo": GEO, "areaServed": "Flathead Valley, Montana",
          "maximumAttendeeCapacity": 200,
          # No petsAllowed key: there is no pets policy in FACTS.md or anywhere on
@@ -2611,7 +2610,7 @@ def llms_txt():
 - Activities: Flathead Lake boating and swimming minutes away; helicopter arrivals and
   private lake flights through WestSlope Helicopters; {WHITEFISH['name']}
   {WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}
-- Contact: {BIZ['phone']} / {BIZ['email']}
+- Contact: {BIZ['email']}
 - Owners: Claudia and Eric
 - Inquiries are answered personally, usually within one business day
 - Sister brand: Flathead Lake Luxury Lodging
