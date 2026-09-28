@@ -112,6 +112,17 @@
     idx = (i + list.length) % list.length;
     var f = list[idx];
     var full = f.dataset.full || f.querySelector("img").src;
+    var avif = lb.querySelector("source[type='image/avif']");
+    var webp = lb.querySelector("source[type='image/webp']");
+    if (f.dataset.stem && avif && webp) {
+      /* the derivatives live beside the original: assets/img/x.jpg -> assets/i/x-1200.avif */
+      var dir = full.replace(/assets\/img\/.*$/, "assets/i/") + f.dataset.stem;
+      avif.srcset = dir + "-1200.avif 1200w, " + dir + "-1920.avif 1920w";
+      webp.srcset = dir + "-1200.webp 1200w";
+    } else if (avif && webp) {
+      avif.removeAttribute("srcset");
+      webp.removeAttribute("srcset");
+    }
     lbImg.src = full;
     lbImg.alt = f.querySelector("img").alt || "";
     var meta = lb.querySelector(".lbox__meta");
@@ -119,13 +130,6 @@
       meta.innerHTML = "<b>" + (f.querySelector("img").alt || "") + "</b>" +
                        (idx + 1) + " of " + list.length;
     }
-    /* quietly warm the neighbours so arrowing through never stalls */
-    [list[(idx + 1) % list.length], list[(idx - 1 + list.length) % list.length]]
-      .forEach(function (n) {
-        if (!n) return;
-        var im = new Image();
-        im.src = n.dataset.full || n.querySelector("img").src;
-      });
   }
   function closeLightbox() {
     if (lb) lb.classList.remove("is-open");
@@ -346,8 +350,16 @@
     var dots = Array.prototype.slice.call(document.querySelectorAll(".hero__dot"));
     var cur = 0, timer = null;
 
+    /* a hidden frame's <picture> only fetches once it is shown; asking for the
+       next one a beat early keeps the cross-fade from landing on a blur */
+    var warm = function (n) {
+      var f = frames[(n + frames.length) % frames.length];
+      var im = f && f.querySelector("img");
+      if (im && im.loading === "lazy") im.loading = "eager";
+    };
     var goTo = function (n) {
       cur = (n + frames.length) % frames.length;
+      warm(cur + 1);
       frames.forEach(function (f, i) {
         f.classList.toggle("is-on", i === cur);
         /* restart the zoom so each frame gets the whole move, not the tail */
@@ -366,11 +378,7 @@
     var play = function () { timer = setInterval(function () { goTo(cur + 1); }, 6800); };
     var pause = function () { clearInterval(timer); timer = null; };
 
-    /* warm the next frame so the cross-fade never shows a blank */
-    frames.slice(1).forEach(function (f) {
-      var im = new Image();
-      im.src = f.querySelector("img").getAttribute("src");
-    });
+    window.addEventListener("load", function () { warm(1); });
 
     dots.forEach(function (d, i) {
       d.addEventListener("click", function () { pause(); goTo(i); play(); });
@@ -539,25 +547,28 @@
       });
     });
 
-    /* thumbnails swap the big photograph within their own panel */
+    /* thumbnails reveal one of the stacked <picture>s within their own panel;
+       the browser fetches it, at the right size, the moment it is shown */
     panels.forEach(function (panel) {
       var stage = panel.querySelector(".sw__stage");
-      var big = panel.querySelector(".sw__big");
+      var shots = [].slice.call(panel.querySelectorAll(".sw__shot"));
       var thumbs = [].slice.call(panel.querySelectorAll(".sw__thumb"));
       thumbs.forEach(function (th) {
         th.addEventListener("click", function () {
           if (th.classList.contains("is-on")) return;
+          var j = +th.dataset.j;
           thumbs.forEach(function (o) { o.classList.toggle("is-on", o === th); });
-          var next = new Image();
-          next.onload = function () {
-            big.src = th.dataset.src;
-            big.alt = th.dataset.alt || "";
-            stage.classList.remove("is-swapping");
-          };
-          /* fade out first, but only actually swap once the file is here */
           stage.classList.add("is-swapping");
-          next.src = th.dataset.src;
-          if (next.complete) next.onload();
+          setTimeout(function () {
+            shots.forEach(function (s, n) { s.hidden = n !== j; s.classList.toggle("is-on", n === j); });
+            var im = shots[j] && shots[j].querySelector("img");
+            var done = function () { stage.classList.remove("is-swapping"); };
+            if (im && !im.complete) {
+              im.loading = "eager";           /* they asked for it; do not wait for a scroll */
+              im.addEventListener("load", done, { once: true });
+              im.addEventListener("error", done, { once: true });
+            } else { done(); }
+          }, 180);
         });
       });
     });

@@ -789,6 +789,7 @@ html:not(.js) .veil{display:none}
 .sw__tab.is-on::before{width:1.05rem}
 .sw__tab.is-on b{color:var(--gold)}
 .sw__stage{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--paper-2)}
+.sw__shot{position:absolute;inset:0}
 .sw__stage img{width:100%;height:100%;object-fit:cover}
 .sw__big{transition:opacity .38s var(--ease)}
 .sw__stage.is-swapping .sw__big{opacity:0}

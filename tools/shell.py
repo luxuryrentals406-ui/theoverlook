@@ -165,12 +165,107 @@ def imgsize(relpath):
     return None
 
 
-def img(name, alt, cls="", ratio=None, eager=False, sizes=None, base=""):
-    """A plain <img>. Photography is real and already optimised."""
+DERIV = "assets/i/"
+
+# `sizes` presets — how wide the photograph renders, so the browser can pick
+# the smallest candidate that is still sharp. Phones are the default case.
+SZ_FULL    = "100vw"
+SZ_HALF    = "(min-width:861px) 50vw, 100vw"
+SZ_THIRD   = "(min-width:861px) 33vw, 100vw"
+SZ_GALLERY = "(min-width:861px) 33vw, 50vw"
+SZ_THUMB   = "(min-width:861px) 8vw, 20vw"
+PHONE_MAX  = 800      # widest derivative a phone is offered for anything but the hero
+
+_MANIFEST = None
+
+
+def manifest():
+    """assets/i/manifest.json, read once. tools/images.py writes it; build.py
+    runs that first, so a photograph missing here is a real mistake."""
+    global _MANIFEST
+    if _MANIFEST is None:
+        import images
+        _MANIFEST = images.load_manifest(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return _MANIFEST
+
+
+def _entry(name):
+    try:
+        return manifest()[name]
+    except KeyError:
+        raise KeyError(f"{name}: not in {DERIV}manifest.json — run python3 tools/images.py")
+
+
+def _candidates(name, widths, ext, base, orig_w):
+    stem = os.path.splitext(name)[0]
+    out = []
+    for w in widths:
+        if ext == "jpg" and w == orig_w:
+            out.append(f"{base}{IMG}{name} {w}w")      # the original is the JPEG at its own width
+        else:
+            out.append(f"{base}{DERIV}{stem}-{w}.{ext} {w}w")
+    return ", ".join(out)
+
+
+def _srcsets(name, e, base, thumb):
+    import images
+    widths = [w for w in e["widths"] if w <= 800] if thumb else e["widths"]
+    avif = _candidates(name, widths, "avif", base, e["w"])
+    webp = _candidates(name, [w for w in widths if w <= images.WEBP_MAX], "webp", base, e["w"])
+    jpg_w = [w for w in widths if w <= images.JPEG_MAX]
+    if not thumb and e["w"] not in jpg_w:
+        jpg_w = jpg_w + [e["w"]]                        # the original tops the JPEG list
+    jpg = _candidates(name, jpg_w, "jpg", base, e["w"])
+    return avif, webp, jpg
+
+
+def img(name, alt, cls="", eager=False, sizes=None, base="", thumb=False):
+    """A photograph as <picture> — AVIF, WebP, JPEG — with srcset, real
+    width/height and an inline blurred placeholder; a PNG as a plain <img>.
+
+    eager: True  -> loading="eager" fetchpriority="high"  (the hero frame)
+           None  -> no loading hints                      (logos in the chrome)
+           False -> loading="lazy" decoding="async"       (everything else)
+    thumb: cap candidates at 800px for grids of small tiles.
+    """
+    e = _entry(name)
     c = f' class="{cls}"' if cls else ""
-    load = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy" decoding="async"'
-    s = f' sizes="{sizes}"' if sizes else ""
-    return f'<img src="{base}{IMG}{name}" alt="{alt}"{c} {load}{s}>'
+    if eager is True:
+        load = ' loading="eager" fetchpriority="high"'
+    elif eager is None:
+        load = ""
+    else:
+        load = ' loading="lazy" decoding="async"'
+    dims = f' width="{e["w"]}" height="{e["h"]}"'
+    if not e["widths"]:
+        return f'<img src="{base}{IMG}{name}" alt="{alt}"{c}{dims}{load}>'
+    sz = sizes or SZ_FULL
+    avif, webp, jpg = _srcsets(name, e, base, thumb)
+    ph = f" style=\"background:url('{e['lqip']}') center/cover\"" if e["lqip"] else ""
+    # A phone caps at the 800px file even on a 3x screen: the difference is
+    # invisible in a card, and it is the difference between a page that loads
+    # on cellular and one that does not. The hero (eager) is exempt.
+    phone = ""
+    if eager is not True and not thumb and any(w > PHONE_MAX for w in e["widths"]):
+        p_avif, p_webp, _ = _srcsets(name, e, base, True)
+        phone = (f'<source type="image/avif" media="(max-width:640px)" srcset="{p_avif}" sizes="{sz}">'
+                 f'<source type="image/webp" media="(max-width:640px)" srcset="{p_webp}" sizes="{sz}">')
+    return (f'<picture>{phone}'
+            f'<source type="image/avif" srcset="{avif}" sizes="{sz}">'
+            f'<source type="image/webp" srcset="{webp}" sizes="{sz}">'
+            f'<img src="{base}{IMG}{name}" srcset="{jpg}" sizes="{sz}" alt="{alt}"{c}{dims}{load}{ph}>'
+            f'</picture>')
+
+
+def hero_preload(name, base="", sizes=SZ_FULL):
+    """Preload the hero at the width this device will actually use. Browsers
+    that cannot decode AVIF ignore a preload of that type and simply fetch
+    the <picture> fallback in the normal flow."""
+    e = _entry(name)
+    avif, _, _ = _srcsets(name, e, base, False)
+    return (f'<link rel="preload" as="image" type="image/avif" imagesrcset="{avif}" '
+            f'imagesizes="{sizes}" fetchpriority="high">')
 
 
 def eyebrow(t):
@@ -293,7 +388,7 @@ def vmap(base, alt, eyeb, title, lede, spots):
         hide = "" if i == 0 else " hidden"
         panels += (f'<div class="vmap__panel" role="tabpanel" id="panel{i}" '
                    f'aria-labelledby="pin{i}"{hide}>'
-                   f'<div class="vmap__shot">{img(photo, palt)}</div>'
+                   f'<div class="vmap__shot">{img(photo, palt, sizes=SZ_THIRD)}</div>'
                    f'<div class="vmap__copy"><span class="vmap__step">{label}</span>'
                    f'<h3>{t}</h3><p>{body}</p></div></div>')
     return f"""<div class="vmap">
@@ -303,7 +398,7 @@ def vmap(base, alt, eyeb, title, lede, spots):
       </div>
       <div class="vmap__grid">
         <div class="vmap__stage rv">
-          {img(base, alt, "vmap__base")}
+          {img(base, alt, "vmap__base", sizes=SZ_HALF)}
           <div class="vmap__pins" role="tablist" aria-label="Points on the property">{pins}</div>
         </div>
         <div class="vmap__panels rv">{panels}</div>
@@ -374,13 +469,17 @@ def switcher(eyeb, title, lede, groups):
         tabs += (f'<button class="sw__tab{" is-on" if on else ""}" role="tab" '
                  f'aria-selected="{"true" if on else "false"}" aria-controls="sw{i}" '
                  f'id="swtab{i}" data-i="{i}"><b>{name}</b><span>{sub}</span></button>')
-        big = img(shots[0][0], shots[0][1], "sw__big")
+        # every shot sits in the stage, one shown at a time; a thumbnail only
+        # toggles which, so no image URL is ever swapped by hand
+        big = "".join(
+            f'<div class="sw__shot{" is-on" if j == 0 else ""}" data-j="{j}"{"" if j == 0 else " hidden"}>'
+            f'{img(f, a, "sw__big", sizes=SZ_HALF)}</div>'
+            for j, (f, a) in enumerate(shots))
         thumbs = ""
         if len(shots) > 1:
             thumbs = '<div class="sw__thumbs">' + "".join(
-                f'<button class="sw__thumb{" is-on" if j == 0 else ""}" data-src="{IMG}{f}" '
-                f'data-alt="{a}" aria-label="{a}">'
-                f'<img src="{THMB}{f}" alt="" loading="lazy" decoding="async"></button>'
+                f'<button class="sw__thumb{" is-on" if j == 0 else ""}" data-j="{j}" '
+                f'aria-label="{a}">{img(f, "", thumb=True, sizes=SZ_THUMB)}</button>'
                 for j, (f, a) in enumerate(shots)) + "</div>"
         panels += (f'<div class="sw__panel" role="tabpanel" id="sw{i}" '
                    f'aria-labelledby="swtab{i}"{"" if on else " hidden"}>'
@@ -502,10 +601,9 @@ DW_CATS = [("all", "Everything"), ("water", "Outside &amp; the water"),
 def slideshow(shots, label):
     """A slide-through gallery. shots: (slug, caption, category)
 
-    Only the first frame carries a real src; the rest are hand-lazied through
-    data-src, because a native lazy <img> inside a hidden slide has not loaded
-    by the time we reveal it and the stage flashes empty. With JS off the first
-    frame and every thumbnail still render.
+    Every frame is a real <picture>; hidden slides do not fetch until shown,
+    and the inline placeholder covers the moment they do. With JS off the
+    first frame and every thumbnail still render.
     """
     tabs = "".join(
         '<button class="shw__cat%s" data-cat="%s" aria-pressed="%s">%s</button>'
@@ -513,13 +611,12 @@ def slideshow(shots, label):
         for k, lab in DW_CATS)
     frames, thumbs = "", ""
     for n, (slug, cap, cat) in enumerate(shots):
-        src = f"{IMG}driftwood-{slug}.jpg"
-        attr = f'src="{src}"' if n == 0 else f'data-src="{src}"'
+        f = f"driftwood-{slug}.jpg"
         frames += (f'<figure class="shw__slide{" is-on" if n == 0 else ""}" data-cat="{cat}">'
-                   f'<img {attr} alt="{cap} at The Driftwood" decoding="async"></figure>')
+                   f'{img(f, f"{cap} at The Driftwood", eager=(None if n == 0 else False), sizes=SZ_HALF)}'
+                   f'</figure>')
         thumbs += (f'<button class="shw__thumb{" is-on" if n == 0 else ""}" data-cat="{cat}" '
-                   f'aria-label="{cap}"><img src="{THMB}driftwood-{slug}.jpg" alt="" '
-                   f'loading="lazy" decoding="async"></button>')
+                   f'aria-label="{cap}">{img(f, "", thumb=True, sizes=SZ_THUMB)}</button>')
     caps = "|".join(cap for _, cap, _ in shots)
     return f"""<div class="shw rv" data-caps="{caps}" tabindex="0" role="group" aria-label="{label}">
       <div class="shw__cats">{tabs}</div>
@@ -687,7 +784,7 @@ def header(current, over_hero=True, base=""):
 <header class="{cls}">
   <div class="wrap hdr__in">
     <a class="brand" href="{base}index.html" aria-label="{BIZ['name']} — home">
-      <img src="{base}{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
+      {img("overlook-logo-main.png", BIZ['name'], eager=None, base=base)}
     </a>
     <nav class="nav" aria-label="Primary">
       {links}
@@ -712,7 +809,7 @@ def footer(base=""):
 <div class="lbox" role="dialog" aria-modal="true" aria-label="Photograph">
   <button class="lbox__x" aria-label="Close">&times;</button>
   <button class="lbox__p" aria-label="Previous">&lsaquo;</button>
-  <img alt="">
+  <picture><source type="image/avif" sizes="100vw"><source type="image/webp" sizes="100vw"><img alt=""></picture>
   <button class="lbox__n" aria-label="Next">&rsaquo;</button>
   <p class="lbox__meta"></p>
 </div>
@@ -721,7 +818,7 @@ def footer(base=""):
   <div class="wrap">
     <div class="ftr__top">
       <div class="ftr__brandcol">
-        <img class="ftr__logo" src="{base}{IMG}overlook-logo-main.png" alt="{BIZ['name']}">
+        {img("overlook-logo-main.png", BIZ['name'], "ftr__logo", eager=None, base=base)}
         <p style="max-width:38ch">A private 15-acre estate above Flathead Lake in
           {BIZ['city']}, {BIZ['state']} — booked one group at a time.</p>
       </div>

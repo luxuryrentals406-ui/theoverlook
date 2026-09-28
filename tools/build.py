@@ -19,7 +19,9 @@ import os, re, sys, json, hashlib, datetime
 import html as ihtml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import images
 from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
+                   hero_preload, SZ_FULL, SZ_HALF, SZ_THIRD, SZ_GALLERY, SZ_THUMB,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, honeybook_form, spec, experiences,
@@ -285,7 +287,7 @@ def page_home():
          "Tour the property"),
     ]
     chtml = "".join(f"""<a class="card" href="{h}">
-        <div class="card__img">{img(i, a)}</div>
+        <div class="card__img">{img(i, a, sizes=SZ_THIRD)}</div>
         <h3>{t}</h3><p>{d}</p>
         <span class="tlink">{cta} <span>&rarr;</span></span>
       </a>""" for h, i, a, t, d, cta in cards)
@@ -471,7 +473,7 @@ def page_weddings():
 
   <section class="sect">
     <div class="wrap">
-      {split(img("wedding-couple-arch.jpg", "A couple beneath the ceremony arch", "", ) ,
+      {split(img("wedding-couple-arch.jpg", "A couple beneath the ceremony arch", sizes=SZ_HALF) ,
         f'''{eyebrow("Your wedding weekend")}
         <h2>The property empties out for you</h2>
         <p class="lede" style="margin:1.4rem 0">For the length of your booking the
@@ -571,7 +573,7 @@ def page_weddings():
 
   <section class="sect">
     <div class="wrap">
-      {split(img("swan-exterior.jpg", "The Swan main house at dusk"),
+      {split(img("swan-exterior.jpg", "The Swan main house at dusk", sizes=SZ_HALF),
         f'''{eyebrow("Onsite lodging")}
         <h2>Nobody drives home</h2>
         <p class="lede" style="margin:1.4rem 0">Five accommodations sit on the same
@@ -687,7 +689,7 @@ def page_retreats():
     spacehtml = ""
     for i, (t, im, alt, d) in enumerate(space):
         spacehtml += f"""<div style="margin-bottom:clamp(3rem,7vw,5.5rem)">{split(
-            img(im, alt, "", ),
+            img(im, alt, sizes=SZ_HALF),
             f'<h3>{t}</h3><p style="color:var(--ink-soft);margin-top:1.1rem;font-size:1.05rem;line-height:1.7">{d}</p>',
             flip=bool(i % 2))}</div>"""
 
@@ -769,7 +771,7 @@ def page_retreats():
 
   <section class="sect sect--paper2">
     <div class="wrap">
-      {split(img("lounge-interior.jpg", "Lounge seating inside the pavilion"),
+      {split(img("lounge-interior.jpg", "Lounge seating inside the pavilion", sizes=SZ_HALF),
         f'''{eyebrow("Who it is for")}
         <h2>Teams that book it</h2>
         <div style="margin-top:1.8rem">{plist(who)}</div>''')}
@@ -778,7 +780,7 @@ def page_retreats():
 
   <section class="sect">
     <div class="wrap">
-      {split(img("heli-new.jpg", "A helicopter over the Flathead valley"),
+      {split(img("heli-new.jpg", "A helicopter over the Flathead valley", sizes=SZ_HALF),
         f'''{eyebrow("Getting here")}
         <h2>Fly in and be working by afternoon</h2>
         <p class="lede" style="margin:1.4rem 0">{FCA["short_name"]} is {FCA["time"]}
@@ -812,7 +814,7 @@ def page_retreats():
   <section class="sect sect--paper2 sect--tight">
     <div class="wrap">
       <div class="split split--wide-img">
-        <div class="split__media rv rv--wipe">{img("barrel-sauna.jpg", "The cedar barrel sauna")}</div>
+        <div class="split__media rv rv--wipe">{img("barrel-sauna.jpg", "The cedar barrel sauna", sizes=SZ_HALF)}</div>
         <div class="split__body rv">
           {eyebrow("Also here")}
           <h2>Wellness retreats</h2>
@@ -964,7 +966,7 @@ def page_estate():
         ("Putting green &amp; lawn games", "lakeside-putting-green.jpg", "The putting green"),
     ]
     ghtml = "".join(f"""<div class="card rv">
-        <div class="card__img" style="aspect-ratio:1/1">{img(im, alt)}</div>
+        <div class="card__img" style="aspect-ratio:1/1">{img(im, alt, sizes=SZ_THIRD)}</div>
         <h4 style="font-family:var(--sans);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:400">{t}</h4>
       </div>""" for t, im, alt in grounds)
 
@@ -1088,8 +1090,8 @@ PHOTOS = [
 
 def page_gallery():
     figs = "".join(
-        f'<figure class="rv" data-cat="{cat}" data-full="{IMG}{f}">'
-        f'<img src="{THMB}{f}" alt="{alt}" loading="lazy" decoding="async"></figure>'
+        f'<figure class="rv" data-cat="{cat}" data-full="{IMG}{f}" data-stem="{f.rsplit(".", 1)[0]}">'
+        f'{img(f, alt, thumb=True, sizes=SZ_GALLERY)}</figure>'
         for f, alt, cat in PHOTOS)
 
     return f"""
@@ -1162,7 +1164,7 @@ def page_story():
 
   <section class="sect">
     <div class="wrap">
-      {split(img("vendor-appreciation-wall.jpg", "The vendor appreciation wall on the estate"),
+      {split(img("vendor-appreciation-wall.jpg", "The vendor appreciation wall on the estate", sizes=SZ_HALF),
         '''<h2>The people we work with</h2>
         <p class="lede" style="margin:1.4rem 0">A venue is only as good as the planners,
           caterers, florists and photographers who work it. We keep real relationships
@@ -1309,7 +1311,7 @@ def page_wellness():
          "part we can actually guarantee."),
     ]
     chtml = "".join(
-        f'<div class="exp__card"><div class="exp__img">{img(f, a)}</div>'
+        f'<div class="exp__card"><div class="exp__img">{img(f, a, sizes=SZ_THIRD)}</div>'
         f'<h3>{t}</h3><p>{d}</p></div>' for f, a, t, d in cards)
 
     spec_groups = [
@@ -2256,8 +2258,8 @@ PAGES = [
 #             behind it is only fetched when the lightbox opens.
 #   story   — the hero is a portrait photograph, which social cards crop badly,
 #             so the card uses a landscape frame from further down the page.
-PRELOAD = {"gallery.html": THMB + PHOTOS[0][0],
-           "story.html":   IMG + "owners-photo.jpg"}
+PRELOAD = {"gallery.html": PHOTOS[0][0],
+           "story.html":   "owners-photo.jpg"}
 
 
 # The six ported URLs. `fn` takes the depth prefix and returns the body; the
@@ -2765,7 +2767,10 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
     base = rel(path)
     extra = ""
     if lcp:
-        extra = f'<link rel="preload" as="image" href="{base}{lcp}" fetchpriority="high">\n'
+        # lcp is a photograph name; the preload carries the same AVIF candidates
+        # as the hero <picture>, so the phone fetches one small file, once.
+        name = lcp.rsplit("/", 1)[-1]
+        extra = hero_preload(name, base, SZ_GALLERY if current == "gallery.html" else SZ_FULL) + "\n"
     html = (head(title, desc, url_of(path), og, extra + ld, base)
             + header(current, over_hero=over, base=base) + body
             + footer(base).replace("{year}", str(YEAR))
@@ -2789,6 +2794,7 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
 
 
 def main():
+    images.build(ROOT, log=print)           # responsive derivatives + manifest, cached by hash
     make_og_cards([p[2] for p in PAGES] + [d["og"] for d in DOCS])
     missing = set()
     built = {}
