@@ -18,6 +18,22 @@ FILLER = ["unparalleled", "once-in-a-lifetime", "once in a lifetime", "magical",
 # Verbatim Google reviews — exempt from the exclamation-point and filler rules.
 QUOTE_RE = re.compile(r"<blockquote.*?</blockquote>", re.S | re.I)
 
+# Performance budget — see rule 7. INITIAL is what a 375px 2x phone fetches
+# when the page opens: every eager image plus the lazy ones inside the
+# browser's lazy-load margin (the old home page fetched 7,900 KB). TOTAL is
+# what a reader who scrolls to the bottom eventually downloads; it only warns,
+# because a 63-photograph gallery is allowed to be long.
+import budget
+INITIAL_BUDGET_KB = 600
+TOTAL_WARN_KB = 3000
+# Third parties a page may contact on load. Every host here must be named in
+# the privacy policy. The beacon is Cloudflare Web Analytics (cookieless).
+ALLOWED_HOSTS = {
+    "*": {"static.cloudflareinsights.com"},
+    "contact.html": {"static.cloudflareinsights.com", "www.google.com",
+                     "theoverlookatflatheadlake.hbportal.co"},
+}
+
 
 def visible(path, strip_chrome=True):
     """Return page text with tags removed. strip_chrome drops nav + footer so the
@@ -135,6 +151,23 @@ for p in pages:
         WARNS.append(f"{name}: {raw.count('<h1')} <h1> tags")
     for m in re.finditer(r"<img (?![^>]*\balt=)[^>]*>", raw):
         FAILS.append(f"{name}: <img> without alt — {m.group(0)[:60]}")
+
+    # 7 — performance budget (mobile-first rebuild, 2026-09-28). Most visitors
+    #     are on phones: a page must not regress to full-size photographs, an
+    #     <img> without dimensions (layout shift) or a third-party request the
+    #     privacy policy does not mention. The byte figure is what a 375px 2x
+    #     phone fetches for every image on the page; it tightens in Phase 2.
+    kb = budget.initial_image_bytes(raw, ROOT) / 1024
+    if kb > INITIAL_BUDGET_KB:
+        FAILS.append(f"{name}: {kb:.0f} KB of images on open at phone width (budget {INITIAL_BUDGET_KB})")
+    total_kb = budget.phone_image_bytes(raw, ROOT) / 1024
+    if total_kb > TOTAL_WARN_KB:
+        WARNS.append(f"{name}: {total_kb:.0f} KB of images if scrolled to the end")
+    for host in budget.external_requests(raw):
+        if host not in ALLOWED_HOSTS.get(name, ALLOWED_HOSTS["*"]):
+            FAILS.append(f"{name}: third-party request to {host}")
+    for tag in budget.imgs_missing_dims(raw):
+        FAILS.append(f"{name}: image without width/height or srcset — {tag}")
 
 # 6b — the deploy config must not contradict the sitemap. A redirect whose
 #      source is a real, indexed page makes that page unreachable, and a page

@@ -69,6 +69,35 @@ class Derivatives(unittest.TestCase):
         h1 = images.build(self.root, ["tent.jpg"])["tent.jpg"]["hash"]
         self.assertNotEqual(h0, h1)
 
+    def test_manifest_entries_carry_the_encoding_policy(self):
+        e = images.build(self.root, ["tent.jpg"])["tent.jpg"]
+        self.assertEqual(e["v"], images.POLICY)
+
+    def test_policy_bump_regenerates(self):
+        images.build(self.root, ["tent.jpg"])
+        m = images.load_manifest(self.root)
+        m["tent.jpg"]["v"] = 0
+        images._save_manifest(self.root, m)
+        p = self.path("assets/i/tent-480.webp")
+        t0 = os.path.getmtime(p)
+        os.utime(p, (t0 - 10, t0 - 10))
+        images.build(self.root, ["tent.jpg"])
+        self.assertGreater(os.path.getmtime(p), t0 - 10)
+
+    def test_oversize_avif_is_encoded_lower(self):
+        import random
+        random.seed(1)
+        noise = Image.new("RGB", (800, 533))
+        noise.putdata([(random.randrange(256), random.randrange(256), random.randrange(256))
+                       for _ in range(800 * 533)])
+        flat = Image.new("RGB", (800, 533), (120, 90, 60))
+        q_noise = images._encode_avif(noise, self.path("n.avif"), images.AVIF_CAP[800])
+        q_flat = images._encode_avif(flat, self.path("f.avif"), images.AVIF_CAP[800])
+        self.assertEqual(q_flat, images.AVIF_STEPS[0])
+        self.assertLess(q_noise, images.AVIF_STEPS[0])
+        # and no cap means no stepping, however noisy
+        self.assertEqual(images._encode_avif(noise, self.path("u.avif"), None), images.AVIF_STEPS[0])
+
     def test_png_passthrough(self):
         Image.new("RGBA", (400, 300)).save(self.path("assets/img/logo.png"))
         e = images.build(self.root, ["logo.png"])["logo.png"]

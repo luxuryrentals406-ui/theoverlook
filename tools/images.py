@@ -36,6 +36,13 @@ AVIF = dict(quality=55, speed=7)
 WEBP = dict(quality=78, method=4)
 JPEG = dict(quality=80, progressive=True, optimize=True)
 
+# A photograph full of foliage can come out twice the size of its neighbours
+# at the same quality. Past these byte caps the AVIF is re-encoded a notch
+# lower; on a phone a lighter file matters more than the last bit of grain.
+AVIF_CAP = {480: 45_000, 800: 100_000, 1200: 200_000, 1920: 350_000}
+AVIF_STEPS = (55, 45, 38)
+POLICY = 2      # bump when the encoding rules change so every entry regenerates
+
 
 def load_manifest(root):
     try:
@@ -88,13 +95,25 @@ def _lqip(im):
     return "data:image/webp;base64," + base64.b64encode(b.getvalue()).decode("ascii")
 
 
+def _encode_avif(frame, path, cap, icc=None):
+    """Save AVIF at the default quality; step down while it is over `cap`
+    bytes. Returns the quality that was kept."""
+    kept = AVIF_STEPS[0]
+    for q in AVIF_STEPS:
+        kept = q
+        frame.save(path, "AVIF", icc_profile=icc, quality=q, speed=AVIF["speed"])
+        if cap is None or os.path.getsize(path) <= cap:
+            break
+    return kept
+
+
 def _derive(root, name, im, widths):
     icc = im.info.get("icc_profile")
     for w in widths:
         h = round(im.height * w / im.width)
         frame = im if w == im.width else im.resize((w, h), Image.LANCZOS)
         base = os.path.join(root, OUT_DIR, f"{_stem(name)}-{w}")
-        frame.save(base + ".avif", "AVIF", icc_profile=icc, **AVIF)
+        _encode_avif(frame, base + ".avif", AVIF_CAP.get(w), icc)
         if w <= WEBP_MAX:
             frame.save(base + ".webp", "WEBP", icc_profile=icc, **WEBP)
         if w <= JPEG_MAX and w != im.width:
@@ -123,14 +142,16 @@ def build(root, names=None, log=None):
         with Image.open(src) as raw:
             im = ImageOps.exif_transpose(raw)
             if name.lower().endswith(".png"):
-                entry = {"w": im.width, "h": im.height, "hash": digest, "lqip": "", "widths": []}
+                entry = {"w": im.width, "h": im.height, "hash": digest, "lqip": "", "widths": [],
+                         "v": POLICY}
             else:
                 im = im.convert("RGB")
                 widths = _widths_for(im.width)
                 entry = {"w": im.width, "h": im.height, "hash": digest,
-                         "lqip": "", "widths": widths}
+                         "lqip": "", "widths": widths, "v": POLICY}
                 need = _files_for(name, widths, im.width)
                 fresh = (old is not None and old.get("hash") == digest and old.get("lqip")
+                         and old.get("v") == POLICY
                          and all(os.path.exists(os.path.join(root, p)) for p in need))
                 if fresh:
                     entry["lqip"] = old["lqip"]
