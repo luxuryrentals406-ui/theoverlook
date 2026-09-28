@@ -899,6 +899,81 @@ html:not(.js) .rule{transform:none}
   .imove img{will-change:transform}
 }
 
+/* ================================================================ 23. phone pacing
+   A long page on a phone keeps every word but changes its shape: reviews
+   become a swipe row, the comparison becomes a ledger, the spec groups fold,
+   and a slim section nav sticks under the header. Desktop is untouched. */
+.snav{position:sticky;top:0;z-index:70;background:var(--paper);border-bottom:1px solid var(--line);
+  margin-bottom:-1px}
+.snav__in{display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none;padding:.35rem var(--gut);
+  -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.snav__in::-webkit-scrollbar{display:none}
+.snav a{flex:0 0 auto;min-height:var(--tap);display:inline-flex;align-items:center;padding:0 .8rem;
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--muted);
+  border-bottom:2px solid transparent;scroll-snap-align:start;white-space:nowrap}
+.snav a.is-on{color:var(--ink);border-bottom-color:var(--gold)}
+[id]{scroll-margin-top:calc(var(--tap) + .8rem)}
+.spec__t{all:unset;display:flex;width:100%;align-items:center;justify-content:space-between;gap:1rem;
+  cursor:pointer;min-height:var(--tap);color:inherit}
+.spec__t::after{content:"";width:9px;height:9px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);
+  transform:rotate(45deg) translateY(-3px);transition:transform .3s var(--ease);flex:0 0 auto}
+.spec__g.is-open .spec__t::after{transform:rotate(225deg) translateY(-2px)}
+.spec__g ul{display:none;padding-bottom:.6rem}
+.spec__g.is-open ul{display:block}
+.spec__g h3{margin-bottom:0}
+.spec__g{padding-top:.4rem}
+.spec{gap:.6rem}
+.quotes{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  margin-inline:calc(var(--gut) * -1);padding:.2rem var(--gut) .6rem;-webkit-overflow-scrolling:touch}
+.quotes::-webkit-scrollbar{display:none}
+.quote{flex:0 0 84%;scroll-snap-align:center;padding:1.3rem 1.2rem 1.4rem;border:1px solid var(--line);
+  border-top:2px solid var(--gold);background:var(--paper);display:flex;flex-direction:column}
+.sect--forest .quote{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14);border-top-color:var(--gold-soft)}
+.quote blockquote{font-size:1.08rem;line-height:1.45;margin-bottom:1rem;flex:1}
+@media (max-width:760px){
+  .tbl tr{border:0;border-bottom:1px solid var(--line);padding:.9rem 0;margin:0;background:none}
+  .tbl tbody th{padding-bottom:.5rem}
+  .tbl td.col-ours{font-size:1rem}
+  .tbl td:first-of-type{padding-top:.5rem;margin-top:.5rem;border-top:0;font-size:.86rem}
+  .tbl td:first-of-type::before{display:inline;margin-right:.4rem}
+  .tbl td.col-ours::before{display:none}
+}
+.pkg__card{padding:1.5rem 1.2rem 1.6rem}
+.pkg__card .plist li{padding-block:.35rem;font-size:.97rem}
+/* the experiences cards and the retreat spaces ride a swipe rail on a phone */
+.exp,.spaces{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  margin-inline:calc(var(--gut) * -1);padding:.2rem var(--gut) .8rem;-webkit-overflow-scrolling:touch}
+.exp::-webkit-scrollbar,.spaces::-webkit-scrollbar{display:none}
+.exp__card,.spaces__item{flex:0 0 82%;scroll-snap-align:center;min-width:0}
+.spaces__item .split{gap:1rem}
+.spaces__item h3{font-size:1.3rem}
+.spaces__item p{font-size:.98rem!important;line-height:1.6!important}
+@media (min-width:861px){
+  .exp{display:grid;overflow:visible;margin-inline:0;padding:0;gap:clamp(1.6rem,3vw,2.6rem)}
+  .exp__card{flex:none}
+  .spaces{display:block;overflow:visible;margin-inline:0;padding:0}
+  .spaces__item{flex:none;margin-bottom:clamp(3rem,7vw,5.5rem)}
+  .spaces__item .split{gap:clamp(2rem,6vw,5.5rem)}
+  .spaces__item h3{font-size:clamp(1.35rem,2.2vw,1.85rem)}
+  .spaces__item p{font-size:1.05rem!important;line-height:1.7!important}
+}
+@media (min-width:561px) and (max-width:860px){.exp{display:grid;grid-template-columns:repeat(2,1fr);overflow:visible;margin-inline:0;padding:0}.exp__card{flex:none}}
+@media (min-width:861px){
+  .snav{display:none}
+  .spec__t{cursor:default}
+  .spec__t::after{content:none}
+  .spec__g ul,.spec__g.is-open ul{display:block;padding-bottom:0}
+  .spec__g h3{margin-bottom:1rem}
+  .spec__g{padding-top:1.2rem}
+  .spec{gap:clamp(2rem,3.5vw,3rem) clamp(2.5rem,5vw,4rem)}
+  .quotes{display:grid;overflow:visible;margin-inline:0;padding:0;gap:clamp(2rem,5vw,4.5rem)}
+  .quote{flex:none;padding:2rem 0 0;border:0;border-top:1px solid var(--line);background:none;display:block}
+  .sect--forest .quote{background:none;border-color:rgba(255,255,255,.22)}
+  .quote blockquote{font-size:clamp(1.18rem,1.9vw,1.5rem);line-height:1.48;margin-bottom:1.8rem}
+  .pkg__card{padding:clamp(2rem,3.6vw,3.2rem)}
+  .pkg__card .plist li{padding-block:.55rem;font-size:1.0625rem}
+}
+
 /* ================================================================ 24. respect the setting */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}

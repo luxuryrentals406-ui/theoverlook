@@ -24,7 +24,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    hero_preload, SZ_FULL, SZ_HALF, SZ_THIRD, SZ_GALLERY, SZ_THUMB,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
-                   getting_here, switcher, rail, mosaic, inquiry_form, spec, experiences,
+                   getting_here, switcher, rail, mosaic, inquiry_form, spec, sectnav, experiences,
                    driftwood,
                    head, header, footer)
 
@@ -424,7 +424,7 @@ def page_weddings():
     ]
     trows = "".join(
         f'<tr><th scope="row">{r}</th>'
-        f'<td data-label="Arranged for the day">{a}</td>'
+        f'<td data-label="Elsewhere">{a}</td>'
         f'<td class="col-ours" data-label="The Overlook">{b}</td></tr>'
         for r, a, b in rows)
 
@@ -471,7 +471,9 @@ def page_weddings():
               ("venue-wide.jpg", "The estate grounds from across the lawn")],
       )}
 
-  <section class="sect">
+  {sectnav([("weekend", "Weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+
+  <section class="sect" id="weekend">
     <div class="wrap">
       {split(img("wedding-couple-arch.jpg", "A couple beneath the ceremony arch", sizes=SZ_HALF) ,
         f'''{eyebrow("Your wedding weekend")}
@@ -513,7 +515,7 @@ def page_weddings():
     </div>
   </section>
 
-  <section class="sect">
+  <section class="sect" id="compare">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:58ch">
         {eyebrow("Why The Overlook")}
@@ -532,7 +534,7 @@ def page_weddings():
     </div>
   </section>
 
-  <section class="sect sect--paper2">
+  <section class="sect sect--paper2" id="packages">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:50ch">
         {eyebrow("Packages")}
@@ -571,7 +573,7 @@ def page_weddings():
     </div>
   </section>
 
-  <section class="sect">
+  <section class="sect" id="lodging">
     <div class="wrap">
       {split(img("swan-exterior.jpg", "The Swan main house at dusk", sizes=SZ_HALF),
         f'''{eyebrow("Onsite lodging")}
@@ -587,7 +589,7 @@ def page_weddings():
     </div>
   </section>
 
-  <section class="sect sect--forest">
+  <section class="sect sect--forest" id="reviews">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.8rem);max-width:20ch">
         {eyebrow("Reviews")}
@@ -629,7 +631,7 @@ def page_weddings():
          ("wedding-bw-stairs.jpg", "A couple on the stairs, in black and white",
           "On the stairs")])}
 
-  <section class="sect">
+  <section class="sect" id="faq">
     <div class="wrap wrap--narrow">
       <div class="rv" style="margin-bottom:2.5rem">
         {eyebrow("Questions")}
@@ -688,7 +690,7 @@ def page_retreats():
     ]
     spacehtml = ""
     for i, (t, im, alt, d) in enumerate(space):
-        spacehtml += f"""<div style="margin-bottom:clamp(3rem,7vw,5.5rem)">{split(
+        spacehtml += f"""<div class="spaces__item">{split(
             img(im, alt, sizes=SZ_HALF),
             f'<h3>{t}</h3><p style="color:var(--ink-soft);margin-top:1.1rem;font-size:1.05rem;line-height:1.7">{d}</p>',
             flip=bool(i % 2))}</div>"""
@@ -730,7 +732,9 @@ def page_retreats():
       slides=[("pool-wide.jpg", "The heated pool and terrace on the upper lawn"),
               ("swan-exterior.jpg", "The Swan, the four-bedroom main house")])}
 
-  <section class="sect">
+  {sectnav([("why", "Why"), ("space", "The space"), ("formats", "Formats"), ("rates", "Rates"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+
+  <section class="sect" id="why">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.8rem,6vw,4.5rem);max-width:54ch">
         {eyebrow("Why teams choose the Overlook")}
@@ -740,13 +744,13 @@ def page_retreats():
     </div>
   </section>
 
-  <section class="sect sect--paper2">
+  <section class="sect sect--paper2" id="space">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.8rem,6vw,4.5rem);max-width:50ch">
         {eyebrow("The space")}
         <h2>What your group has to work with</h2>
       </div>
-      {spacehtml}
+      <div class="spaces">{spacehtml}</div>
       <div class="rv" style="border-top:1px solid var(--line);padding-top:2.5rem">
         <h3 style="margin-bottom:1.3rem">Logistics</h3>
         {ilist(["200 AMP electrical service",
@@ -759,7 +763,7 @@ def page_retreats():
     </div>
   </section>
 
-  <section class="sect">
+  <section class="sect" id="formats">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:46ch">
         {eyebrow("Formats we host")}
@@ -793,7 +797,7 @@ def page_retreats():
     </div>
   </section>
 
-  <section class="sect sect--forest">
+  <section class="sect sect--forest" id="rates">
     <div class="wrap">
       <div class="rv center" style="margin-bottom:clamp(2rem,4vw,2.8rem)">
         {eyebrow("Rates")}
@@ -860,7 +864,7 @@ def page_retreats():
 
   {driftwood(DRIFTWOOD_SHOTS, "retreat")}
 
-  <section class="sect sect--forest">
+  <section class="sect sect--forest" id="reviews">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.8rem);max-width:20ch">
         {eyebrow("From our guests")}
@@ -873,7 +877,7 @@ def page_retreats():
     </div>
   </section>
 
-  <section class="sect">
+  <section class="sect" id="faq">
     <div class="wrap wrap--narrow">
       <div class="rv" style="margin-bottom:2.5rem">
         {eyebrow("Questions")}
@@ -1302,7 +1306,9 @@ def page_wellness():
       slides=[("pool-hottub-wide.jpg", "The pool and hot tub on the terrace"),
               ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate")])}
 
-  <section class="sect">
+  {sectnav([("why", "Why here"), ("what", "What is here"), ("detail", "The detail"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+
+  <section class="sect" id="why">
     <div class="wrap">
       <div class="rv" style="max-width:56ch">
         {eyebrow("Why here")}
@@ -1350,7 +1356,7 @@ def page_wellness():
     </div>
   </section>
 
-  <section class="sect sect--paper2">
+  <section class="sect sect--paper2" id="detail">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:50ch">
         {eyebrow("The detail")}
@@ -1360,7 +1366,7 @@ def page_wellness():
     </div>
   </section>
 
-  <section class="sect sect--forest">
+  <section class="sect sect--forest" id="reviews">
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.8rem);max-width:22ch">
         {eyebrow("From our guests")}
@@ -1373,7 +1379,7 @@ def page_wellness():
     </div>
   </section>
 
-  <section class="sect">
+  <section class="sect" id="faq">
     <div class="wrap wrap--narrow">
       <div class="rv" style="margin-bottom:2.5rem">
         {eyebrow("Questions")}

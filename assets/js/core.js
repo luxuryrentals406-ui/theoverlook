@@ -468,6 +468,34 @@
     show(0);
   });
 
+  /* ---- spec groups fold on a phone; the heading opens them ------------------------ */
+  document.querySelectorAll(".spec__t").forEach(function (t) {
+    t.addEventListener("click", function () {
+      var g = t.closest(".spec__g");
+      var open = g.classList.toggle("is-open");
+      t.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
+  /* ---- section nav: the link for the section on screen is lit ---------------------- */
+  var snav = document.querySelector(".snav");
+  if (snav && "IntersectionObserver" in window) {
+    var links = [].slice.call(snav.querySelectorAll("a[href^='#']"));
+    var targets = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
+    var light = function (i) {
+      links.forEach(function (a, n) { a.classList.toggle("is-on", n === i); });
+      var a = links[i];
+      if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    };
+    var sio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        light(targets.indexOf(en.target));
+      });
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+    targets.forEach(function (t) { if (t) sio.observe(t); });
+  }
+
   /* ---- the other two files ---------------------------------------------------- */
   /* inquire.js on the first tap of any inquiry control, or when the page is
      idle; cinema.js only where a mouse and a wide screen make it worth it. */

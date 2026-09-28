@@ -668,10 +668,23 @@ def spec(groups):
     serif so the figures can be scanned without reading the sentences.
     """
     out = []
-    for head, items in groups:
+    for n, (head, items) in enumerate(groups):
         li = "".join(f"<li>{i}</li>" for i in items)
-        out.append(f'<div class="spec__g"><h3>{head}</h3><ul>{li}</ul></div>')
+        # On a phone each group folds to its heading, the first one open; the
+        # heading is a button so a thumb can open the rest. Desktop shows all.
+        on = n == 0
+        out.append(f'<div class="spec__g{" is-open" if on else ""}">'
+                   f'<h3><button type="button" class="spec__t" aria-expanded="{"true" if on else "false"}">'
+                   f'{head}</button></h3><ul>{li}</ul></div>')
     return f'<div class="spec rv rv--stagger">{"".join(out)}</div>'
+
+
+def sectnav(items, base=""):
+    """A slim sticky row of section links for a long page on a phone.
+    items: (fragment_id, label). Hidden on desktop, where the page is short
+    enough to scroll and the header carries the site nav."""
+    links = "".join(f'<a href="#{i}">{l}</a>' for i, l in items)
+    return f'<nav class="snav" aria-label="On this page"><div class="snav__in">{links}</div></nav>'
 
 
 def experiences(eyeb, title, lede, items):
