@@ -9,3 +9,6 @@ dist/
 
 # Local editor / agent state
 .claude/settings.local.json
+
+# Unrelated 666MB of presentation media (gozzer-ranch), not part of this site
+presentations/

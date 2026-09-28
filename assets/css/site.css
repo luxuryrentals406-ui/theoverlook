@@ -1105,3 +1105,34 @@ html:not(.js) .veil{display:none}
   .nav{display:none}
   .burger{display:block}
 }
+
+/* ---- breadcrumb + footer legal row (added with the journal pages) ------- */
+.dcrumb{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.6rem}
+.dcrumb a{color:inherit}
+.dcrumb a:hover{color:var(--ink)}
+.ftr__legal{display:inline-flex;gap:1.5rem;flex-wrap:wrap}
+
+/* These two arrived after the touch-target pass and were never covered. */
+@media (hover:none),(max-width:1024px){
+  /* min-height rather than padding: these are small-caps links whose line box
+     is only 18px, so padding alone lands a couple of pixels short of 44. */
+  .dcrumb a,.ftr__legal a{display:inline-flex;align-items:center;min-height:44px}
+  .dcrumb{margin-bottom:.8rem;line-height:1.1}
+  .ftr__legal{gap:1.2rem}
+}
+
+/* The arrow links and the sticky-bar CTA sat at 37px — above the old 32px
+   probe I was using, below the 44px touch standard. */
+@media (hover:none),(max-width:1024px){
+  .tlink{min-height:44px;align-items:center}
+  .sbar__cta{min-height:44px}
+}
+
+/* Slideshow controls on a phone: the category chips were 35px and the arrows 42. */
+@media (hover:none),(max-width:1024px){
+  .shw__cat{min-height:44px;display:inline-flex;align-items:center}
+}
+@media (max-width:600px){
+  .shw__arrow{width:44px;height:44px}
+}

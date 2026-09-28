@@ -1,0 +1,54 @@
+{
+  "redirects": [
+    {
+      "source": "/about",
+      "destination": "/story.html",
+      "permanent": true
+    },
+    {
+      "source": "/book",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/corporate-retreats",
+      "destination": "/retreats.html",
+      "permanent": true
+    },
+    {
+      "source": "/gallery",
+      "destination": "/gallery.html",
+      "permanent": true
+    },
+    {
+      "source": "/helicopter-experiences",
+      "destination": "/things-to-do",
+      "permanent": true
+    },
+    {
+      "source": "/private-events",
+      "destination": "/retreats.html",
+      "permanent": true
+    },
+    {
+      "source": "/stay-onsite",
+      "destination": "/estate.html",
+      "permanent": true
+    },
+    {
+      "source": "/wedding-experiences",
+      "destination": "/weddings.html",
+      "permanent": true
+    },
+    {
+      "source": "/wellness-retreats",
+      "destination": "/wellness.html",
+      "permanent": true
+    }
+  ]
+}

@@ -19,8 +19,8 @@ import os, re, sys, json, hashlib, datetime
 import html as ihtml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER,
-                   img, eyebrow, btn, tlink,
+from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
+                   img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, honeybook_form, spec, experiences,
                    driftwood,
@@ -165,11 +165,55 @@ FAQ_WELLNESS = [
      "shoulder-season dates.</p>"),
 ]
 
+FAQ_AREA = [
+    ("How far is Glacier National Park?",
+     f"{cap(GLACIER['time'])} — {GLACIER['miles']} to {GLACIER['entrance']}, the west "
+     f"entrance to the park."),
+    ("How close is the lake?",
+     "The estate sits on the hillside above Flathead Lake in Lakeside. Boating and "
+     "swimming are minutes away."),
+    ("What is there to do without leaving the property?",
+     "A heated pool, a hot tub, a barrel sauna, a fitness room, a games room, a fire "
+     "pit, a putting green and walking trails across the fifteen acres."),
+    ("Can guests arrive by helicopter?",
+     "Yes. Helicopter arrivals and private flights over the lake are arranged through "
+     "WestSlope Helicopters."),
+    ("How far is Whitefish Mountain Resort?",
+     f"{cap(WHITEFISH['time'])} from the estate."),
+    ("Which airport do guests fly into?",
+     f"{FCA['name']}, {FCA['time']} away."),
+]
+
+FAQ_MTVENUES = [
+    ("What is an estate-buyout wedding venue?",
+     "One group takes the whole property for the length of the booking. The "
+     "celebration and the place people sleep are on the same land, and no other event "
+     "shares the site."),
+    ("How many guests can this venue hold?",
+     "Up to 200 guests for the celebration. Separately, 28 people sleep on the "
+     "property across five accommodations."),
+    ("Is lodging included in the venue fee?",
+     "No. Lodging is booked separately from the venue fee, which keeps the starting "
+     "figure honest for couples whose guests stay in Whitefish or Kalispell."),
+    ("What should I ask a Montana venue before booking?",
+     "Whether power and water are permanently installed or brought in, how far vendors "
+     "load in, how many cars park on site, when the noise cutoff falls, what is already "
+     "standing, and whether another event shares the property that weekend."),
+    ("How far ahead do Montana venues book?",
+     "Most dates here book a year or more out. Send the weekend you have in mind and we "
+     "will tell you honestly whether it is open."),
+    ("Is pricing published?",
+     "No. Every booking is quoted against the dates and the shape of the event, with "
+     "one exception: the Ultimate Flathead Lake Wedding Weekend starts at $100,000."),
+]
+
 # One page, one FAQ list. The page renders it, schema() turns it into FAQPage
 # structured data and llms_txt() prints it, so the three cannot drift apart.
 FAQS = {"weddings.html": FAQ_WEDDINGS,
         "retreats.html": FAQ_RETREATS,
-        "wellness.html": FAQ_WELLNESS}
+        "wellness.html": FAQ_WELLNESS,
+        "things-to-do/index.html": FAQ_AREA,
+        "wedding-venues-montana/index.html": FAQ_MTVENUES}
 
 
 # The Driftwood, the add-on estate at Woods Bay. Photographs are the owner's
@@ -1418,9 +1462,8 @@ def dcrumb(base, trail):
     for label, href in trail:
         parts.append(f'<a href="{base}{href}">{label}</a>' if href
                      else f'<span>{label}</span>')
-    return ('<p style="font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;'
-            'color:var(--muted);margin-bottom:1.6rem">'
-            + ' &rsaquo; '.join(parts) + '</p>')
+    # a class, not only inline styles, so the touch-target rules can reach it
+    return ('<p class="dcrumb">' + ' &rsaquo; '.join(parts) + '</p>')
 
 
 def doc_head(base, eyeb, h1, lede, trail=()):
@@ -2000,6 +2043,162 @@ def page_journal(base):
         base=base)}
 """)
 
+
+# ============================================ PORTED: /things-to-do
+def page_area(base):
+    """Ported from the live /things-to-do.
+
+    This page exists for the guest question rather than the couple's — "what is
+    there to do around here" is asked of assistants constantly, and answering it
+    with real drive times is what gets the estate named in the reply.
+    """
+    on_site = ["A heated pool and a hot tub", "A barrel sauna",
+               "A fitness room and a games room", "A fire pit",
+               "A putting green", "Walking trails across the fifteen acres"]
+    items = "".join(f"<li>{i}</li>" for i in on_site)
+    return (doc_head(base, "The Area", "Things to do around Flathead Lake",
+                     "The estate is private and self-contained, but nobody spends a "
+                     "whole weekend on one hillside. Here is what is actually within "
+                     "reach, with honest drive times.",
+                     trail=[("Things to Do", None)])
+            + f"""
+  <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
+    <div class="wrap wrap--narrow rv">
+      <h2>Flathead Lake</h2>
+      <p style="margin-top:1rem">The largest freshwater lake west of the Mississippi sits
+        below the property. Boating and swimming are minutes away, and the water is what
+        the pavilion looks out over &mdash; the reason the ceremony lawn faces the
+        direction it does.</p>
+
+      <h2 style="margin-top:2.8rem">{GLACIER['name']}</h2>
+      <p style="margin-top:1rem">{cap(GLACIER['drive'])} to {GLACIER['entrance']}, the
+        west entrance &mdash; {GLACIER['miles']}. Close enough that guests add a day
+        either side of the weekend, far enough that it is a day trip rather than an
+        afternoon. Going-to-the-Sun Road is seasonal; check the park before promising
+        anyone a drive over the pass.</p>
+
+      <h2 style="margin-top:2.8rem">{WHITEFISH['name']}</h2>
+      <p style="margin-top:1rem">{cap(WHITEFISH['time'])} from the estate. Skiing in
+        winter, lift-served hiking and biking in summer, and the town below it is where
+        a good share of guests end up staying when the five houses are full.</p>
+
+      <h2 style="margin-top:2.8rem">Arriving by air</h2>
+      <p style="margin-top:1rem">{FCA['name']} is {FCA['time']} away. For arrivals with
+        more ceremony to them, helicopter landings and private flights over the lake are
+        arranged through WestSlope Helicopters &mdash; the same operator that runs the
+        transfer in the two-estate weekend package.</p>
+
+      <h2 style="margin-top:2.8rem">Without leaving the property</h2>
+      <p style="margin-top:1rem">Most of a weekend happens here, which is the point of
+        booking the whole estate:</p>
+      <ul style="margin-top:1rem;color:var(--ink-soft);line-height:2">{items}</ul>
+    </div>
+  </section>
+
+  <section class="sect sect--stone">
+    <div class="wrap wrap--narrow">
+      <h2 class="rv">Questions guests ask</h2>
+      <div class="rv">{faq(FAQ_AREA)}</div>
+    </div>
+  </section>
+
+  {band("lake-sunset-boat.jpg", "The lake at sunset from the estate",
+        "Planning a weekend here",
+        "Tell us the dates you are considering and we will tell you honestly "
+        "whether they are open.",
+        btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
+        base=base)}
+""")
+
+
+# ============================================ PORTED: /wedding-venues-montana
+def page_mt_venues(base):
+    """Ported from the live /wedding-venues-montana.
+
+    A category page, not a second wedding page: it answers "how do I choose a
+    Montana venue" and only then says where this one sits. Written that way
+    because that is the query it has to earn.
+    """
+    asks = [
+        ("Is the power permanent?",
+         "Generators run all weekend and have to be paid for, placed and silenced. "
+         "Here it is 200 AMP permanently installed service, with water on site."),
+        ("How far do vendors carry everything?",
+         "Load-in distance decides how long setup takes and what it costs. Vendors "
+         "pull within 50 feet of the venue here."),
+        ("Where does everyone park?",
+         "Seventy-five cars park on the property, which is usually the difference "
+         "between shuttles and no shuttles."),
+        ("When does the music stop?",
+         "Ordinances are the thing nobody mentions until late. Contracts here are "
+         "written to an 11:00 p.m. event end, said up front."),
+        ("What is already standing?",
+         "A 3,200 sq ft pavilion, a 40 &times; 80 ft tent, a built-in bar, tables and "
+         "chairs including four head tables, and a fire pit. Anything a venue does not "
+         "own, you rent."),
+        ("Does another event share the weekend?",
+         "One group is on this property at a time. No shared facilities, no second "
+         "party across the lawn."),
+    ]
+    cards = "".join(f"""<div class="rv" style="border-top:1px solid var(--line);padding:2rem 0">
+        <h3 style="font-size:clamp(1.05rem,1.8vw,1.25rem)">{q}</h3>
+        <p style="margin-top:.8rem;color:var(--ink-soft);max-width:66ch">{a}</p>
+      </div>""" for q, a in asks)
+
+    return (doc_head(base, "Montana Wedding Venues",
+                     "Choosing a wedding venue in Montana",
+                     "Montana venues divide into two kinds: a room or a lawn you rent "
+                     "for a day, and a property you take over entirely. They are priced "
+                     "differently, they fail differently, and the questions worth asking "
+                     "are not the same.",
+                     trail=[("Montana Wedding Venues", None)])
+            + f"""
+  <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
+    <div class="wrap wrap--narrow rv">
+      <h2>The rented venue</h2>
+      <p style="margin-top:1rem">You get the site for a block of hours. Tables, chairs,
+        power, lighting and a bar arrive on trucks and leave the same night, and your
+        guests sleep somewhere else. It is the cheaper line on a spreadsheet and the
+        longer list of vendors to manage.</p>
+
+      <h2 style="margin-top:2.8rem">The estate buyout</h2>
+      <p style="margin-top:1rem">You take the property. The celebration and the beds are
+        on the same land, the infrastructure is already installed, and the weekend is
+        yours from the rehearsal to the last morning. It reads as more money until the
+        rentals, the lodging and the transport are added back to the other column.</p>
+      <p style="margin-top:1rem">{tlink(base + "journal/" + A_BUYOUT,
+        "What an estate buyout actually includes")}</p>
+
+      <h2 style="margin-top:2.8rem">Six questions worth asking either kind</h2>
+      <div style="margin-top:1.4rem">{cards}</div>
+
+      <h2 style="margin-top:2.8rem">Where The Overlook sits</h2>
+      <p style="margin-top:1rem">Fifteen private acres above Flathead Lake in
+        {BIZ['city']}, {FCA['time']} from {FCA['short_name']}. Up to 200 guests for the
+        celebration, 28 sleeping across five accommodations, one group on the property
+        at a time. Lodging is booked separately from the venue fee.</p>
+      <p style="margin-top:1rem">Pricing is quoted against your dates rather than
+        published, with a single exception: the Ultimate Flathead Lake Wedding Weekend,
+        five nights across two estates, starts at $100,000.</p>
+    </div>
+  </section>
+
+  <section class="sect sect--stone">
+    <div class="wrap wrap--narrow">
+      <h2 class="rv">Common questions</h2>
+      <div class="rv">{faq(FAQ_MTVENUES)}</div>
+    </div>
+  </section>
+
+  {band("venue-overview.jpg", "The grounds and tent seen across the estate",
+        "Check a date",
+        "Send the weekend you have in mind. Claudia or Eric will write back "
+        "personally.",
+        btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
+        base=base)}
+""")
+
+
 # ================================================================== assembly
 CRUMB = {"weddings.html": "Weddings", "retreats.html": "Corporate Retreats",
          "wellness.html": "Wellness Retreats",
@@ -2085,6 +2284,24 @@ DOCS = [
      "trail": [("Terms of Service", "terms/index.html")]},
 ]
 
+DOCS.append(
+    {"path": "things-to-do/index.html", "fn": page_area,
+     "og": "lake-sunset-boat.jpg", "sticky": True, "priority": "0.7",
+     "title": "Things to Do Near Flathead Lake | The Overlook",
+     "desc": "What is within reach of the estate — Flathead Lake, Glacier National "
+             "Park about an hour away, Whitefish Mountain Resort, and what is already "
+             "on the property.",
+     "trail": [("Things to Do", "things-to-do/index.html")]})
+
+DOCS.append(
+    {"path": "wedding-venues-montana/index.html", "fn": page_mt_venues,
+     "og": "venue-overview.jpg", "sticky": True, "priority": "0.9",
+     "title": "Montana Wedding Venues | How to Choose One",
+     "desc": "How Montana wedding venues differ — estate buyouts versus rented sites, "
+             "six questions worth asking before you book, and where a private Flathead "
+             "Lake estate fits.",
+     "trail": [("Montana Wedding Venues", "wedding-venues-montana/index.html")]})
+
 for _a in ARTICLES:
     DOCS.append({
         "path": f"journal/{_a['slug']}/index.html",
@@ -2093,6 +2310,116 @@ for _a in ARTICLES:
         "title": _a["title"], "desc": _a["desc"], "article": _a["slug"],
         "trail": [("Journal", "journal/index.html"),
                   (_a["crumb"], f"journal/{_a['slug']}/index.html")]})
+
+
+# ---------------------------------------------------------------- redirects
+# The live site indexed these URLs. The rebuild renamed some pages and dropped
+# others, so without a destination each one 404s the day the domain is
+# repointed and whatever ranking it holds is thrown away.
+#
+# Three artefacts, because the host is not decided yet:
+#   _redirects   — Netlify / Cloudflare Pages
+#   vercel.json  — Vercel
+#   an HTML stub — every other static host, including plain S3 or Apache
+# Whichever the host understands wins; the others sit inert. The stub carries a
+# canonical to the destination and noindex on itself, so it cannot compete in
+# the index with the page it points at.
+REDIRECTS = {
+    "wedding-experiences":    "weddings.html",
+    "stay-onsite":            "estate.html",
+    "helicopter-experiences": "things-to-do",
+    "private-events":         "retreats.html",
+    "corporate-retreats":     "retreats.html",
+    "wellness-retreats":      "wellness.html",
+    "gallery":                "gallery.html",
+    "about":                  "story.html",
+    "contact":                "contact.html",
+    "book":                   "contact.html",
+}
+
+STUB = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Page moved | {name}</title>
+<meta name="description" content="This page has moved. The current version of it now lives at {target} instead.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="{target}">
+<meta http-equiv="refresh" content="0;url={dest}">
+</head>
+<body>
+<p>This page has moved to <a href="{dest}">{target}</a>.</p>
+<script>location.replace({js});</script>
+</body>
+</html>
+"""
+
+
+def write_redirects():
+    lines, vercel = [], []
+    for old, new in sorted(REDIRECTS.items()):
+        dest = "/" + new
+        lines.append("/%s  %s  301" % (old, dest))
+        vercel.append({"source": "/" + old, "destination": dest, "permanent": True})
+
+        d = os.path.join(ROOT, old)
+        os.makedirs(d, exist_ok=True)
+        target = SITE + "/" + new
+        with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+            f.write(STUB.format(name=BIZ["name"], target=target, dest=dest,
+                                js=json.dumps(dest)))
+
+    header = "# Generated by tools/build.py - old live URLs kept alive.\n"
+    open(os.path.join(ROOT, "_redirects"), "w", encoding="utf-8").write(
+        header + "\n".join(lines) + "\n")
+    with open(os.path.join(ROOT, "vercel.json"), "w", encoding="utf-8") as f:
+        json.dump({"redirects": vercel}, f, indent=2)
+        f.write("\n")
+    print("  wrote %d redirects (_redirects, vercel.json, HTML stubs)" % len(REDIRECTS))
+
+
+# ---------------------------------------------------------------- share cards
+# Social and chat previews crop to roughly 1.91:1. The photography here is 3:2,
+# so handing it over raw lets each platform choose its own crop — which is how
+# a horizon ends up through somebody's head. These are cut once, centred, at the
+# size the scrapers actually want, and regenerated only when the source changes.
+OG_DIR = "assets/img/og/"
+OG_W, OG_H = 1200, 630
+
+
+def make_og_cards(names):
+    import subprocess
+    out = os.path.join(ROOT, OG_DIR)
+    os.makedirs(out, exist_ok=True)
+    made = 0
+    for n in sorted(set(names)):
+        src = os.path.join(ROOT, IMG + n)
+        dst = os.path.join(out, n)
+        if not os.path.isfile(src):
+            continue
+        if os.path.isfile(dst) and os.path.getmtime(dst) >= os.path.getmtime(src):
+            continue
+        dims = imgsize(IMG + n)
+        if not dims:
+            continue
+        w, h = dims
+        # crop to the card's aspect at full resolution first, then scale down,
+        # so the result is a real 1200x630 rather than a stretched 3:2
+        want = OG_W / float(OG_H)
+        if w / float(h) > want:
+            cw, ch = int(round(h * want)), h
+        else:
+            cw, ch = w, int(round(w / want))
+        try:
+            subprocess.run(["sips", "-c", str(ch), str(cw), src, "--out", dst],
+                           check=True, capture_output=True)
+            subprocess.run(["sips", "-z", str(OG_H), str(OG_W), dst],
+                           check=True, capture_output=True)
+            made += 1
+        except Exception as e:
+            print("  !! og card failed for %s: %s" % (n, e))
+    if made:
+        print("  wrote %d share cards (%dx%d) to %s" % (made, OG_W, OG_H, OG_DIR))
 
 
 def blog_nodes(path, article_slug):
@@ -2352,6 +2679,10 @@ def llms_txt():
 - [Gallery]({SITE}/gallery.html): photographs of the property
 - [Our Story]({SITE}/story.html): how the venue came to be
 - [Contact]({SITE}/contact.html): inquiry form, location and drive times
+- [Montana Wedding Venues]({SITE}/wedding-venues-montana): how an estate buyout differs
+  from renting a site for the day, and the questions worth asking either kind
+- [Things to Do]({SITE}/things-to-do): the lake, Glacier National Park, Whitefish and
+  what is on the property, with drive times
 
 ## Guides
 
@@ -2378,6 +2709,14 @@ def llms_txt():
 ## Common questions — wellness retreats
 
 {qa(FAQ_WELLNESS)}
+
+## Common questions — choosing a Montana venue
+
+{qa(FAQ_MTVENUES)}
+
+## Common questions — the area
+
+{qa(FAQ_AREA)}
 
 ## About this file
 
@@ -2443,6 +2782,7 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
 
 
 def main():
+    make_og_cards([p[2] for p in PAGES] + [d["og"] for d in DOCS])
     missing = set()
     built = {}
     priority = {}
@@ -2466,6 +2806,8 @@ def main():
                    False, "", d["sticky"], ld,
                    IMG + d["og"] if slug else None, missing, built)
         priority[path] = d["priority"]
+
+    write_redirects()
 
     # sitemap + robots
     today = datetime.date.today().isoformat()

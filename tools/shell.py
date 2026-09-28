@@ -618,7 +618,12 @@ def stickybar(page="", base=""):
 def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base=""):
     """url is the absolute canonical URL; base is the depth prefix from rel()."""
     alt = f"{BIZ['name']}, Lakeside, Montana"
-    dims = imgsize(f"{IMG}{og_image}")
+    # a 1200x630 card is generated per share image by tools/build.py; use it
+    # when it exists so scrapers are not left to crop the 3:2 original.
+    _card = f"{IMG}og/{og_image}"
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    og_src = _card if os.path.isfile(os.path.join(_root, _card)) else f"{IMG}{og_image}"
+    dims = imgsize(og_src)
     wh = ""
     if dims:
         wh = (f'<meta property="og:image:width" content="{dims[0]}">\n'
@@ -645,14 +650,14 @@ def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base="")
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE}/{IMG}{og_image}">
-<meta property="og:image:secure_url" content="{SITE}/{IMG}{og_image}">
+<meta property="og:image" content="{SITE}/{og_src}">
+<meta property="og:image:secure_url" content="{SITE}/{og_src}">
 {wh}<meta property="og:image:type" content="{mime}">
 <meta property="og:image:alt" content="{alt}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
-<meta name="twitter:image" content="{SITE}/{IMG}{og_image}">
+<meta name="twitter:image" content="{SITE}/{og_src}">
 <meta name="twitter:image:alt" content="{alt}">
 
 <link rel="icon" href="{base}{IMG}overlook-logo.png">
@@ -739,7 +744,7 @@ def footer(base=""):
     </div>
     <div class="ftr__bot">
       <span>&copy; {{year}} {BIZ['name']}. All rights reserved.</span>
-      <span style="display:inline-flex;gap:1.5rem"><a href="{base}privacy">Privacy Policy</a>
+      <span class="ftr__legal"><a href="{base}privacy">Privacy Policy</a>
         <a href="{base}terms">Terms of Service</a></span>
       <span>Lakeside, Montana</span>
     </div>

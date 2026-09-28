@@ -134,6 +134,27 @@ for p in pages:
     for m in re.finditer(r"<img (?![^>]*\balt=)[^>]*>", raw):
         FAILS.append(f"{name}: <img> without alt — {m.group(0)[:60]}")
 
+# 6b — the deploy config must not contradict the sitemap. A redirect whose
+#      source is a real, indexed page makes that page unreachable, and a page
+#      directory that render.yaml never copies is simply missing after deploy.
+rl = os.path.join(ROOT, "render.yaml")
+if os.path.exists(rl):
+    cfg = open(rl, encoding="utf-8").read()
+    sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8").read()
+    indexed = {u.replace("https://theoverlookatflatheadlake.com", "").rstrip("/") or "/"
+               for u in re.findall(r"<loc>(.*?)</loc>", sm)}
+    for src in re.findall(r"source: (\S+)", cfg):
+        if src.rstrip("/") in indexed:
+            FAILS.append(f"render.yaml: redirects {src}, but it is an indexed page")
+    m = re.search(r"cp -R ([^\n]*?) dist/", cfg)
+    copied = set(m.group(1).split()) if m else set()
+    for u in indexed:
+        top = u.strip("/").split("/")[0]
+        if not top or top.endswith(".html"):
+            continue
+        if top not in copied:
+            FAILS.append(f"render.yaml: /{top} is indexed but never copied into dist/")
+
 # 7 — site-wide 'dream' budget
 n_dream = len(re.findall(r"\bdream", site_text))
 if n_dream > 1:

@@ -7,7 +7,7 @@ services:
     # Run `python3 tools/build.py && python3 tools/lint.py` before committing.
     # NOTE: this list is explicit. A new top-level output directory must be
     # added here or it will not be published.
-    buildCommand: rm -rf dist && mkdir -p dist && cp -R *.html *.txt *.xml assets journal privacy terms dist/
+    buildCommand: rm -rf dist && mkdir -p dist && cp -R *.html *.txt *.xml assets journal privacy terms things-to-do wedding-venues-montana dist/
     staticPublishPath: dist
     pullRequestPreviewsEnabled: false
     headers:
@@ -27,9 +27,6 @@ services:
     routes:
       - type: redirect
         source: /wedding-experiences
-        destination: /weddings.html
-      - type: redirect
-        source: /wedding-venues-montana
         destination: /weddings.html
       - type: redirect
         source: /helicopter-experiences
@@ -58,6 +55,3 @@ services:
       - type: redirect
         source: /private-events
         destination: /weddings.html
-      - type: redirect
-        source: /things-to-do
-        destination: /journal/getting-to-the-overlook-travel-guide
