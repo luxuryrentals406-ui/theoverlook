@@ -39,14 +39,11 @@ NAV = [
 
 # Inline so the page can never be stranded behind the transition veil: the
 # veil is only allowed to exist once this has run and can also remove it.
+# The browser keeps its own scroll restoration: the back button lands where the
+# reader left, which on a phone is the whole point of the back button.
 BOOT = ('<script>(function(d,w){var h=d.documentElement;h.className+=" js";'
-        # Chrome restores the scroll offset you last had on a URL, so clicking a nav
-        # link to a page you had scrolled drops you into the middle of it.
-        'try{if("scrollRestoration" in history)history.scrollRestoration="manual";}catch(e){}'
-        'var top=function(){if(!location.hash)w.scrollTo(0,0);};'
-        'var go=function(){h.classList.add("is-ready");top();};'
+        'var go=function(){h.classList.add("is-ready");};'
         'd.addEventListener("DOMContentLoaded",go);'
-        'w.addEventListener("load",top);'
         'setTimeout(go,2500);})'
         '(document,window);</script>')
 
@@ -847,6 +844,6 @@ def footer(base=""):
     </div>
   </div>
 </footer>
-<script src="{base}assets/js/site.js?v={_ver("assets/js/site.js")}" defer></script>
+<script src="{base}assets/js/core.js?v={_ver("assets/js/core.js")}" defer data-base="{base}" data-inquire="{_ver("assets/js/inquire.js")}" data-cinema="{_ver("assets/js/cinema.js")}"></script>
 </body>
 </html>"""
