@@ -25,7 +25,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, inquiry_form, spec, sectnav, experiences,
-                   weekend_builder,
+                   weekend_builder, film,
                    driftwood,
                    head, header, footer)
 
@@ -271,8 +271,8 @@ def page_home():
     fhtml = "".join(parts)
 
     cards = [
-        ("weddings.html", "wedding-aerial-tent.jpg",
-         "The tent and ceremony lawn from the air at golden hour", "Weddings",
+        ("weddings.html", "tent-interior-lake-view.jpg",
+         "Inside the clear tent with the tables set and Flathead Lake beyond", "Weddings",
          "The whole estate for a multi-day celebration &mdash; ceremony, cocktails and "
          "reception each in their own part of the property.",
          "See the wedding weekend"),
@@ -281,8 +281,8 @@ def page_home():
          "A full-property buyout for leadership teams, boards and company gatherings. "
          "Everyone works, eats and sleeps in the same place.",
          "Plan a retreat"),
-        ("estate.html", "swan-exterior.jpg",
-         "The Swan, the four-bedroom main house", "The Estate",
+        ("estate.html", "treehouse-sunset.jpg",
+         "A treehouse at sunset, the light coming through the pines", "The Estate",
          "Five accommodations, a heated pool, sauna, fitness room and trails across "
          "fifteen acres. This is what your group has to itself.",
          "Tour the property"),
@@ -470,9 +470,10 @@ def page_weddings():
       + btn("#included", "What&rsquo;s Included", "btn btn--outline-light btn--lg"),
       slides=[("ceremony-aisle-view.jpg", "The aisle looking toward the ceremony site"),
               ("venue-wide.jpg", "The estate grounds from across the lawn")],
+      portrait=HERO_PORTRAIT["weddings.html"],
       )}
 
-  {sectnav([("weekend", "Weekend"), ("your-weekend", "Your weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+  {sectnav([("weekend", "Weekend"), ("film", "Watch"), ("your-weekend", "Your weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
 
   <section class="sect" id="weekend">
     <div class="wrap">
@@ -489,6 +490,26 @@ def page_weddings():
         <p>The end time is whatever your contract says it is, agreed with you when you
           book rather than handed to you on the day.</p>''',
         wide=True)}
+    </div>
+  </section>
+
+  <section class="sect sect--tight" id="film">
+    <div class="wrap">
+      <div class="split split--film" style="align-items:center">
+        <div class="split__media rv">
+          {film("ceremony-lawn", "film-ceremony-lawn.jpg",
+                "The ceremony lawn set for a wedding, with the trees and the lake beyond",
+                "Thirty-five seconds on the property, set for a wedding.")}
+        </div>
+        <div class="split__body rv">
+          {eyebrow("Watch")}
+          <h2>Set, and waiting</h2>
+          <p class="lede" style="margin:1.4rem 0">The ceremony lawn with the chairs out,
+            then the tent with the tables laid &mdash; the trees, the lake behind them,
+            and the quiet before anyone arrives.</p>
+          <p>Tap to play. It is short, and it is the real place.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -589,7 +610,7 @@ def page_weddings():
 
   <section class="sect" id="lodging">
     <div class="wrap">
-      {split(img("swan-exterior.jpg", "The Swan main house at dusk", sizes=SZ_HALF),
+      {split(img("treehouse-deck-evening.jpg", "One of the two treehouses on its stilts in evening light", sizes=SZ_HALF),
         f'''{eyebrow("Onsite lodging")}
         <h2>Nobody drives home</h2>
         <p class="lede" style="margin:1.4rem 0">Five accommodations sit on the same
@@ -620,7 +641,15 @@ def page_weddings():
 
   {rail("The details", "Photographs from weddings here",
         "Drag the rail, or use the arrows. Every one of these was taken on the property.",
-        [("ceremony-setup.jpg", "Chairs set on the ceremony lawn before guests arrive",
+        [("tent-long-table-roses.jpg", "Long tables under the clear tent, set with white roses and candles",
+          "White roses, the length of the table"),
+         ("tent-interior-lake-view.jpg", "Inside the clear tent with the tables set and Flathead Lake beyond",
+          "The lake, through the tent"),
+         ("tent-from-lawn-ceremony.jpg", "The clear-top tent seen from the lawn below",
+          "The tent from the lawn"),
+         ("tent-exterior-sunflare.jpg", "The clear-top tent on its stone terrace in afternoon sun",
+          "Afternoon on the terrace"),
+         ("ceremony-setup.jpg", "Chairs set on the ceremony lawn before guests arrive",
           "Chairs set before anyone arrives"),
          ("ceremony-forest.jpg", "The ceremony site among the trees",
           "The ceremony site, in the trees"),
@@ -989,7 +1018,7 @@ def page_estate():
       </div>""" for t, im, alt in grounds)
 
     return f"""
-{hero("lakeside-both-homes.jpg", "Two of the estate's accommodations at golden hour",
+{hero("meadow-evening-light.jpg", "Evening light across the meadow, with the accommodations among the pines",
       "The Estate", "Five places to sleep,<br>fifteen acres to use",
       "The accommodation and grounds detail behind every wedding and every retreat "
       "booked here.", short=True)}
@@ -1038,6 +1067,17 @@ def page_estate():
 # ================================================================== GALLERY
 # (file, alt, category) — category: weddings | estate | grounds
 PHOTOS = [
+    # added 2026-09-28 from the new shoot — these open the gallery
+    ("tent-interior-lake-view.jpg", "Inside the clear tent with the tables set and Flathead Lake beyond", "weddings"),
+    ("treehouse-sunset.jpg", "A treehouse at sunset, the light coming through the pines", "estate"),
+    ("tent-long-table-roses.jpg", "Long tables under the clear tent, set with white roses and candles", "weddings"),
+    ("meadow-evening-light.jpg", "Evening light across the meadow, with the accommodations among the pines", "grounds"),
+    ("tent-from-lawn-ceremony.jpg", "The clear-top tent seen from the lawn below", "weddings"),
+    ("treehouse-deck-evening.jpg", "One of the two treehouses on its stilts in evening light", "estate"),
+    ("tent-exterior-sunflare.jpg", "The clear-top tent on its stone terrace in afternoon sun", "weddings"),
+    ("treehouse-sauna-evening.jpg", "A treehouse and the cedar barrel sauna at golden hour", "estate"),
+    ("tent-side-rock-wall.jpg", "The tent with its sides down, behind the boulder wall", "weddings"),
+    ("treehouses-among-pines.jpg", "The treehouses among the pines in evening light", "estate"),
     ("wedding-aerial-tent.jpg", "Aerial view of the tent and ceremony lawn", "weddings"),
     ("ceremony-tent-wide.jpg", "Ceremony seating with the tent and lake behind", "weddings"),
     ("wedding-couple-arch.jpg", "A couple beneath the ceremony arch", "weddings"),
@@ -2200,7 +2240,7 @@ PAGES = [
      "A private 15-acre estate above Flathead Lake for yoga, movement and recovery "
      "retreats. Pavilion, sauna, hot tub, heated pool, 28 onsite, one group at a time."),
 
-    ("estate.html", page_estate, "lakeside-both-homes.jpg", True,
+    ("estate.html", page_estate, "meadow-evening-light.jpg", True,
      "The Estate | Lodging &amp; Grounds at The Overlook at Flathead Lake",
      "Five accommodations sleeping 28, plus a heated pool, sauna, fitness room, fire pit "
      "and trails across 15 private acres above Flathead Lake."),
@@ -2229,6 +2269,10 @@ PAGES = [
 #             so the card uses a landscape frame from further down the page.
 PRELOAD = {"gallery.html": PHOTOS[0][0],
            "story.html":   "owners-photo.jpg"}
+
+# A vertical photograph that phones get as the hero instead of the landscape
+# one — a 3:2 frame cropped into a phone screen shows a sliver of itself.
+HERO_PORTRAIT = {"weddings.html": "tent-interior-lake-view.jpg"}
 
 
 # The six ported URLs. `fn` takes the depth prefix and returns the body; the
@@ -2739,7 +2783,8 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
         # lcp is a photograph name; the preload carries the same AVIF candidates
         # as the hero <picture>, so the phone fetches one small file, once.
         name = lcp.rsplit("/", 1)[-1]
-        extra = hero_preload(name, base, SZ_GALLERY if current == "gallery.html" else SZ_FULL) + "\n"
+        extra = hero_preload(name, base, SZ_GALLERY if current == "gallery.html" else SZ_FULL,
+                             portrait=HERO_PORTRAIT.get(current)) + "\n"
     html = (head(title, desc, url_of(path), og, extra + ld, base)
             + header(current, over_hero=over, base=base) + body
             + footer(base, sheet=(current != "contact.html"),

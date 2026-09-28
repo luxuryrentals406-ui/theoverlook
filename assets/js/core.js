@@ -524,6 +524,23 @@
     targets.forEach(function (t) { if (t) sio.observe(t); });
   }
 
+  /* ---- a short film: the poster and the play mark give way to the video --------- */
+  document.querySelectorAll("[data-film]").forEach(function (fig) {
+    var video = fig.querySelector("video");
+    var play = fig.querySelector(".film__play");
+    if (!video || !play) return;
+    play.addEventListener("click", function () {
+      fig.classList.add("is-playing");
+      video.load();
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { video.controls = true; });
+    });
+    video.addEventListener("ended", function () {
+      fig.classList.remove("is-playing");
+      video.currentTime = 0;
+    });
+  });
+
   /* ---- your weekend: the picks become the inquiry note --------------------------- */
   var wk = document.querySelector("[data-weekend]");
   if (wk) {

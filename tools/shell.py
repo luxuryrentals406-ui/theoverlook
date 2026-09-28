@@ -217,7 +217,7 @@ def _srcsets(name, e, base, thumb):
     return avif, webp, jpg
 
 
-def img(name, alt, cls="", eager=False, sizes=None, base="", thumb=False):
+def img(name, alt, cls="", eager=False, sizes=None, base="", thumb=False, portrait=None):
     """A photograph as <picture> — AVIF, WebP, JPEG — with srcset, real
     width/height and an inline blurred placeholder; a PNG as a plain <img>.
 
@@ -225,8 +225,18 @@ def img(name, alt, cls="", eager=False, sizes=None, base="", thumb=False):
            None  -> no loading hints                      (logos in the chrome)
            False -> loading="lazy" decoding="async"       (everything else)
     thumb: cap candidates at 800px for grids of small tiles.
+    portrait: a second photograph (name) that phones get instead — art
+           direction for a full-bleed frame, where a 3:2 landscape cropped
+           into a 9:19 screen shows a sliver of itself.
     """
     e = _entry(name)
+    if portrait:
+        pe = _entry(portrait)
+        p_avif, p_webp, _ = _srcsets(portrait, pe, base, False)
+        phone_ad = (f'<source type="image/avif" media="(max-width:640px)" srcset="{p_avif}" sizes="100vw">'
+                    f'<source type="image/webp" media="(max-width:640px)" srcset="{p_webp}" sizes="100vw">')
+    else:
+        phone_ad = ""
     c = f' class="{cls}"' if cls else ""
     if eager is True:
         load = ' loading="eager" fetchpriority="high"'
@@ -248,21 +258,28 @@ def img(name, alt, cls="", eager=False, sizes=None, base="", thumb=False):
         p_avif, p_webp, _ = _srcsets(name, e, base, True)
         phone = (f'<source type="image/avif" media="(max-width:640px)" srcset="{p_avif}" sizes="{sz}">'
                  f'<source type="image/webp" media="(max-width:640px)" srcset="{p_webp}" sizes="{sz}">')
-    return (f'<picture>{phone}'
+    return (f'<picture>{phone_ad}{phone}'
             f'<source type="image/avif" srcset="{avif}" sizes="{sz}">'
             f'<source type="image/webp" srcset="{webp}" sizes="{sz}">'
             f'<img src="{base}{IMG}{name}" srcset="{jpg}" sizes="{sz}" alt="{alt}"{c}{dims}{load}{ph}>'
             f'</picture>')
 
 
-def hero_preload(name, base="", sizes=SZ_FULL):
+def hero_preload(name, base="", sizes=SZ_FULL, portrait=None):
     """Preload the hero at the width this device will actually use. Browsers
     that cannot decode AVIF ignore a preload of that type and simply fetch
-    the <picture> fallback in the normal flow."""
+    the <picture> fallback in the normal flow. With a portrait photograph for
+    phones, each device preloads only the one it will show."""
     e = _entry(name)
     avif, _, _ = _srcsets(name, e, base, False)
-    return (f'<link rel="preload" as="image" type="image/avif" imagesrcset="{avif}" '
-            f'imagesizes="{sizes}" fetchpriority="high">')
+    if not portrait:
+        return (f'<link rel="preload" as="image" type="image/avif" imagesrcset="{avif}" '
+                f'imagesizes="{sizes}" fetchpriority="high">')
+    p_avif, _, _ = _srcsets(portrait, _entry(portrait), base, False)
+    return (f'<link rel="preload" as="image" type="image/avif" media="(max-width:640px)" '
+            f'imagesrcset="{p_avif}" imagesizes="100vw" fetchpriority="high">\n'
+            f'<link rel="preload" as="image" type="image/avif" media="(min-width:641px)" '
+            f'imagesrcset="{avif}" imagesizes="{sizes}" fetchpriority="high">')
 
 
 def eyebrow(t):
@@ -320,8 +337,9 @@ def lines(text):
         f'<span class="ln" style="--ln:{i}">{p}</span>' for i, p in enumerate(parts))
 
 
-def hero(image, alt, eyeb, h1, sub, ctas="", extra="", short=False, slides=None):
+def hero(image, alt, eyeb, h1, sub, ctas="", extra="", short=False, slides=None, portrait=None):
     """slides: extra (image, alt) pairs that cross-fade behind the headline.
+    portrait: a vertical photograph phones get for the first frame instead.
 
     With JS off the first frame simply stays put, so the hero still reads.
     """
@@ -329,7 +347,7 @@ def hero(image, alt, eyeb, h1, sub, ctas="", extra="", short=False, slides=None)
     frames = [(image, alt)] + list(slides or [])
     stack = "".join(
         f'<div class="hero__frame{" is-on" if i == 0 else ""}">'
-        f'{img(src, a, eager=(i == 0))}</div>'
+        f'{img(src, a, eager=(i == 0), portrait=(portrait if i == 0 else None))}</div>'
         for i, (src, a) in enumerate(frames))
     dots = ""
     if len(frames) > 1:
@@ -711,6 +729,28 @@ def weekend_builder():
         <button type="button" class="btn" data-wk-send>Send this weekend as my inquiry</button>
       </div>
     </div>"""
+
+
+def film(stem, poster, alt, caption="", base=""):
+    """A short film, click to play. Nothing downloads until the tap: the
+    poster is an ordinary <picture> from the derivative set and the <video>
+    is preload="none". HEVC first for Safari and phones (smaller), H.264 for
+    everyone else. stem: assets/video/<stem>-hevc.mp4 and -h264.mp4."""
+    cap = f'<figcaption class="film__cap">{caption}</figcaption>' if caption else ""
+    return f"""<figure class="film" data-film>
+      <div class="film__frame">
+        {img(poster, alt, "film__poster", sizes="(min-width:861px) 360px, 88vw")}
+        <video class="film__video" preload="none" playsinline controls
+               width="1080" height="1920" aria-label="{alt}">
+          <source src="{base}assets/video/{stem}-hevc.mp4" type='video/mp4; codecs="hvc1"'>
+          <source src="{base}assets/video/{stem}-h264.mp4" type='video/mp4; codecs="avc1.640028"'>
+        </video>
+        <button type="button" class="film__play" aria-label="Play the film">
+          <span class="film__ring"><i></i></span><span class="film__lbl">Play &middot; 35 sec</span>
+        </button>
+      </div>
+      {cap}
+    </figure>"""
 
 
 def sectnav(items, base=""):
