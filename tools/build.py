@@ -560,7 +560,7 @@ def page_weddings():
             at Woods Bay when the day is done.</p>
           {plist(["The Overlook &mdash; fifteen acres, pavilion and tent, yours alone",
                   "The Driftwood &mdash; 14,000 sq ft on the lake, private cove and boat slips",
-                  "Fifty-four sleeping across the two",
+                  "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
                   "Helicopter transfer between them, through WestSlope",
                   "Planning support from the first call to the send-off"])}
           {btn("contact.html?type=wedding", "Request the Details", "btn btn--light")}
