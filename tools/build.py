@@ -955,14 +955,13 @@ def page_estate():
          "The two Lakeside tiny homes side by side",
          "A pair of modern tiny homes, each with a full bath, a loft and a view down "
          "toward the water. Popular with couples travelling together."),
-        ("The Summit", "Elevated treehouse", "summit-exterior.jpg",
-         "The Summit treehouse in the canopy",
-         "An elevated treehouse in the canopy, high enough that the lake shows through "
-         "the trunks in the morning."),
-        ("The Ridge", "Treehouse", "ridge-exterior.jpg",
-         "The Ridge treehouse at the edge of the trees",
-         "The second treehouse, set along the ridge line with its own deck and a quiet "
-         "approach through the woods."),
+        # one tab for both, as The Lakeside is for the two tiny homes; the new
+        # photographs are of the treehouses but not labelled by building
+        ("The Treehouses", "The Summit &amp; The Ridge", "treehouse-sunset.jpg",
+         "A treehouse at sunset, the light coming through the pines",
+         "Two treehouses in the canopy. The Summit sits high enough that the lake shows "
+         "through the trunks in the morning; The Ridge is set along the ridge line with "
+         "its own deck and a quiet approach through the woods."),
     ]
     # every photograph we hold of each building, not just the one exterior
     shots = {
@@ -992,8 +991,14 @@ def page_estate():
             ("lakeside-bathroom.jpg", "The bathroom in a Lakeside tiny home"),
             ("lakeside-exterior.jpg", "A Lakeside tiny home from outside"),
         ],
-        "The Summit": [("summit-exterior.jpg", "The Summit treehouse in the canopy")],
-        "The Ridge": [("ridge-exterior.jpg", "The Ridge treehouse at the edge of the trees")],
+        "The Treehouses": [
+            ("treehouse-sunset.jpg", "A treehouse at sunset, the light coming through the pines"),
+            ("treehouse-deck-evening.jpg", "A treehouse on its stilts in evening light"),
+            ("treehouses-among-pines.jpg", "The treehouses among the pines in evening light"),
+            ("treehouse-sauna-evening.jpg", "A treehouse and the cedar barrel sauna at golden hour"),
+            ("summit-exterior.jpg", "The Summit treehouse in the canopy"),
+            ("ridge-exterior.jpg", "The Ridge treehouse at the edge of the trees"),
+        ],
     }
     hhtml = switcher(
         "Where everyone sleeps",
