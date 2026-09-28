@@ -145,7 +145,7 @@ adding one line to that list.
 
 - **Photographer credit.** Confirm who shot the professional sets before publishing
   them anywhere beyond this site.
-- **Sister property name.** The Ultimate (starting at $135,000) Flathead Lake Wedding Weekend
+- **Sister property name.** The Ultimate Flathead Lake Wedding Weekend (starting at $135,000)
   currently says "our sister property" — name it if you want the SEO.
 - **Shoulder-season corporate rates** are deliberately unpublished, per the brief.
   The line reads "available on request" so nothing is overpromised.
