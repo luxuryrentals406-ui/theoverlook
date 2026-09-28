@@ -1,0 +1,31 @@
+# The Overlook inquiry relay. Deploy with wrangler (`wrangler deploy`) or by
+# pasting worker/dist/worker.js into the Cloudflare dashboard — README.md has
+# both routes. Secrets never go in this file.
+name = "overlook-inquire"
+main = "index.js"
+compatibility_date = "2026-09-01"
+
+routes = [
+  { pattern = "theoverlookatflatheadlake.com/api/*", zone_name = "theoverlookatflatheadlake.com" },
+  { pattern = "www.theoverlookatflatheadlake.com/api/*", zone_name = "theoverlookatflatheadlake.com" }
+]
+
+[[kv_namespaces]]
+binding = "INQUIRIES"
+id = "REPLACE_WITH_THE_KV_NAMESPACE_ID"
+
+# Email Routing must be enabled on the zone and MAIL_TO verified as a
+# destination address there before this binding works.
+[[send_email]]
+name = "MAIL"
+destination_address = "theoverlook@luxurylodgingvip.com"
+
+[vars]
+MAIL_TO = "theoverlook@luxurylodgingvip.com"
+MAIL_FROM = "inquiries@theoverlookatflatheadlake.com"
+ALLOWED_ORIGINS = "https://theoverlookatflatheadlake.com,https://www.theoverlookatflatheadlake.com"
+
+# Secrets — set with `wrangler secret put NAME` or in the dashboard:
+#   ZAPIER_HOOK_URL   the Catch Hook URL of the Zap that creates the HoneyBook project
+#   STATS_TOKEN       any long random string; unlocks GET /api/stats?token=
+#   TURNSTILE_SECRET  optional; pairs with shell.TURNSTILE_SITE_KEY in the site

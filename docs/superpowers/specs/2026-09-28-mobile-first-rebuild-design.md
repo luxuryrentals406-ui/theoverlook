@@ -65,15 +65,23 @@ steps sized for one thumb:
 3. **You** — name, email, phone, optional note. Honeypot field + Turnstile.
 
 Submit → `POST /api/inquire` on a Cloudflare Worker (`worker/`), routed on the
-live domain. The Worker: validates, rate-limits per IP (KV), verifies Turnstile,
-creates the HoneyBook contact and project (`createContact`, `createProject` with
-date, guest count, type, and details including the source page), stores a copy
-in KV (90-day TTL; this is the inquiry count and the backup), returns 200.
-Failure or relay down → the sheet shows a prefilled "email us" link and the
-phone number. Nothing is ever lost silently.
+live domain. The Worker: validates, rate-limits per IP (KV), verifies Turnstile
+when enabled, stores a copy in KV (90-day TTL; this is the inquiry count and
+the backup), then delivers the lead two ways — a Zapier catch hook whose next
+step is HoneyBook **Create Project** (HoneyBook has no public API; its Zapier
+integration is the supported way in, and the free Zapier plan covers the
+volume), and an email to the inbox through Cloudflare Email Routing. 200 once
+either delivery succeeded; otherwise 502, and the sheet shows a prefilled
+"email us" link and the phone number. Nothing is ever lost silently.
 
-Secrets (Cloudflare, never in the repo): `HONEYBOOK_API_KEY`, `TURNSTILE_SECRET`.
-The site works without the Worker: the fallback is the current HoneyBook link.
+*Correction, 2026-09-28:* the design first assumed a direct HoneyBook API.
+The "SDK" seen in this session is HoneyBook's connector for Claude, not a
+public API, so the relay uses Zapier's official integration instead. Same
+outcome for Eric — the lead lands in his HoneyBook pipeline — at $0.
+
+Secrets (Cloudflare, never in the repo): `ZAPIER_HOOK_URL`, `STATS_TOKEN`,
+optionally `TURNSTILE_SECRET`. The site works without the Worker: the fallback
+is the prefilled email, and with JS off the HoneyBook public form.
 
 ### Analytics and privacy
 Cloudflare Web Analytics beacon (cookieless, no consent banner). Conversion is
@@ -125,6 +133,7 @@ Only pieces that move someone toward an inquiry:
 
 Branch `mobile-first-rebuild` off `main`. One PR per phase; Render deploys on
 merge. Phase 1 needs nothing from Eric to build. To switch the relay on he
-provides a HoneyBook API key and signs in to Cloudflare (`wrangler login`) once;
-until then the form falls back to the existing HoneyBook link, so shipping
-Phase 1 early is safe.
+(or Claude, with his Cloudflare and Zapier access) follows `worker/README.md`:
+one Zap (Catch Hook → HoneyBook Create Project) and one Worker pasted into the
+Cloudflare dashboard with its KV, route and secrets. Until then the sheet
+falls back to a prefilled email, so shipping Phase 1 early is safe.
