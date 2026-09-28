@@ -96,16 +96,15 @@ FAQ_WEDDINGS = [
      "sleep on the property across the five accommodations &mdash; usually the couple "
      "and their closest family and wedding party.</p>"),
     ("What does a booking include?",
-     "<p>Pricing depends on the dates and the shape of the weekend, so we quote it "
-     "directly rather than publish a number. A booking covers exclusive use of the "
+     "<p>The Overlook Wedding starts at $20,000. A booking covers exclusive use of the "
      "grounds, the "
      "pavilion and tent, the built-in bar, onsite tables and chairs, four head "
      "tables, "
      "the fire pit, parking for 75 cars and your onsite venue coordinator. "
      "<a href='#included'>See the full list of what is included.</a></p>"),
     ("Is lodging included or separate?",
-     "<p>Lodging is booked separately from the venue fee, which keeps the starting "
-     "price honest for couples whose guests are staying in Whitefish or Kalispell. "
+     "<p>Separate. Lodging is booked apart from the venue fee, so you only take the "
+     "houses you need. "
      "<a href='estate.html'>See the five accommodations.</a></p>"),
     ("What is the payment schedule?",
      "<p>50% at signing, 25% at 120 days out, and the final 25% at 60 days out. A "
@@ -126,9 +125,8 @@ FAQ_RETREATS = [
      "and how they travel. Tell us your headcount and we will come back with a "
      "specific plan for the property.</p>"),
     ("Can we host a full-day working session?",
-     "<p>Yes. The pavilion and grounds are designed to flex between general session, "
-     "breakouts, and dining or social use across the same day without a reset that "
-     "pushes your group outside.</p>"),
+     "<p>Yes. The pavilion holds the whole group for working sessions, and the main "
+     "house and the grounds give you room for breakouts and meals.</p>"),
     ("Do you offer team experiences or local activities?",
      "<p>Helicopter arrivals and private lake flights are available through WestSlope "
      "Helicopters, along with access to Flathead Lake recreation and Glacier National "
@@ -140,14 +138,14 @@ FAQ_RETREATS = [
      f"{WHITEFISH['time']} away, and {GLACIER['entrance']}, the west entrance to "
      f"{GLACIER['name']}, {GLACIER['time']}.</p>"),
     ("How do we get a custom proposal?",
-     "<p>Send your dates, your group size and what the gathering needs to accomplish. "
-     "You will get a tailored proposal rather than a rate sheet.</p>"),
+     "<p>Send your dates, your group size and what the gathering needs to accomplish, "
+     "and we will send you a written proposal.</p>"),
 ]
 
 FAQ_WELLNESS = [
     ("Can we bring our own instructors and practitioners?",
-     "<p>Yes, and most groups do. If you would rather not, tell us what the week "
-     "needs and we will look for it in the valley.</p>"),
+     "<p>Yes. Or tell us what the week needs and we will look for the right people "
+     "in the valley.</p>"),
     ("How many people can a retreat be?",
      "<p>28 stay on the property across the five accommodations. The pavilion holds "
      "far more than that for daytime sessions if part of your group is coming in "
@@ -156,13 +154,11 @@ FAQ_WELLNESS = [
      "<p>Yes. One group is on the estate at a time, for the length of the booking. "
      "There is no other party on the far lawn and nobody crossing to a pool.</p>"),
     ("Can you handle specific diets?",
-     "<p>A private chef is the simplest route &mdash; they cook for your group "
-     "alone, so a menu built around whatever the week requires is normal rather "
-     "than an accommodation.</p>"),
+     "<p>Yes. A private chef cooks for your group alone, so the menu can be built "
+     "around whatever the week requires.</p>"),
     ("What time of year works?",
-     "<p>Summer is the obvious answer, but the tent encloses fully with sides and "
-     "every building is heated, so spring and autumn work. Ask us about "
-     "shoulder-season dates.</p>"),
+     "<p>Summer is the easiest. The tent closes fully with sides, so spring and "
+     "autumn work too. Ask us about shoulder-season dates.</p>"),
 ]
 
 FAQ_AREA = [
@@ -193,15 +189,15 @@ FAQ_MTVENUES = [
      "Up to 200 guests for the celebration. Separately, 28 people sleep on the "
      "property across five accommodations."),
     ("Is lodging included in the venue fee?",
-     "No. Lodging is booked separately from the venue fee, which keeps the starting "
-     "figure honest for couples whose guests stay in Whitefish or Kalispell."),
+     "No. Lodging is booked separately from the venue fee, so you only take the "
+     "houses you need."),
     ("What should I ask a Montana venue before booking?",
      "Whether power and water are permanently installed or brought in, how far vendors "
      "load in, how many cars park on site, when the noise cutoff falls, what is already "
      "standing, and whether another event shares the property that weekend."),
     ("How far ahead do Montana venues book?",
-     "Most dates here book a year or more out. Send the weekend you have in mind and we "
-     "will tell you honestly whether it is open."),
+     "Summer Saturdays go first, so if you have one in mind, ask early. Send the "
+     "weekend and we will tell you whether it is open."),
     ("Is pricing published?",
      "Two starting figures are published: The Overlook Wedding starts at $20,000, and "
      "the Ultimate Flathead Lake Wedding Weekend, which adds The Driftwood, starts at "
@@ -342,7 +338,7 @@ def page_home():
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.8rem)">
         {eyebrow("From our guests")}
-        <h2 style="max-width:16ch">What people say once they have been here</h2>
+        <h2 style="max-width:16ch">What our guests say</h2>
       </div>
       <div class="quotes quotes--3">
         {quote(*R_OLIVIA)}
@@ -355,7 +351,7 @@ def page_home():
   {band("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate",
         "Tell us your dates",
         "We take a limited number of weekends each season. Send us the one you have in "
-        "mind and we will tell you honestly whether it is open.",
+        "mind and we will tell you whether it is open.",
         btn("contact.html", "Start Your Inquiry", "btn btn--light btn--lg"))}
 """
 
@@ -408,15 +404,13 @@ def page_weddings():
         ("Bar", "Built or rented, then staffed and stocked.",
          "Built-in bar, in place and ready to run."),
         ("Tables &amp; chairs", "Ordered, delivered and collected.",
-         "On property, with setup handled by the venue team."),
+         "On the property."),
         ("Head tables", "Part of the same rental order.",
          "Four head tables included."),
         ("Guest parking", "Arranged on site, or a shuttle from town.",
          "Parking for 75 cars on site."),
         ("Vendor access", "Depends on where a truck can reach.",
          "Load-in within 50 feet of the venue."),
-        ("Setup", "Planned and built for the day, then taken down.",
-         "Permanent, so the planning is about the wedding."),
         ("Where guests stay", "In town, travelling in each morning.",
          "Up to 28 people sleep on the property and walk to breakfast."),
     ]
@@ -428,29 +422,29 @@ def page_weddings():
 
     spots = [
         (15, 54, "Arrival",
-         "They come down the drive",
-         "Guests park on the property &mdash; 75 cars, no shuttle contract, no field. "
-         "The approach is the first thing they see, and it is already the lake.",
+         "Guests park on the property",
+         "There is room for 75 cars on site, and the lake is in view from the "
+         "moment guests arrive.",
          "venue-overview.jpg", "The estate grounds and tent from the lawn"),
         (52, 17, "Ceremony",
-         "The lawn faces west",
-         "Chairs set on the grass above the water, with the tree line on both sides. "
-         "Late afternoon puts the sun behind the officiant, not in your guests&rsquo; eyes.",
+         "The lawn faces the lake",
+         "Chairs sit on the grass above the water, with trees on both sides. In the "
+         "late afternoon the sun is behind your guests, not in their eyes.",
          "ceremony-aisle-view.jpg", "The aisle looking toward the water"),
         (55, 39, "The walk down",
-         "Stone steps, not a shuttle",
-         "Ceremony and reception are a short walk apart on the same hillside. Nobody "
-         "gets in a car, and the gap between the two is about the length of a drink.",
+         "A short walk down",
+         "Ceremony and reception are a few minutes apart on foot, on the same "
+         "hillside. Nobody needs a car between them.",
          "ceremony-tent-wide.jpg", "Ceremony seating with the tent below"),
         (84, 40, "Cocktails",
-         "The grounds hold the hour",
-         "The built-in bar runs while the tent is turned over. Guests spread onto the "
-         "gravel and lawn instead of queuing in a corridor.",
+         "Drinks on the grounds",
+         "The built-in bar opens after the ceremony, and guests spread out across "
+         "the lawn.",
          "bar-cheers-setup.jpg", "The built-in bar set for service"),
         (52, 68, "Reception",
          "Dinner under the tent",
-         "Forty by eighty feet, clear-top or white-top with full sides. Round tables, "
-         "four head tables and chairs, set before you arrive.",
+         "A 40 by 80 ft tent, clear-top or white-top with full sides. Tables, chairs "
+         "and four head tables are already on the property.",
          "reception-tent-full.jpg", "The reception tent set for dinner"),
     ]
 
@@ -473,16 +467,12 @@ def page_weddings():
     <div class="wrap">
       {split(img("wedding-couple-arch.jpg", "A couple beneath the ceremony arch", "", ) ,
         f'''{eyebrow("Your wedding weekend")}
-        <h2>The property empties out for you</h2>
+        <h2>The whole property is yours</h2>
         <p class="lede" style="margin:1.4rem 0">For the length of your booking the
-          estate is closed to everyone but your people &mdash; one wedding on the
-          property, and no one crossing the lawn who was not invited.</p>
-        <p>That changes the shape of the day. Your ceremony happens on the lawn above
-          the water. Cocktail hour moves to the grounds. Dinner and dancing take the
-          pavilion and tent. Guests travel through the evening instead of sitting in one
-          room watching it get flipped around them.</p>
-        <p>The end time is whatever your contract says it is, agreed with you when you
-          book rather than handed to you on the day.</p>''',
+          estate is closed to everyone but your guests. One wedding, and no other
+          events on the property.</p>
+        <p>The ceremony is on the lawn above the water. Cocktail hour is on the
+          grounds. Dinner and dancing are in the pavilion and tent.</p>''',
         wide=True)}
     </div>
   </section>
@@ -492,9 +482,9 @@ def page_weddings():
       {vmap("wedding-aerial-tent.jpg",
             "Overhead view of the ceremony lawn and reception tent",
             "How the evening moves",
-            "Fifteen acres of it, in order",
-            "The evening moves through the property rather than staying in one room. "
-            "Select a marker to see where each part of it happens.",
+            "From the ceremony to the last dance",
+            "Each part of the evening has its own place on the property. Select a "
+            "marker to see where.",
             spots)}
     </div>
   </section>
@@ -503,9 +493,9 @@ def page_weddings():
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:52ch">
         {eyebrow("What&rsquo;s included")}
-        <h2>Already standing when you arrive</h2>
-        <p class="lede" style="margin-top:1.4rem">Nothing on this list is rented in for
-          the weekend, quoted separately or struck on Sunday. It is the property.</p>
+        <h2>What comes with the venue</h2>
+        <p class="lede" style="margin-top:1.4rem">The pavilion, tent, power and bar are
+          permanent. They are here when you arrive, not delivered for the weekend.</p>
       </div>
       {spec(included)}
     </div>
@@ -516,9 +506,8 @@ def page_weddings():
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:58ch">
         {eyebrow("Why The Overlook")}
         <h2>What is already here</h2>
-        <p class="lede" style="margin-top:1.4rem">Most of a wedding is infrastructure. At
-          an open site it arrives for the weekend and leaves again; here it is permanent.
-          The same wedding, line by line.</p>
+        <p class="lede" style="margin-top:1.4rem">Much of what a wedding needs usually
+          has to be rented and delivered. Here it is already in place.</p>
       </div>
       <div class="tbl-scroll rv">
         <table class="tbl">
@@ -555,9 +544,9 @@ def page_weddings():
           <h3>The Ultimate Flathead Lake Wedding Weekend</h3>
           <p class="pkg__price"><small>Five nights, two estates &middot; starting at</small>$135,000</p>
           <p style="color:#CFCabd;margin-bottom:1.6rem">Two estates, one group, five
-            nights. The wedding itself at The Overlook, and
-            <b style="font-weight:400;color:#fff">The Driftwood</b> waiting on the water
-            at Woods Bay when the day is done.</p>
+            nights. The wedding is at The Overlook, and
+            <b style="font-weight:400;color:#fff">The Driftwood</b>, on the water at
+            Woods Bay, gives more of your guests a place to stay.</p>
           {plist(["The Overlook &mdash; fifteen acres, pavilion and tent, yours alone",
                   "The Driftwood &mdash; 14,000 sq ft on the lake, private cove and boat slips",
                   "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
@@ -573,13 +562,12 @@ def page_weddings():
     <div class="wrap">
       {split(img("swan-exterior.jpg", "The Swan main house at dusk"),
         f'''{eyebrow("Onsite lodging")}
-        <h2>Nobody drives home</h2>
+        <h2>Stay on the property</h2>
         <p class="lede" style="margin:1.4rem 0">Five accommodations sit on the same
-          fifteen acres as the ceremony lawn &mdash; a four-bedroom main house, a
-          cabin, two tiny homes and two treehouses. Twenty-eight people wake up where
-          the night ended.</p>
-        <p>Getting ready happens on site. So does the morning after. Lodging is quoted
-          separately from the venue fee.</p>
+          fifteen acres as the ceremony lawn: a four-bedroom main house, a cabin, a
+          pair of tiny homes and two treehouses. Together they sleep 28.</p>
+        <p>Getting ready happens here, and so does breakfast the next morning. Lodging
+          is quoted separately from the venue fee.</p>
         <div style="margin-top:2rem">{tlink("estate.html", "See all five")}</div>''',
         flip=True)}
     </div>
@@ -653,17 +641,15 @@ def page_retreats():
          "pavilion, all five houses, the pool, the sauna, the trails and the fire pit. "
          "For the length of your booking it belongs to you."),
         ("Everyone stays where you meet",
-         "Your team works, eats and stays in the same place, so the conversation does "
-         "not end when the session does &mdash; it carries from the pavilion to the fire "
-         "pit to the kitchen island, without anyone getting in a car."),
-        ("A destination, not a conference room",
+         "Your team works, eats and stays in the same place. The conversation carries "
+         "from the pavilion to dinner to the fire pit, and nobody has to drive "
+         "anywhere."),
+        ("A place people want to travel to",
          f"Flathead Lake is out the window. {WHITEFISH['name']} is "
-         f"{WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}. For a "
-         f"distributed team, that is a reason to actually get on the plane."),
-        ("Built to function as a venue",
-         "This is not a large rental that has to be built out for the week. The "
-         "gathering space, the power, the connectivity and the grounds are permanent "
-         "infrastructure."),
+         f"{WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}."),
+        ("Built as a venue",
+         "The meeting space, the power, the internet and the grounds are permanent, "
+         "so nothing has to be brought in for your week."),
     ]
     whyhtml = "".join(
         f'<div class="rv"><h3>{t}</h3><p style="color:var(--ink-soft);margin-top:.9rem">{d}</p></div>'
@@ -673,16 +659,16 @@ def page_retreats():
         ("The Pavilion", "hero-pavilion-lake.jpg", "The pavilion looking out over Flathead Lake",
          "3,200 sq ft with panoramic lake views and dimmable lighting, adaptable from a "
          "full-group general session to a seated dinner. The tent runs clear-top or "
-         "fully enclosed white-top with sides, which makes shoulder-season use viable."),
+         "fully enclosed white-top with sides, so spring and fall work too."),
         ("The Main House &mdash; The Swan", "swan-game-room.jpg", "The game room in the Swan",
          "Three levels with a gourmet kitchen, a full bar, a game room and lake-view "
-         "balconies &mdash; where breakout groups end up without being told to."),
+         "balconies. It works well for breakout groups and evenings."),
         ("The Grounds", "pool-wide.jpg", "The heated pool and cabana above the lake",
          "Heated pool and cabana, hot tub, barrel sauna, fitness room, fire pit, putting "
          "green, lawn games and walking trails for the hours between sessions."),
         ("Connectivity", "swan-kitchen-new.jpg", "The kitchen in the Swan",
-         "Starlink is installed in all five houses and at the venue itself, so a "
-         "remote-first team is not hunting for signal between calls."),
+         "Starlink is installed in all five houses and at the venue, so people can "
+         "stay on calls and keep working."),
     ]
     spacehtml = ""
     for i, (t, im, alt, d) in enumerate(space):
@@ -693,11 +679,11 @@ def page_retreats():
 
     formats = [
         ("Leadership / Executive Retreat", "Multi-night &middot; full estate",
-         "The whole group stays on property. This is the best fit for the estate and "
-         "the most common booking we take."),
+         "The whole group stays on the property. This is what the estate suits "
+         "best."),
         ("Board or Strategy Retreat", "Two to three nights &middot; full estate",
-         "Built around privacy and focus, with the pavilion held for working sessions "
-         "and the houses absorbing everything else."),
+         "A smaller group, with the pavilion held for working sessions and the houses "
+         "for everything else."),
         ("Company Gathering or Kickoff", "Up to 200 guests &middot; single event day",
          "The pavilion and grounds scale to a full company day, with your core team on "
          "site and additional attendees housed in Whitefish or Kalispell."),
@@ -712,7 +698,7 @@ def page_retreats():
         "Private equity, venture capital and wealth management firms hosting partner or LP retreats",
         "Sales organisations running kickoffs or President&rsquo;s Club incentive trips",
         "Professional-services and agency leadership teams",
-        "Any team combining real strategic work with an actual change of scenery",
+        "Any team that wants to get real work done somewhere new",
     ]
 
     faqs = FAQ_RETREATS
@@ -732,7 +718,7 @@ def page_retreats():
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.8rem,6vw,4.5rem);max-width:54ch">
         {eyebrow("Why teams choose the Overlook")}
-        <h2>Privacy first, everything else after</h2>
+        <h2>The whole estate, for your team only</h2>
       </div>
       <div class="cards cards--2" style="gap:clamp(2.2rem,4vw,3.5rem)">{whyhtml}</div>
     </div>
@@ -771,7 +757,7 @@ def page_retreats():
     <div class="wrap">
       {split(img("lounge-interior.jpg", "Lounge seating inside the pavilion"),
         f'''{eyebrow("Who it is for")}
-        <h2>Teams that book it</h2>
+        <h2>Who it suits</h2>
         <div style="margin-top:1.8rem">{plist(who)}</div>''')}
     </div>
   </section>
@@ -780,10 +766,10 @@ def page_retreats():
     <div class="wrap">
       {split(img("heli-new.jpg", "A helicopter over the Flathead valley"),
         f'''{eyebrow("Getting here")}
-        <h2>Fly in and be working by afternoon</h2>
+        <h2>Easy to reach</h2>
         <p class="lede" style="margin:1.4rem 0">{FCA["short_name"]} is {FCA["time"]}
-          from the gate. A team on a morning flight is in the pavilion after
-          lunch.</p>
+          away by car. A team on a morning flight can be working by the
+          afternoon.</p>
         <p>{GLACIER["entrance"]}, the west entrance to {GLACIER["name"]}, is
           {GLACIER["time"]} out for groups extending the trip, and helicopter arrivals
           are available through WestSlope Helicopters.</p>''',
@@ -816,9 +802,9 @@ def page_retreats():
         <div class="split__body rv">
           {eyebrow("Also here")}
           <h2>Wellness retreats</h2>
-          <p class="lede" style="margin-top:1.3rem">The same estate takes yoga,
-            movement and recovery weeks &mdash; the pavilion as a floor that stays set,
-            a sauna and hot tub a few steps from it, and nobody else on the property.</p>
+          <p class="lede" style="margin-top:1.3rem">The estate also hosts yoga,
+            movement and recovery retreats, with the pavilion as open floor space, a
+            sauna and hot tub nearby, and nobody else on the property.</p>
           {tlink("wellness.html", "See wellness retreats")}
         </div>
       </div>
@@ -828,9 +814,8 @@ def page_retreats():
   {experiences(
       "Food and time off the clock",
       "Private chefs, catering and what the group does after",
-      "Teams eat together here rather than scattering to restaurants. Tell us how you "
-      "want the days fed and what you want the group doing between sessions, and we "
-      "will put the people in place.",
+      "Tell us how you want the group fed and what you want to do between sessions, "
+      "and we will help you arrange it.",
       [("swan-kitchen-new.jpg", "The kitchen in the Swan",
         "Private chefs",
         "A private chef can cook for the group in the Swan&rsquo;s kitchen &mdash; one "
@@ -841,12 +826,11 @@ def page_retreats():
         "keep working relationships with Flathead Valley caterers and can introduce you."),
        ("grazing-table-spread.jpg", "A grazing table laid out for guests",
         "Grazing tables and the bar",
-        "Grazing tables, working lunches that do not stop the day, and the built-in "
-        "bar, already in place and ready to run."),
+        "Grazing tables, working lunches, and the built-in bar for the evenings."),
        ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate",
         "On the lake",
         "Flathead Lake is minutes down the hill, with boating, swimming and sunset "
-        "cruises when the group needs to be somewhere other than the pavilion."),
+        "cruises."),
        ("heli-new.jpg", "A helicopter over the Flathead valley",
         "Helicopter arrivals",
         "Helicopter arrivals and private lake flights are available through WestSlope "
@@ -895,25 +879,23 @@ def page_estate():
         ("The Swan", "Main house &middot; sleeps 14", "swan-exterior.jpg",
          "The Swan main house exterior",
          "Four bedrooms and four baths across three levels, with a gourmet kitchen, a "
-         "full bar, a game room and balconies facing the water. It is the anchor of the "
-         "property and where a group naturally collects."),
+         "full bar, a game room and balconies facing the water. It is the largest house "
+         "on the property, and where groups tend to gather."),
         ("The Glacier", "Modern cabin", "glacier-exterior.jpg",
          "The Glacier cabin among the trees",
          "A two-storey cabin in dark board-and-batten under a single sloping roof, with "
-         "a sleeping loft and a private patio, set back far enough from the main house "
-         "to feel like its own address."),
+         "a sleeping loft and a private patio, set back from the main house for some "
+         "privacy."),
         ("The Lakeside", "Two modern tiny homes", "lakeside-both-homes.jpg",
          "The two Lakeside tiny homes side by side",
          "A pair of modern tiny homes, each with a full bath, a loft and a view down "
-         "toward the water. Popular with couples travelling together."),
+         "toward the water."),
         ("The Summit", "Elevated treehouse", "summit-exterior.jpg",
          "The Summit treehouse in the canopy",
-         "An elevated treehouse in the canopy, high enough that the lake shows through "
-         "the trunks in the morning."),
+         "The first of two treehouses, raised up among the trees."),
         ("The Ridge", "Treehouse", "ridge-exterior.jpg",
          "The Ridge treehouse at the edge of the trees",
-         "The second treehouse, set along the ridge line with its own deck and a quiet "
-         "approach through the woods."),
+         "The second treehouse, set along the ridge line with its own deck."),
     ]
     # every photograph we hold of each building, not just the one exterior
     shots = {
@@ -971,15 +953,14 @@ def page_estate():
     return f"""
 {hero("lakeside-both-homes.jpg", "Two of the estate's accommodations at golden hour",
       "The Estate", "Five places to sleep,<br>fifteen acres to use",
-      "The accommodation and grounds detail behind every wedding and every retreat "
-      "booked here.", short=True)}
+      "Where your group sleeps, and what is on the grounds.", short=True)}
 
   <section class="sect">
     <div class="wrap wrap--narrow center rv">
       <h2>Twenty-eight people, one property</h2>
       <p class="lede" style="margin-top:1.4rem">The estate sleeps 28 across five separate
-        accommodations. Everything below is on the same fifteen acres &mdash; nobody is
-        driving between locations.</p>
+        accommodations, all on the same fifteen acres. Nobody has to drive between
+        them.</p>
     </div>
   </section>
 
@@ -1009,8 +990,8 @@ def page_estate():
 
   {band("lake-sunset-boat.jpg", "The lake at sunset from the estate",
         "See it for yourself",
-        "Photographs only go so far. Tell us your dates and we will walk you through the "
-        "property and what it would look like for your group.",
+        "Tell us your dates and we will walk you through the property and how it "
+        "would work for your group.",
         btn("contact.html", "Start Your Inquiry", "btn btn--light btn--lg"))}
 """
 
@@ -1116,8 +1097,8 @@ def page_gallery():
 
   {band("venue-wide.jpg", "Wide view of the estate grounds",
         "Come see the rest",
-        "Photographs miss the scale of the place. Tell us your dates and we will show "
-        "you the property properly.",
+        "Photos only show so much. Tell us your dates and we will show you around "
+        "in person.",
         btn("contact.html", "Start Your Inquiry", "btn btn--light btn--lg"))}
 """
 
@@ -1126,26 +1107,20 @@ def page_gallery():
 def page_story():
     return f"""
 {hero("owners-photo.jpg", "Claudia and Eric on the estate", "Our Story",
-      "Claudia &amp; Eric", "The two people who built the place, and the reason it is "
-      "run the way it is.", short=True)}
+      "Claudia &amp; Eric", "The owners, and how the venue came to be.", short=True)}
 
   <section class="sect">
     <div class="wrap wrap--narrow rv">
       <p class="lede">We started with rental houses. In 2021 we began hosting guests on
-        Flathead Lake as Flathead Lake Luxury Lodging, and for four years we learned the
-        thing you only learn by doing it &mdash; what a group actually needs when they
-        take over a property for a weekend.</p>
-      <p style="margin-top:1.6rem">The pattern repeated. Guests booked a house for a
-        celebration and then spent the planning months stitching together a venue
-        somewhere else: a tent from one vendor, generators from another, a bar built on
-        site, lighting hung the morning of, and a hard cutoff at ten because of an
-        ordinance nobody mentioned until late.</p>
-      <p>So in 2025 we built the venue those weekends kept asking for. The pavilion, the
-        tent, the power, the bar, the lighting, the parking &mdash; permanent, on the
-        same fifteen acres as the houses, so that the celebration and the place everyone
-        sleeps are finally in the same place.</p>
-      <p>We keep the calendar deliberately short. One group at a time is not a marketing
-        position; it is the only way the property works.</p>
+        Flathead Lake as Flathead Lake Luxury Lodging, and over four years we learned
+        what a group needs when they take over a property for a weekend.</p>
+      <p style="margin-top:1.6rem">Guests kept booking our houses for weddings and
+        family celebrations, then renting a tent, power and a bar from separate
+        vendors to hold the event somewhere else.</p>
+      <p>So in 2025 we built the venue on the same fifteen acres as the houses: the
+        pavilion, the tent, permanent power, the bar and parking. Now the celebration
+        and the place everyone sleeps are in the same spot.</p>
+      <p>We book one group at a time, so the whole property is always yours.</p>
     </div>
   </section>
 
@@ -1164,12 +1139,11 @@ def page_story():
     <div class="wrap">
       {split(img("vendor-appreciation-wall.jpg", "The vendor appreciation wall on the estate"),
         '''<h2>The people we work with</h2>
-        <p class="lede" style="margin:1.4rem 0">A venue is only as good as the planners,
-          caterers, florists and photographers who work it. We keep real relationships
-          with a short list of Flathead Valley vendors who know the property, and
-          several extend a partner discount to our couples.</p>
-        <p>You are never required to book from that list. It exists because it saves
-          people time, not because it earns us a commission.</p>''',
+        <p class="lede" style="margin:1.4rem 0">We work with a short list of Flathead
+          Valley planners, caterers, florists and photographers who know the property,
+          and several offer a partner discount to our couples.</p>
+        <p>You are never required to book from that list. It is there to save you
+          time.</p>''',
         flip=True)}
     </div>
   </section>
@@ -1281,31 +1255,29 @@ def page_wellness():
     cards = [
         ("hero-pavilion-lake.jpg", "The empty pavilion looking out over Flathead Lake",
          "Room to move",
-         "The pavilion is 3,200 sq ft under cover with the lake in front of it &mdash; "
-         "clear floor for mats, and nobody needs to reset it between sessions. It runs "
-         "clear-top or fully enclosed with sides, which makes shoulder season workable."),
+         "The pavilion is 3,200 sq ft under cover, facing the lake, with open floor "
+         "for mats. You can leave it set up all week. The tent also closes fully with "
+         "sides for cooler months."),
         ("barrel-sauna.jpg", "The cedar barrel sauna",
          "Heat and cold",
-         "A cedar barrel sauna, a hot tub and a heated pool within a few steps of each "
-         "other, so contrast work does not mean going anywhere or booking a slot."),
+         "A cedar barrel sauna, a hot tub and a heated pool, a few steps from each "
+         "other and yours whenever you want them."),
         ("pool-house-gym.jpg", "The fitness room in the pool house",
          "The fitness room",
-         "Equipment in the pool house with the water through the glass. Open at five in "
-         "the morning if that is when your group trains, because your group is the only "
-         "one here."),
+         "A fitness room in the pool house, open whenever your group wants to "
+         "train."),
         ("venue-overview.jpg", "The estate grounds from above",
          "Fifteen acres to walk",
-         "Trails across the property for a morning walk or a long silence, and Flathead "
-         "Lake minutes down the hill when the week calls for water."),
+         "Walking trails across the property, and Flathead Lake a few minutes down "
+         "the hill."),
         ("swan-kitchen-new.jpg", "The kitchen in the Swan",
          "Food that fits the week",
-         "A private chef can cook to whatever the retreat calls for &mdash; plant-based, "
-         "protein-forward, or simply early. Caterers can take the whole stay instead."),
+         "A private chef can cook to your group&rsquo;s needs, whether that is "
+         "plant-based, high-protein or an early breakfast. Caterers can cover the whole "
+         "stay instead."),
         ("pool-loungers.jpg", "Loungers along the pool deck",
-         "Nowhere to be",
-         "No lobby to cross, no other guests, no schedule but yours. Most of what a "
-         "retreat is trying to buy is the absence of other people, and that is the "
-         "part we can actually guarantee."),
+         "Just your group",
+         "No other guests and no front desk. You set the schedule."),
     ]
     chtml = "".join(
         f'<div class="exp__card"><div class="exp__img">{img(f, a)}</div>'
@@ -1316,7 +1288,7 @@ def page_wellness():
             "<b>3,200 sq ft</b> pavilion, clear floor, lake views",
             "<b>40 &times; 80 ft</b> tent &mdash; clear-top or enclosed with sides",
             "Fitness room in the pool house",
-            "Fire pit and covered terraces",
+            "Fire pit",
         ]),
         ("Water and heat", [
             "Heated pool",
@@ -1344,9 +1316,9 @@ def page_wellness():
 {hero("pool-wide.jpg",
       "The heated pool and terrace above Flathead Lake",
       "Wellness Retreats",
-      "A quiet estate<br>for the work of resting",
-      "Fifteen private acres above Flathead Lake, closed to everyone but your group "
-      "&mdash; for yoga, movement, recovery and the retreats people actually remember.",
+      "A private estate<br>for wellness retreats",
+      "Fifteen private acres above Flathead Lake, closed to everyone but your group. "
+      "For yoga, movement and recovery retreats.",
       btn("contact.html?type=wellness", "Check Availability", "btn btn--light btn--lg")
       + btn("#what", "What Is Here", "btn btn--outline-light btn--lg"),
       slides=[("pool-hottub-wide.jpg", "The pool and hot tub on the terrace"),
@@ -1356,14 +1328,13 @@ def page_wellness():
     <div class="wrap">
       <div class="rv" style="max-width:56ch">
         {eyebrow("Why here")}
-        <h2>The hard part is already solved</h2>
-        <p class="lede" style="margin-top:1.4rem">A retreat needs a room that can be
-          held all week, water and heat within walking distance, food that bends to the
-          programme, and no strangers. Most places give you two of those.</p>
-        <p style="color:var(--ink-soft);max-width:62ch">The estate is booked one group
-          at a time, so the pavilion stays set, the sauna is yours at six in the
-          morning, and nobody has to explain to a front desk why twenty people are
-          barefoot on the lawn.</p>
+        <h2>What a retreat needs, in one place</h2>
+        <p class="lede" style="margin-top:1.4rem">A room you can keep set up all week,
+          a sauna, hot tub and pool close by, food cooked for your group, and no other
+          guests.</p>
+        <p style="color:var(--ink-soft);max-width:62ch">We book one group at a time,
+          so the pavilion, the sauna and the grounds are yours for the whole
+          stay.</p>
       </div>
     </div>
   </section>
@@ -1372,7 +1343,7 @@ def page_wellness():
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:52ch">
         {eyebrow("What is here")}
-        <h2>A property that already works for this</h2>
+        <h2>What is on the property</h2>
       </div>
       <div class="exp rv rv--stagger">{chtml}</div>
     </div>
@@ -1435,7 +1406,7 @@ def page_wellness():
 
   {band("hottub-views.jpg", "The hot tub looking out over the valley",
         "Tell us what the week is for",
-        "Send the dates and the shape of the retreat and we will tell you honestly "
+        "Send the dates and the shape of the retreat and we will tell you "
         "whether the estate is open and whether it suits.",
         btn("contact.html?type=wellness", "Check Availability", "btn btn--light btn--lg"))}
 """
@@ -1610,8 +1581,8 @@ def page_terms(base):
           "exclusively through private inquiry. All bookings are subject to "
           "availability and require a signed rental agreement.</p>",
           ilist(["All venue rental inquiries are subject to review and approval",
-                 "Pricing and availability are shared privately after initial "
-                 "consultation",
+                 "Starting prices are published on this site; a full quote is "
+                 "shared after an initial conversation",
                  "A signed contract and deposit are required to confirm any booking",
                  "Cancellation policies are outlined in the rental agreement"])]),
         ("User Conduct",
@@ -1695,78 +1666,56 @@ def related(base, slugs):
 
 def body_buyout(base):
     return art_body([
-        para("Most couples begin their venue search with a familiar mental picture: a "
-             "beautiful room, a set block of hours, a hard stop at the end of the "
-             "night. An estate buyout works differently. Instead of renting a space "
-             "inside someone else&rsquo;s schedule, you take the whole property "
-             "&mdash; every acre, every building, every quiet corner &mdash; and the "
-             "celebration unfolds at your pace."),
-        para("Here&rsquo;s what that actually means at The Overlook, and how it "
-             "compares to the traditional venue model."),
+        para("Most wedding venues rent you a space for a set block of hours. An "
+             "estate buyout works differently: you book the whole property, every "
+             "building and every acre, for the length of your stay."),
+        para("Here is what that means at The Overlook, and how it compares to a "
+             "traditional venue rental."),
         h2("The whole property, only yours"),
         para("The Overlook sits on 15 private acres above Flathead Lake. When you "
-             "book, that acreage isn&rsquo;t shared with another party, another "
-             "ceremony running an hour behind, or a lobby full of strangers passing "
-             "through your cocktail hour. There is no second event on the other side "
-             "of a folding wall. The gate closes behind your people and the estate is "
-             "simply yours."),
-        para("That privacy changes the texture of the day more than couples expect. "
-             "Getting ready happens in a bedroom rather than a rented suite. First "
-             "looks happen wherever the light is best. Nobody is managing the awkward "
-             "overlap of two weddings sharing one parking lot."),
+             "book, the property is not shared with any other party or event. It is "
+             "yours for the length of your stay."),
+        para("That makes the day simpler. Getting ready happens in one of the houses "
+             "on site. First looks can happen wherever the light is best. There is no "
+             "other wedding sharing the parking or the grounds."),
         h2("Your closest people sleep where the wedding happens"),
         # CORRECTED: the live article listed three kinds of accommodation and
         # left out the cabin. The count is phrased exactly as weddings.html
         # phrases it, so a reader moving between the two pages is never asked to
         # reconcile five names against six buildings.
-        para("The single biggest difference between a buyout and a banquet-hall "
-             "rental is lodging. The estate sleeps up to 28 guests onsite &mdash; a "
-             "four-bedroom main house, a cabin, two tiny homes and two treehouses, "
-             "all on the same fifteen acres:"),
+        para("The biggest difference is lodging. The estate sleeps up to 28 guests "
+             "in five accommodations, all on the same fifteen acres:"),
         blist([
-            "<b>The Swan</b> &mdash; the four-bedroom main house, and the anchor of the property.",
+            "<b>The Swan</b> &mdash; the four-bedroom main house.",
             "<b>The Glacier</b> &mdash; a cabin with a sleeping loft and its own patio.",
-            "<b>The Lakeside</b> &mdash; two modern tiny homes, private and thoughtfully designed.",
-            "<b>The Summit</b> and <b>The Ridge</b> &mdash; two treehouses in the canopy, the kind of stay guests talk about long after the weekend ends."]),
-        para("Practically, this removes an entire category of wedding-day logistics. "
-             "No shuttle timing for the wedding party. No one driving back to a hotel "
-             "at midnight. No parents missing the last hour because the ride is "
-             "leaving. Your inner circle wakes up on the property, has coffee "
-             "together, and is already exactly where they need to be."),
+            "<b>The Lakeside</b> &mdash; a pair of modern tiny homes.",
+            "<b>The Summit</b> and <b>The Ridge</b> &mdash; two treehouses in the trees."]),
+        para("Your wedding party and closest family can stay where the wedding "
+             "happens. Nobody in that group needs a shuttle or a late drive back to "
+             "a hotel, and everyone wakes up in the same place the next morning."),
         h2("Space built for the celebration itself"),
-        para("The estate hosts receptions for up to 200 guests, centered on a 3,200 "
-             "square-foot reception pavilion. Because the pavilion is permanent "
-             "infrastructure rather than a tent trucked in for the weekend, it holds "
-             "up to Montana weather and doesn&rsquo;t need to be rebuilt from scratch "
-             "for every event."),
-        para("Around it, the grounds do the rest of the work: a pool and hot tub for "
-             "the welcome afternoon, open lawn for ceremony and lawn games, and long "
-             "mountain views that mean your photographer never has to hunt for a "
-             "backdrop."),
+        para("The estate hosts receptions for up to 200 guests in a 3,200 square-foot "
+             "pavilion and a 40 by 80 ft tent. Both are permanent, so nothing has to be "
+             "delivered and set up for your weekend."),
+        para("Around them are a pool and hot tub, open lawn for the ceremony and lawn "
+             "games, and views of the lake and mountains."),
         # CORRECTED: the live article had tables and chairs as a rental. FACTS.md
         # has them on site with four head tables, and the bar built in — which
         # makes them part of what is already standing, not part of what you bring.
-        para("Some of what a tented field would have you rent is already standing. "
-             "Tables and chairs are on site, including four head tables, and the bar "
-             "is built in and ready to run."),
+        para("Tables and chairs are on site, including four head tables, and the bar "
+             "is built in."),
         h2("A weekend, not a time slot"),
-        para("A traditional venue sells you a window &mdash; often eight or ten "
-             "hours, with load-in and load-out squeezed at either end. An estate "
-             "buyout sells you the property for the duration of your stay. Rehearsal "
-             "dinner, welcome gathering, the wedding day itself, and a slow "
-             "morning-after breakfast all happen in the same place, without anyone "
-             "rushing you toward the door the way a rented banquet hall must."),
-        para("That said, a buyout is not a free-for-all. Quiet hours, music curfews, "
-             "vendor access, and the specifics of your timeline are all set out in "
-             "your agreement &mdash; the difference is that they&rsquo;re shaped "
-             "around your weekend rather than around the event booked after yours. "
-             "Contracts here are written to a 200-guest maximum and an 11:00 p.m. "
-             "event end."),
+        para("With a buyout you have the property for your whole stay, not a few "
+             "hours on one day. The rehearsal dinner, a welcome gathering, the wedding "
+             "and breakfast the next morning can all happen in the same place."),
+        para("Quiet hours, vendor access and your timeline are set out in your "
+             "agreement. Contracts are written to a 200-guest maximum and an "
+             "11:00 p.m. event end."),
         h2("What you still bring in"),
         # CORRECTED: the live article called the caterers "approved partners".
         # FACTS.md has a preferred vendor list couples are not required to use.
         # Nothing here says who staffs the bar, because nothing we hold says it.
-        para("A buyout gives you the canvas; you and your team fill it. Couples at "
+        para("Couples at "
              "The Overlook work with a day-of coordinator (required), carry event "
              "insurance, and arrange restroom rentals for larger guest counts. "
              "Catering is arranged separately. We keep a preferred vendor list of "
@@ -1775,128 +1724,95 @@ def body_buyout(base):
              "required to book from it. A full planner is available if you&rsquo;d "
              "rather hand the details to someone else entirely."),
         h2("Is a buyout right for you?"),
-        para("If your priority is a single beautiful evening with minimal moving "
-             "parts, a traditional venue may serve you well. If you want your "
-             "favorite people in one place for a few days &mdash; unhurried, "
-             "uninterrupted, and genuinely together &mdash; an estate buyout is the "
-             "model built for that."),
+        para("If you want a single evening with as few moving parts as possible, a "
+             "traditional venue may suit you better. If you want your family and "
+             "friends in one place for a few days, a buyout is built for that."),
     ])
 
 
 def body_season(base):
     return art_body([
-        para("Northwest Montana doesn&rsquo;t do subtle seasons. The difference "
-             "between a June evening and an October one isn&rsquo;t a few degrees "
-             "&mdash; it&rsquo;s a different landscape, a different light, and a "
-             "different kind of wedding. Choosing your date here is less about "
-             "finding the &lsquo;best&rsquo; weather and more about deciding which "
-             "version of Montana you want your guests to remember."),
+        para("The seasons in northwest Montana are very different from each other. "
+             "A June evening and an October evening bring different weather, light "
+             "and scenery. Here is what each time of year is like for a wedding."),
         h2("Summer: the reliable choice"),
-        para("Roughly June through September is the heart of the season, and for good "
-             "reason. This stretch tends to bring the mildest, most settled weather "
-             "of the year and the longest daylight &mdash; which matters more than "
-             "most couples realize. Long evenings mean a ceremony that isn&rsquo;t "
-             "racing the sunset, golden-hour portraits that actually happen at a "
-             "civilized hour, and dinner outdoors while it&rsquo;s still light."),
-        para("The lake is at its best in these months, the grounds are fully green, "
-             "and outdoor everything &mdash; cocktail hour on the lawn, a swim before "
-             "the rehearsal dinner, late drinks under string lights &mdash; is "
-             "realistic rather than aspirational."),
-        para("The trade-off is simple: this is also when everyone else wants to marry "
-             "here. Peak-season Saturdays go early, often more than a year out. If "
-             "your heart is set on a July or August weekend, treat your date search "
-             "as the first thing you do, not the last."),
+        para("June through September brings the most settled weather of the year "
+             "and the longest days. Long evenings mean the ceremony is not racing "
+             "the sunset, portraits happen in good light at a reasonable hour, and "
+             "dinner can start outside while it is still light."),
+        para("The lake is warmest and the grounds are green, so cocktail hour on the "
+             "lawn or a swim before the rehearsal dinner are easy to plan."),
+        para("Summer is also the busiest time, and Saturdays in July and August are "
+             "the first dates to go. If you want one, start there."),
         h2("Late spring and early fall: the shoulders"),
-        para("The weeks bracketing peak season are where thoughtful couples often "
-             "find the sweet spot. You trade a measure of weather certainty for "
-             "meaningful gains elsewhere:"),
+        para("Late May, early June, late September and October give up some "
+             "weather certainty in exchange for:"),
         blist([
             "Better availability &mdash; more dates open, and more flexibility on which nights you hold the property.",
             "Different scenery &mdash; spring green and running water on one side, larch and cottonwood color on the other.",
             "Fewer crowds regionally, which makes travel and side trips easier for out-of-town guests.",
-            "A softer, lower light that many photographers quietly prefer."]),
-        para("The honest caveat: shoulder-season weather in the mountains is genuinely "
-             "variable. A gorgeous afternoon and a cold, wet one are both plausible. "
-             "That&rsquo;s not a reason to avoid these months &mdash; it&rsquo;s a "
-             "reason to plan for both. A permanent covered reception space, a real "
-             "indoor-capable plan, and warm layers for guests turn "
-             "&lsquo;unpredictable&rsquo; into &lsquo;handled.&rsquo;"),
-        h2("Winter: for a specific kind of couple"),
-        para("Winter weddings in Montana are a deliberate aesthetic choice &mdash; "
-             "snow, candlelight, small guest counts, everyone indoors and close. They "
-             "ask more of your guests in travel and more of your plan in "
-             "contingencies, but the couples who choose them almost never want "
-             "anything else. If this is you, build extra travel margin into "
-             "everyone&rsquo;s arrival day and keep the celebration compact."),
-        h2("How to actually decide"),
+            "Softer, lower light for photos."]),
+        para("Mountain weather in these months can go either way, so plan for both a "
+             "warm afternoon and a cold, wet one. A covered reception space, a "
+             "backup plan for the ceremony and warm layers for guests cover it."),
+        h2("Winter"),
+        para("A winter wedding in Montana means snow, a smaller guest list and "
+             "everyone indoors. Travel takes more planning, so give guests extra time "
+             "on their arrival day and keep the celebration small."),
+        h2("How to decide"),
         para("Work backward from what you care about most:"),
         blist([
             "Want the safest bet on an outdoor ceremony and long golden light? Aim for the heart of summer and book far ahead.",
             "Want more date choice, a quieter valley, and dramatic scenery? Look at the shoulders and build a genuine weather plan.",
             "Have a fixed guest list traveling from far away? Prioritize the months with the easiest travel, then choose the date.",
             "Have a meaningful date already? Choose it, and design the weekend around whatever that season does best."]),
-        para("There&rsquo;s no wrong answer here &mdash; only a plan that matches the "
-             "month."),
     ])
 
 
 def body_travel(base):
     return art_body([
-        para("A destination wedding asks something of your guests, and the kindest "
-             "thing you can do is make the logistics feel easy. The good news: "
-             "getting to The Overlook is simpler than most Montana destinations. "
-             "Here&rsquo;s the guide to share with your guest list."),
+        para("Getting to The Overlook is straightforward. Here is a guide you can "
+             "share with your guests."),
         h2("Fly into Glacier Park International (FCA)"),
         para("The closest airport is Glacier Park International Airport in Kalispell, "
              "Montana &mdash; airport code FCA. From FCA, the estate is roughly "
-             f"{FCA['drive']}. That&rsquo;s the single most useful fact to put on "
-             "your wedding website, because it tells guests immediately that they "
-             "won&rsquo;t be spending half a day in a car after landing."),
-        para("FCA is a small, easy airport: short walks, quick baggage claim, rental "
-             "counters right there. Encourage anyone arriving for the wedding day "
-             "itself to build in buffer &mdash; small regional airports leave less "
-             "room to recover from a missed connection."),
+             f"{FCA['drive']}. Put that on your wedding website."),
+        para("FCA is a small airport with rental car counters in the terminal. Anyone "
+             "flying in on the wedding day itself should leave extra time, since a "
+             "missed connection is harder to make up at a small airport."),
         h2("Renting a car vs. arranging shuttles"),
         para("Both work. Which is right depends on your guest list."),
         para("Rental cars make sense when guests are arriving on different days, want "
              "to explore the valley on their own schedule, or are extending the trip. "
-             "Rentals at FCA are limited in peak season, so tell guests to reserve "
-             "early &mdash; earlier than feels necessary. It&rsquo;s the most common "
-             "travel regret we hear."),
+             "Rental cars at FCA run short in summer, so tell guests to book "
+             "early."),
         para("Group shuttles make sense when a large block of guests arrives in a "
              "similar window, when you&rsquo;d rather not manage a parking lot full "
-             "of cars, or &mdash; most importantly &mdash; when there&rsquo;s a bar. "
-             "A shuttle for the wedding evening is the simplest way to make sure "
-             "nobody drives after the reception. Many couples arrange a rental car "
-             "for a handful of key people and a shuttle for everyone else."),
+             "of cars, or when there is a bar. A shuttle for the wedding evening means "
+             "nobody has to drive after the reception. Some couples arrange rental "
+             "cars for a few key people and a shuttle for everyone else."),
         blist([
             "Book shuttle service well ahead; regional operators fill up in summer.",
             "Give the driver one point of contact from your side, not five.",
             "Plan the last shuttle for after your music curfew, not at it.",
-            "Share the parking situation in advance &mdash; the estate accommodates onsite parking for 75 cars."]),
+            "Let guests know in advance that there is parking on site for 75 cars."]),
         h2("Where guests stay"),
         para("The estate sleeps 28 guests onsite across the main house, the cabin, "
-             "the tiny homes and the treehouses &mdash; typically reserved for family "
-             "and the wedding party. Everyone else stays nearby in the Lakeside and "
-             "Flathead Valley area, and we&rsquo;re glad to point you toward partner "
-             "accommodations so you can send guests a short, curated list rather than "
-             "an overwhelming one."),
+             "the tiny homes and the treehouses, usually kept for family and the "
+             "wedding party. Everyone else stays nearby in Lakeside, Kalispell, Bigfork "
+             "or Whitefish, and we can suggest places to stay."),
         h2("Extending the trip"),
-        para("Many guests turn a wedding weekend here into a proper Montana trip, and "
-             "the estate is a natural home base for it. Flathead Lake itself is the "
-             "obvious draw &mdash; boating, swimming, waterfront dining, and cherries "
-             "in late summer. The valley also offers alpine adventure, hiking, and "
-             "small-town Montana worth an unhurried afternoon."),
-        para(f"{GLACIER['name']} is the other great reason to stay longer. "
+        para("If guests want to stay longer, Flathead Lake has boating, swimming, "
+             "lakeside restaurants and cherry stands in late summer, and the valley "
+             "has plenty of hiking and small towns to visit."),
+        para(f"{GLACIER['name']} is another good reason to stay. "
              f"{GLACIER['entrance']}, the park&rsquo;s west entrance, is "
              f"{GLACIER['drive']} from the estate &mdash; about {GLACIER['miles']}. "
-             "That&rsquo;s close enough for a "
-             "day in the park and back, though guests should plan a full day for it "
-             "rather than squeezing it around wedding events, and should check the "
-             "park&rsquo;s own website before going, since entry requirements and "
-             "park conditions change from year to year."),
+             "It works as a day trip, but plan a full day rather than fitting it "
+             "around wedding events, and check the park&rsquo;s website first, since "
+             "entry rules and conditions change from year to year."),
         h2("A simple note to send your guests"),
-        para("Feel free to borrow this: &ldquo;Fly into Glacier Park International "
+        para("You can copy this: &ldquo;Fly into Glacier Park International "
              f"Airport (FCA) in Kalispell, Montana &mdash; the venue is about "
              f"{FCA['time']} away. Reserve a rental car early if you&rsquo;d like to "
              "explore, and watch for shuttle details for the wedding evening. If you "
@@ -1916,15 +1832,14 @@ ARTICLES = [
              "acres, 28 sleeping onsite, a 3,200 sq ft pavilion, and a weekend "
              "instead of a time slot.",
      "kicker": "Planning guide &middot; 5 min read",
-     "lede": "A traditional venue sells you a room and a block of hours. A buyout sells "
-             "you the property, and the weekend runs at your pace.",
+     "lede": "A traditional venue rents you a space for a few hours. A buyout gives you "
+             "the whole property for your stay.",
      "img": ("tent-front.jpg", "The reception tent from the lawn"),
      "cta_img": ("venue-overview.jpg", "The ceremony lawn and tent across the grounds"),
      "body": body_buyout,
      "cta": ("See what your weekend would look like",
-             "We&rsquo;re happy to walk you through what a weekend at The Overlook "
-             "could look like for your guest count and your season. Reach out and "
-             "we&rsquo;ll send details and current availability.",
+             "Tell us your guest count and your season, and we will send details "
+             "and current availability.",
              "Check Your Date", "contact.html?type=wedding"),
      "summary": "How an estate buyout differs from a traditional venue rental, and "
                 "what is and is not included at The Overlook.",
@@ -1938,15 +1853,14 @@ ARTICLES = [
              "seasons and winter each give you, and what each one asks of your "
              "guests and your plan.",
      "kicker": "Planning guide &middot; 5 min read",
-     "lede": "Choosing a date here is less about finding the best weather and more "
-             "about deciding which version of Montana your guests remember.",
+     "lede": "What summer, the shoulder seasons and winter are each like for a "
+             "wedding here.",
      "img": ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate"),
      "cta_img": ("ceremony-setup.jpg", "Chairs set on the ceremony lawn before guests arrive"),
      "body": body_season,
      "cta": ("Tell us the season you have in mind",
-             "Tell us the season you&rsquo;re imagining and we&rsquo;ll let you know "
-             "what&rsquo;s still open and what a weekend looks like at that time of "
-             "year.",
+             "Tell us the season you have in mind and we will let you know which "
+             "dates are open.",
              "Check Your Date", "contact.html?type=wedding"),
      "summary": "What summer, the shoulder seasons and winter each give you for a "
                 "wedding in northwest Montana.",
@@ -1960,18 +1874,17 @@ ARTICLES = [
              f"International (FCA) is {FCA['time']} away. Rental cars, shuttles, "
              "and where guests stay.",
      "kicker": "Guest travel &middot; 5 min read",
-     "lede": "The logistics you can hand straight to your guest list, from the airport "
-             "to the last shuttle of the night.",
+     "lede": "Airport, cars, shuttles and places to stay, in a form you can share "
+             "with your guests.",
      "img": ("venue-wide.jpg", "The estate grounds from across the lawn"),
      "cta_img": ("lake-sunset-boat.jpg", "Sunset over Flathead Lake from the estate"),
      "body": body_travel,
      "cta": ("Help with guest travel",
-             "If you&rsquo;re planning a weekend at The Overlook and want help "
-             "thinking through guest travel, reach out &mdash; we&rsquo;ve walked a "
-             "lot of couples through it.",
+             "If you are planning a weekend at The Overlook and want help with guest "
+             "travel, get in touch.",
              "Start Your Inquiry", "contact.html"),
      "summary": "The airport, rental cars versus shuttles, where guests stay, and how "
-                "far Glacier National Park really is.",
+                "far it is to Glacier National Park.",
      "related": [A_BUYOUT, A_SEASON]},
 ]
 
@@ -2028,7 +1941,7 @@ def page_journal(base):
           <p style="margin-top:1.4rem">{tlink(base + "journal/" + a["slug"], "Read it")}</p>
         </article>"""
     return (doc_head(base, "Journal", "Planning guides and travel notes",
-                     "What we find ourselves explaining on the phone, written down "
+                     "The questions couples and guests ask us most, answered in one place: "
                      "once: how an estate buyout works, how to choose a month in "
                      "northwest Montana, and how to get your guests here.",
                      trail=[("Journal", None)])
@@ -2059,40 +1972,35 @@ def page_area(base):
                "A putting green", "Walking trails across the fifteen acres"]
     items = "".join(f"<li>{i}</li>" for i in on_site)
     return (doc_head(base, "The Area", "Things to do around Flathead Lake",
-                     "The estate is private and self-contained, but nobody spends a "
-                     "whole weekend on one hillside. Here is what is actually within "
-                     "reach, with honest drive times.",
+                     "What is nearby for guests who want to get out and explore, "
+                     "with drive times from the estate.",
                      trail=[("Things to Do", None)])
             + f"""
   <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
     <div class="wrap wrap--narrow rv">
       <h2>Flathead Lake</h2>
-      <p style="margin-top:1rem">The largest freshwater lake west of the Mississippi sits
-        below the property. Boating and swimming are minutes away, and the water is what
-        the pavilion looks out over &mdash; the reason the ceremony lawn faces the
-        direction it does.</p>
+      <p style="margin-top:1rem">The largest natural freshwater lake west of the
+        Mississippi in the lower 48 sits below the property, and the pavilion looks out
+        over it. Boating and swimming are minutes away.</p>
 
       <h2 style="margin-top:2.8rem">{GLACIER['name']}</h2>
       <p style="margin-top:1rem">{cap(GLACIER['drive'])} to {GLACIER['entrance']}, the
-        west entrance &mdash; {GLACIER['miles']}. Close enough that guests add a day
-        either side of the weekend, far enough that it is a day trip rather than an
-        afternoon. Going-to-the-Sun Road is seasonal; check the park before promising
-        anyone a drive over the pass.</p>
+        west entrance &mdash; {GLACIER['miles']}. It makes a good day trip before or
+        after the weekend; plan a full day. Going-to-the-Sun Road is seasonal, so check
+        the park&rsquo;s website before you go.</p>
 
       <h2 style="margin-top:2.8rem">{WHITEFISH['name']}</h2>
       <p style="margin-top:1rem">{cap(WHITEFISH['time'])} from the estate. Skiing in
-        winter, lift-served hiking and biking in summer, and the town below it is where
-        a good share of guests end up staying when the five houses are full.</p>
+        winter, lift-served hiking and biking in summer. Whitefish is also a good
+        place for extra guests to stay.</p>
 
       <h2 style="margin-top:2.8rem">Arriving by air</h2>
-      <p style="margin-top:1rem">{FCA['name']} is {FCA['time']} away. For arrivals with
-        more ceremony to them, helicopter landings and private flights over the lake are
-        arranged through WestSlope Helicopters &mdash; the same operator that runs the
-        transfer in the two-estate weekend package.</p>
+      <p style="margin-top:1rem">{FCA['name']} is {FCA['time']} away. Helicopter
+        arrivals and private flights over the lake can be arranged through WestSlope
+        Helicopters, who also run the transfer in the two-estate weekend package.</p>
 
       <h2 style="margin-top:2.8rem">Without leaving the property</h2>
-      <p style="margin-top:1rem">Most of a weekend happens here, which is the point of
-        booking the whole estate:</p>
+      <p style="margin-top:1rem">On the estate itself:</p>
       <ul style="margin-top:1rem;color:var(--ink-soft);line-height:2">{items}</ul>
     </div>
   </section>
@@ -2106,8 +2014,8 @@ def page_area(base):
 
   {band("lake-sunset-boat.jpg", "The lake at sunset from the estate",
         "Planning a weekend here",
-        "Tell us the dates you are considering and we will tell you honestly "
-        "whether they are open.",
+        "Tell us the dates you are considering and we will tell you whether they "
+        "are open.",
         btn(base + "contact.html", "Start Your Inquiry", "btn btn--light btn--lg"),
         base=base)}
 """)
@@ -2123,24 +2031,21 @@ def page_mt_venues(base):
     """
     asks = [
         ("Is the power permanent?",
-         "Generators run all weekend and have to be paid for, placed and silenced. "
-         "Here it is 200 AMP permanently installed service, with water on site."),
+         "If not, generators have to be rented and placed for the weekend. Here it is "
+         "200 AMP permanently installed service, with water on site."),
         ("How far do vendors carry everything?",
-         "Load-in distance decides how long setup takes and what it costs. Vendors "
-         "pull within 50 feet of the venue here."),
+         "Load-in distance affects how long setup takes. Here vendors can pull up "
+         "within 50 feet of the venue."),
         ("Where does everyone park?",
-         "Seventy-five cars park on the property, which is usually the difference "
-         "between shuttles and no shuttles."),
+         "Seventy-five cars can park on the property."),
         ("When does the music stop?",
-         "Ordinances are the thing nobody mentions until late. Contracts here are "
-         "written to an 11:00 p.m. event end, said up front."),
+         "Ask for the end time before you book. Contracts here are written to an "
+         "11:00 p.m. event end."),
         ("What is already standing?",
          "A 3,200 sq ft pavilion, a 40 &times; 80 ft tent, a built-in bar, tables and "
-         "chairs including four head tables, and a fire pit. Anything a venue does not "
-         "own, you rent."),
+         "chairs including four head tables, and a fire pit."),
         ("Does another event share the weekend?",
-         "One group is on this property at a time. No shared facilities, no second "
-         "party across the lawn."),
+         "One group is on this property at a time, with no shared facilities."),
     ]
     cards = "".join(f"""<div class="rv" style="border-top:1px solid var(--line);padding:2rem 0">
         <h3 style="font-size:clamp(1.05rem,1.8vw,1.25rem)">{q}</h3>
@@ -2149,29 +2054,26 @@ def page_mt_venues(base):
 
     return (doc_head(base, "Montana Wedding Venues",
                      "Choosing a wedding venue in Montana",
-                     "Montana venues divide into two kinds: a room or a lawn you rent "
-                     "for a day, and a property you take over entirely. They are priced "
-                     "differently, they fail differently, and the questions worth asking "
-                     "are not the same.",
+                     "Most Montana venues fall into two kinds: a space you rent for "
+                     "a day, and a property you take over for a weekend. Here is how "
+                     "they differ and what to ask.",
                      trail=[("Montana Wedding Venues", None)])
             + f"""
   <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
     <div class="wrap wrap--narrow rv">
       <h2>The rented venue</h2>
       <p style="margin-top:1rem">You get the site for a block of hours. Tables, chairs,
-        power, lighting and a bar arrive on trucks and leave the same night, and your
-        guests sleep somewhere else. It is the cheaper line on a spreadsheet and the
-        longer list of vendors to manage.</p>
+        power and a bar are often rented and delivered, and guests stay somewhere else.
+        The venue fee is usually lower, with more vendors to coordinate.</p>
 
       <h2 style="margin-top:2.8rem">The estate buyout</h2>
-      <p style="margin-top:1rem">You take the property. The celebration and the beds are
-        on the same land, the infrastructure is already installed, and the weekend is
-        yours from the rehearsal to the last morning. It reads as more money until the
-        rentals, the lodging and the transport are added back to the other column.</p>
+      <p style="margin-top:1rem">You book the whole property. The celebration and the
+        lodging are on the same land, the power, tent and bar are already in place, and
+        the weekend is yours from the rehearsal to the last morning.</p>
       <p style="margin-top:1rem">{tlink(base + "journal/" + A_BUYOUT,
-        "What an estate buyout actually includes")}</p>
+        "What an estate buyout includes")}</p>
 
-      <h2 style="margin-top:2.8rem">Six questions worth asking either kind</h2>
+      <h2 style="margin-top:2.8rem">Six questions to ask any venue</h2>
       <div style="margin-top:1.4rem">{cards}</div>
 
       <h2 style="margin-top:2.8rem">Where The Overlook sits</h2>

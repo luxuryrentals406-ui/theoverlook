@@ -351,8 +351,8 @@ def getting_here():
           {eyebrow("Getting here")}
           <h2>On the west shore,<br>above Lakeside</h2>
           <p class="lede" style="margin-top:1.3rem">Fifteen acres on the hillside above
-            Lakeside, Montana &mdash; close enough that guests can be on the property
-            within an hour of landing, far enough that the road noise never reaches you.</p>
+            Lakeside, Montana. Guests can be on the property within an hour of
+            landing.</p>
           <ul class="legs">{li}</ul>
           {tlink("contact.html", "Ask about a site visit")}
         </div>
@@ -548,8 +548,7 @@ def driftwood(shots, kind="wedding"):
                 "with private lake access, a cove and boat slips.")
         body = ("About twenty minutes around the lake, or a few minutes by air &mdash; we "
                 "can move the group between the two by helicopter with WestSlope. Both "
-                "estates sit under one booking, so the team stays on the same footing "
-                "instead of splitting across a hotel block in town.")
+                "estates sit under one booking, so the whole team stays together.")
     else:
         title = "The Driftwood,<br>down on the water"
         lede = ("The Overlook sleeps 28 up on the hill. When the guest list runs past "
@@ -559,8 +558,7 @@ def driftwood(shots, kind="wedding"):
         body = ("It is about twenty minutes around the lake from the venue, or a few "
                 "minutes by air &mdash; we can move your group between the two by "
                 "helicopter with WestSlope. Either way both estates sit under one "
-                "booking, so your family and your closest people stay together instead "
-                "of scattering across hotels in Whitefish and Kalispell.")
+                "booking, so more of your family and friends can stay together.")
     specs = [("14,000", "sq ft"), ("7", "bedrooms"), ("9", "baths"),
              ("20 min", "from the venue"), ("", "Private boat slips")]
     if kind != "retreat":
