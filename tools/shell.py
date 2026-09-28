@@ -759,9 +759,9 @@ def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base="")
 
 <link rel="icon" href="{base}{IMG}overlook-logo.png">
 <link rel="apple-touch-icon" href="{base}{IMG}overlook-logo-main.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="{base}assets/fonts/cormorant.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="{base}assets/fonts/jost.woff2">
+<link rel="stylesheet" href="{base}assets/fonts/fonts.css?v={_ver("assets/fonts/fonts.css")}">
 <link rel="stylesheet" href="{base}assets/css/site.css?v={_ver("assets/css/site.css")}">
 {extra}
 </head>

@@ -1556,18 +1556,17 @@ def page_privacy(base):
           "the foot of the page, that choice is stored in your browser&rsquo;s "
           "session storage so the bar stays closed. Your browser discards it when "
           "you close the tab, and it never leaves your device.</p>",
-          "<p>Three third parties are embedded in these pages. When their content "
-          "loads, each receives your IP address and basic browser information, and "
-          "each may set cookies of its own under its own policy, which we neither "
-          "control nor read:</p>",
-          ilist(["<b>Google Fonts</b> (fonts.googleapis.com and fonts.gstatic.com), "
-                 "on every page, to load the two typefaces the site is set in.",
-                 "<b>Google Maps</b>, on the contact page only, for the map of "
+          "<p>The typefaces are served from this site, not from Google, so "
+          "reading a page contacts no one but us. Two third parties are embedded "
+          "in these pages. When their content loads, each receives your IP "
+          "address and basic browser information, and each may set cookies of "
+          "its own under its own policy, which we neither control nor read:</p>",
+          ilist(["<b>Google Maps</b>, on the contact page only, for the map of "
                  "Lakeside.",
                  "<b>HoneyBook</b> (hbportal.co), on the contact page only, for the "
                  "inquiry form."]),
-          "<p>You can block any of these in your browser. The pages still work "
-          "without them; the type and the map are what change.</p>"]),
+          "<p>You can block either of these in your browser. The pages still work "
+          "without them; the map is what changes.</p>"]),
         ("Third-Party Links",
          ["<p>Our website may contain links to third-party websites. We are not "
           "responsible for the privacy practices of these external sites and "
