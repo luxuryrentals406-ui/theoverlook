@@ -1001,7 +1001,7 @@ def page_estate():
         {eyebrow("The grounds")}
         <h2>The rest of the fifteen acres</h2>
       </div>
-      <div class="cards cards--3">{ghtml}</div>
+      <div class="cards cards--3 cards--tiles">{ghtml}</div>
       <div class="rv" style="margin-top:clamp(2.5rem,5vw,3.5rem);border-top:1px solid var(--line);padding-top:2.5rem">
         {ilist(["Walking trails across the property",
                 "Starlink internet in all five houses and the venue",
