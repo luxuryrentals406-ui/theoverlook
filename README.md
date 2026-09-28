@@ -1,23 +1,26 @@
 # The Overlook at Flathead Lake — website
 
-Static site. No build step to host, no dependencies, no database. Fourteen pages,
-one stylesheet, one script, 63 gallery photographs. Deployed on Render from
-`render.yaml`; also runs on Netlify, Vercel, Cloudflare Pages or plain shared hosting.
+Static site. No framework, no database, no build step to host. Sixteen pages,
+one stylesheet, three small scripts, 63 gallery photographs. Deployed on Render
+from `render.yaml`; also runs on Netlify, Vercel, Cloudflare Pages or plain
+shared hosting. The only server-side code is the inquiry relay in `worker/`,
+a Cloudflare Worker.
 
-This site **replaces a live, indexed React site** on the same domain. All 19 of that
-site's URLs are accounted for: twelve redirect via `render.yaml`, six are preserved
-as real pages at their exact paths, one is the home page. Do not remove a redirect
-or rename a ported directory without checking the old sitemap first.
+This site **replaces a live, indexed React site** on the same domain. All 19 of
+that site's URLs are accounted for: twelve redirect via `render.yaml`, six are
+preserved as real pages at their exact paths, one is the home page. Do not
+remove a redirect or rename a ported directory without checking the old sitemap
+first.
 
 ```
 index.html          Home — orient, then split wedding vs corporate
 weddings.html       Primary page: the weekend, what's included, comparison table,
                     packages, lodging teaser, reviews, FAQ
-retreats.html       Corporate retreats — new, and the gap in the old site
+retreats.html       Corporate retreats
 estate.html         Shared lodging + grounds reference, linked from both
 gallery.html        63 photos, filterable, with lightbox
 story.html          Claudia & Eric
-contact.html        Inquiry page — embedded HoneyBook lead form
+contact.html        The inquiry form, inline (every other page has it as a sheet)
 wellness.html       Wellness retreats
 
   Ported from the old site, URLs preserved exactly — these must not move:
@@ -25,121 +28,97 @@ privacy/index.html  Privacy policy        -> /privacy
 terms/index.html    Terms of service      -> /terms
 journal/index.html  Journal index         -> /journal
 journal/<slug>/index.html   Three planning guides -> /journal/<slug>
+things-to-do/ wedding-venues-montana/     Two more ported pages
 
-assets/css/site.css Hand-written. No framework.
-assets/js/site.js   Progressive enhancement only — the site works without it.
-assets/img/         Full-size photography (35 MB)
-assets/thumb/       Gallery thumbnails (4.8 MB)
+assets/css/site.css   Hand-written, mobile-first. Phone rules are the default;
+                      min-width queries add tablet (641), desktop (861), wide nav (1041).
+assets/js/core.js     The controls every device gets: menu, reveal, lightbox, pickers.
+assets/js/inquire.js  The inquiry sheet. Loaded on idle or the first inquiry tap.
+assets/js/cinema.js   Desktop-with-a-mouse only: parallax, Ken Burns, cursor mark,
+                      page hand-offs. A phone never downloads it.
+assets/img/           Original photography — the source of truth (43 MB)
+assets/i/             Generated derivatives: AVIF/WebP/JPEG at 480/800/1200/1920 and
+                      manifest.json (dimensions + placeholders). Committed. (62 MB)
+assets/fonts/         Cormorant Garamond and Jost, self-hosted latin subsets
 
-tools/build.py      Regenerates every page.  python3 tools/build.py
-tools/shell.py      Header, footer, <head>, shared components
-tools/lint.py       Copy-rule + SEO linter, walks subdirectories.
-tools/lastmod.json  Per-page content hashes — sitemap lastmod state. Commit it.
-render.yaml         Render blueprint: build, redirects, headers
+tools/build.py        Regenerates every page.  python3 tools/build.py
+tools/shell.py        Header, footer, <head>, shared components, the inquiry form
+tools/images.py       Derivatives + manifest. build.py runs it; content-hashed, so
+                      only changed photographs are re-encoded.
+tools/fonts.py        Fetches the font subsets once. Output is committed.
+tools/lint.py         Copy rules + SEO + the phone performance budget. Walks subdirectories.
+tools/budget.py       What a phone fetches per page; used by lint.py
+tools/pack_worker.py  worker/lib.js + index.js -> worker/dist/worker.js (one file to paste)
+tools/tests/          unittest suite for images, picture markup and the budget
+tools/lastmod.json    Per-page content hashes — sitemap lastmod state. Commit it.
+worker/               The inquiry relay (Cloudflare Worker). README.md there is
+                      the switch-on guide.
+render.yaml           Render blueprint: build, redirects, headers
 sitemap.xml robots.txt llms.txt
+docs/superpowers/     The rebuild's spec and plans
 ```
 
-Edit `tools/*.py`, never the `.html` directly — the HTML is generated and your
-changes there will be overwritten on the next build.
+Edit `tools/*.py`, `assets/css`, `assets/js`, never the `.html` directly — the
+HTML is generated and your changes there will be overwritten on the next build.
 
----
-
-## Before it goes live — 3 things
-
-### 1. Real contact details — DONE
-
-These are live in the `BIZ` dict in `tools/shell.py`:
-
-```python
-"phone":   "(406) 885-6064",
-"tel":     "+14068856064",
-"email":   "theoverlook@luxurylodgingvip.com",
-```
-
-The email is a Microsoft 365 mailbox on `luxurylodgingvip.com`, deliberately not on
-this site's own domain. `theoverlookatflatheadlake.com` runs Google Workspace
-(`media@`), but no public-facing address is published there. If you ever change the
-published address, edit `tools/shell.py` and rebuild — never the `.html`:
+## Building and checking
 
 ```bash
 cd ~/theoverlook
 python3 tools/build.py && python3 tools/lint.py
+python3 -m unittest discover -s tools/tests -t .
+/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc worker/lib.js worker/test.js
 ```
 
-### 2. Wire the inquiry form — DONE
+Run the first line before every deploy; lint exits non-zero on a violation, so
+it can gate CI. The other two are the unit tests (Python has no dependencies
+beyond Pillow, which is installed; the Worker tests run on macOS's own
+JavaScriptCore because there is no Node here).
 
-`INQUIRY_MODE = "honeybook"` in `tools/build.py`, which embeds the live HoneyBook
-lead form on `contact.html`, so a submission becomes a real HoneyBook inquiry.
-The hand-built `own_form()` below is the unused fallback path.
+To add a photograph: drop it in `assets/img/`, add it where a page uses it
+(gallery photos are the `PHOTOS` list in `tools/build.py`), and build —
+`images.py` makes the derivatives. Photos are used through `shell.img()`,
+which emits a `<picture>` with the right `sizes`; the build fails loudly on a
+name that is not in the manifest.
 
-**Known gap:** 18 CTAs link to `contact.html?type=wedding|corporate|wellness`, and
-`site.js` reads that param to preselect `#eventType` — a field that only exists in
-`own_form()`. Under HoneyBook the param is silently ignored.
+## The inquiry path
 
-The options below apply only if you switch `INQUIRY_MODE` back to `"own"`.
+Every "Check Your Date" / "Start Your Inquiry" control opens a three-step sheet
+(when → what → you). It posts JSON to `/api/inquire`, the Worker in `worker/`,
+which keeps a copy and delivers the lead to HoneyBook (through Zapier's
+official HoneyBook integration — HoneyBook has no public API) and to the
+inbox by email. If the relay is unreachable the sheet turns what was typed
+into a prefilled email, so nothing is lost. With JS off, every step shows and
+the submit opens HoneyBook's public form.
 
-**Option A — HoneyBook or any CRM webhook (recommended).** Set `data-endpoint` to
-your webhook URL. The script POSTs JSON with every field plus `source` and
-`submittedAt`, and shows an inline thank-you without leaving the page:
-
-```html
-data-endpoint="https://your-webhook-url"
-```
-
-**Option B — Formspree, no code.** Replace `YOUR_FORM_ID` in the form `action`
-with your Formspree form ID and leave `data-endpoint` empty.
-
-**Option C — Netlify Forms.** Add `netlify` and `name="inquiry"` to the `<form>`
-tag and remove the `action`.
-
-Either way `eventType` (Wedding / Corporate Retreat / Other Private Event) is what
-you route on internally. The wedding and corporate CTAs already deep-link with
-`contact.html?type=wedding` and `?type=corporate`, which preselects the dropdown.
-
-### 3. Point the domain
-
-`SITE` in `tools/shell.py` is already `https://theoverlookatflatheadlake.com` — it
-feeds canonical URLs, OpenGraph tags and the sitemap. If you launch on a staging
-domain first, change it there and rebuild so social previews are not wrong.
-
----
+`worker/README.md` has the switch-on steps: one Zap and one Worker pasted into
+the Cloudflare dashboard. Until that is done the sheet is in fallback mode.
 
 ## The copy rules, and how they stay enforced
 
-The rebuild existed because the old site repeated itself. `tools/lint.py` fails the
-build if that creeps back in:
+`tools/lint.py` fails the build if any of these creep back in:
 
 - "Begin Your Story" and "Your Story Awaits" never appear
 - "dream" appears at most once across the whole site (currently zero)
-- **sleeping capacity is 28**, never 24. "Roughly 12" appears only on the corporate
-  page, in the executive-group context, exactly as briefed
-- wedding vocabulary (ceremony, bride, groom, aisle…) cannot appear on
-  `retreats.html`; corporate vocabulary (meeting space, breakout, general session)
+- **sleeping capacity is 28**, never 24; the corporate page does not discuss beds
+- no published prices except the two the owner set
+- wedding vocabulary cannot appear on `retreats.html`; corporate vocabulary
   cannot appear on `weddings.html`
 - no exclamation points outside the verbatim Google reviews
 - luxury filler (unparalleled, magical, breathtaking, stunning, nestled…) capped at
   one per page
-- every `<img>` has alt text; every page has a title and meta description in range
+- every `<img>` has alt text, width/height and (for photographs) a srcset; every
+  page has a title and meta description in range
+- **performance budget:** no page may fetch more than 600 KB of images when it
+  opens on a 375px phone; no third party may be contacted on load except the
+  analytics beacon and, on the contact page, Google Maps
+- no phone number anywhere, including `llms.txt`
 
-```bash
-python3 tools/build.py && python3 tools/lint.py
-```
+## Measurement
 
-Run both before every deploy. Lint exits non-zero on a violation, so it can gate CI.
-
----
-
-## Photography
-
-67 images pulled from the existing site, resized to 2200px max and recompressed
-(89 MB → 35 MB), with 700px thumbnails generated for the gallery grid. Gallery
-categories live in the `PHOTOS` list in `tools/build.py` — `weddings`, `estate`,
-`grounds`. Add a photo by dropping it in `assets/img/`, making a thumbnail, and
-adding one line to that list.
-
-`tools/build.py` fails loudly if any page references an image that isn't on disk.
-
----
+`shell.CF_ANALYTICS_TOKEN` switches on Cloudflare Web Analytics (cookieless,
+no consent banner). The relay's `/api/stats` counts inquiries by month, page
+and kind. Inquiries over page views is the number the rebuild is judged by.
 
 ## Still open
 
@@ -151,3 +130,5 @@ adding one line to that list.
   The line reads "available on request" so nothing is overpromised.
 - **Real reviews only.** The six on the site are the six real Google reviews.
   Do not add invented ones.
+- **Phase 2 and 3** of the rebuild (phone-paced funnel pages, the interactive
+  layer) are specified in `docs/superpowers/specs/`.
