@@ -492,7 +492,7 @@ def page_weddings():
       {vmap("wedding-aerial-tent.jpg",
             "Overhead view of the ceremony lawn and reception tent",
             "How the evening moves",
-            "Five acres of it, in order",
+            "Fifteen acres of it, in order",
             "The evening moves through the property rather than staying in one room. "
             "Select a marker to see where each part of it happens.",
             spots)}
