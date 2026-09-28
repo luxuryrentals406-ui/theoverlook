@@ -24,7 +24,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    hero_preload, SZ_FULL, SZ_HALF, SZ_THIRD, SZ_GALLERY, SZ_THUMB,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
-                   getting_here, switcher, rail, mosaic, honeybook_form, spec, experiences,
+                   getting_here, switcher, rail, mosaic, inquiry_form, spec, experiences,
                    driftwood,
                    head, header, footer)
 
@@ -1212,7 +1212,7 @@ def page_contact():
           </div>
         </div>
 
-        {honeybook_form() if INQUIRY_MODE == "honeybook" else own_form()}
+        <div class="rv">{inquiry_form("", inline=True)}</div>
       </div>
     </div>
   </section>
@@ -1222,60 +1222,8 @@ def page_contact():
 
 
 
-# Two ways to take an inquiry. "honeybook" embeds the live lead form, so a
-# submission becomes a real HoneyBook inquiry with its workflows attached.
-# "own" renders the hand-built form below, which still needs an endpoint.
-INQUIRY_MODE = "honeybook"
-
-
-def own_form():
-    return f"""        <div class="rv">
-          <!-- WIRING: see README step 2. Either set data-endpoint (HoneyBook / CRM
-               webhook, posts JSON) or replace action= with your Formspree URL. -->
-          <form class="form" id="inquiry" method="POST"
-                action="https://formspree.io/f/YOUR_FORM_ID"
-                data-endpoint="">
-            <div class="formstatus" role="status" aria-live="polite"></div>
-
-            <div class="field">
-              <label for="name">Name <span class="req">*</span></label>
-              <input id="name" name="name" type="text" autocomplete="name" required>
-            </div>
-            <div class="field">
-              <label for="email">Email <span class="req">*</span></label>
-              <input id="email" name="email" type="email" autocomplete="email" required>
-            </div>
-            <div class="field">
-              <label for="phone">Phone</label>
-              <input id="phone" name="phone" type="tel" autocomplete="tel">
-            </div>
-            <div class="field">
-              <label for="eventType">Event type <span class="req">*</span></label>
-              <select id="eventType" name="eventType" required>
-                <option value="">Select one</option>
-                <option value="Wedding">Wedding</option>
-                <option value="Corporate Retreat">Corporate Retreat</option>
-                <option value="Other Private Event">Other Private Event</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="dates">Preferred dates</label>
-              <input id="dates" name="dates" type="text" placeholder="e.g. late August 2027, or flexible">
-            </div>
-            <div class="field">
-              <label for="groupSize">Group size</label>
-              <input id="groupSize" name="groupSize" type="text" placeholder="Guests, and how many staying onsite">
-            </div>
-            <div class="field field--full">
-              <label for="message">Tell us about it</label>
-              <textarea id="message" name="message"
-                placeholder="What are you planning, and what would make the weekend work?"></textarea>
-            </div>
-            <button class="btn btn--lg" type="submit">Send Inquiry</button>
-            <p class="form__note">We use this to answer you and nothing else. No list, no
-              drip sequence.</p>
-          </form>
-        </div>"""
+# The inquiry form itself lives in shell.inquiry_form(): the same three steps
+# sit inline here and in the bottom sheet on every other page.
 
 
 
@@ -2772,7 +2720,9 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
         extra = hero_preload(name, base, SZ_GALLERY if current == "gallery.html" else SZ_FULL) + "\n"
     html = (head(title, desc, url_of(path), og, extra + ld, base)
             + header(current, over_hero=over, base=base) + body
-            + footer(base).replace("{year}", str(YEAR))
+            + footer(base, sheet=(current != "contact.html"),
+                     kind={"weddings.html": "wedding", "retreats.html": "corporate",
+                           "wellness.html": "wellness"}.get(current, "")).replace("{year}", str(YEAR))
                           .replace("{STICKYBAR}",
                                    stickybar(current, base) if sticky else ""))
     full = os.path.join(ROOT, path)

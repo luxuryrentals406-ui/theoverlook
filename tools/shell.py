@@ -270,7 +270,14 @@ def eyebrow(t):
 
 
 def btn(href, label, cls="btn"):
-    return f'<a class="{cls}" href="{href}">{label}</a>'
+    """A button-styled link. One that points at the contact page also carries
+    data-sheet, so with JS the inquiry sheet opens in place (prefilled from
+    ?type=) and without JS the link still goes where it says."""
+    sheet = ""
+    m = re.match(r"(?:\.\./)*contact\.html(?:\?type=(\w+))?$", href)
+    if m:
+        sheet = f' data-sheet="{m.group(1) or ""}"'
+    return f'<a class="{cls}" href="{href}"{sheet}>{label}</a>'
 
 
 def tlink(href, label):
@@ -541,24 +548,106 @@ HB_FORM_ID   = "691cc90430213200341cb152"          # "Event Inquiry Form", live
 HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
 
 
-def honeybook_form():
-    """Embed the HoneyBook inquiry form.
+INQUIRE_ENDPOINT = "/api/inquire"     # the Cloudflare Worker relay (worker/)
+TURNSTILE_SITE_KEY = ""              # set to enable Cloudflare Turnstile on the last step
 
-    This is a plain iframe of the public form, which works with no snippet to
-    paste. To move to HoneyBook's own widget later (Lead capture > Lead Forms >
-    Event Inquiry Form > Share > Code), replace the <iframe> below with the
-    copied <script> — everything around it can stay.
+INQ_TYPES = [("wedding", "Wedding"), ("corporate", "Corporate retreat"),
+             ("wellness", "Wellness retreat"), ("other", "Something else")]
+
+
+def inquiry_form(base="", inline=False):
+    """The three-step inquiry: when → what → you. One form, three sections;
+    inquire.js walks them one at a time and posts JSON to the relay. With JS
+    off every section shows and the submit opens HoneyBook's public form, so
+    nothing is ever a dead end.
+
+    inline=True is the contact page, where it sits in the layout instead of
+    the bottom sheet.
     """
-    return f"""<div class="hbform">
-      <iframe class="hbform__frame" src="{HB_FORM_URL}"
-        title="Inquiry form for {BIZ['name']}" loading="lazy"
-        allow="clipboard-write"></iframe>
-      <noscript><p class="hbform__fallback"><a href="{HB_FORM_URL}" rel="noopener">
-        Open the inquiry form</a></p></noscript>
-      <p class="hbform__fallback">Form not loading?
-        <a href="{HB_FORM_URL}" rel="noopener">Open it in a new tab</a>,
-        or email <a href="mailto:{BIZ['email']}">{BIZ['email']}</a>.</p>
-    </div>"""
+    types = "".join(
+        f'<label class="chip"><input type="radio" name="type" value="{v}" required> {l}</label>'
+        for v, l in INQ_TYPES)
+    turnstile = (f'<div class="cf-turnstile" data-sitekey="{TURNSTILE_SITE_KEY}" data-theme="light"></div>'
+                 if TURNSTILE_SITE_KEY else "")
+    cls = "inq inq--inline" if inline else "inq"
+    return f"""<form class="{cls}" id="inquiry" method="get" action="{HB_FORM_URL}"
+      data-endpoint="{INQUIRE_ENDPOINT}" novalidate>
+  <div class="sheet__prog" aria-hidden="true"><i class="is-on"></i><i></i><i></i></div>
+
+  <section class="sheet__step is-on" data-step="when" aria-label="Step 1 of 3">
+    <h3>When are you thinking?</h3>
+    <p class="lede">The dates you have in mind &mdash; a guess is fine.</p>
+    <div class="inq__dates">
+      <div class="field"><label for="inq-start">Arrive</label>
+        <input id="inq-start" name="start" type="date"></div>
+      <div class="field"><label for="inq-end">Leave</label>
+        <input id="inq-end" name="end" type="date"></div>
+    </div>
+    <p class="field__err" data-err="when">Leaving before you arrive &mdash; check the dates.</p>
+    <div class="chips" style="margin-top:1rem">
+      <label class="chip"><input type="checkbox" name="flexible" value="yes"> Dates are flexible</label>
+    </div>
+  </section>
+
+  <section class="sheet__step" data-step="what" aria-label="Step 2 of 3">
+    <h3>What are you planning?</h3>
+    <div class="chips" role="radiogroup" aria-label="Kind of gathering">{types}</div>
+    <p class="field__err" data-err="type">Pick the closest one.</p>
+    <div class="field" style="margin-top:1.2rem"><label for="inq-guests">About how many guests?</label>
+      <input id="inq-guests" name="guests" type="number" inputmode="numeric" min="1" max="200" placeholder="e.g. 120"></div>
+  </section>
+
+  <section class="sheet__step" data-step="you" aria-label="Step 3 of 3">
+    <h3>Where should we reply?</h3>
+    <div class="field"><label for="inq-name">Name <span class="req">*</span></label>
+      <input id="inq-name" name="name" type="text" autocomplete="name" required>
+      <p class="field__err">Your name, so we know who to write to.</p></div>
+    <div class="field"><label for="inq-email">Email <span class="req">*</span></label>
+      <input id="inq-email" name="email" type="email" autocomplete="email" inputmode="email" required>
+      <p class="field__err">That email does not look right.</p></div>
+    <div class="field"><label for="inq-phone">Phone</label>
+      <input id="inq-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"></div>
+    <div class="field"><label for="inq-note">Anything else?</label>
+      <textarea id="inq-note" name="note" rows="3" maxlength="2000"
+        placeholder="What you are picturing, and what would make the weekend work."></textarea></div>
+    <div class="inq__hp" aria-hidden="true"><label>Leave this empty
+      <input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="source" value="">
+    {turnstile}
+    <p class="form__note">We use this to answer you and nothing else. No list, no drip sequence.</p>
+  </section>
+
+  <div class="sheet__done" hidden>
+    <span class="eyebrow">Sent</span>
+    <h3>Thank you &mdash; it&rsquo;s with us.</h3>
+    <p>You&rsquo;ll hear back, usually within one business day.</p>
+  </div>
+  <div class="sheet__fallback" role="alert"></div>
+
+  <div class="sheet__nav">
+    <button type="button" class="btn btn--ghost" data-back hidden>Back</button>
+    <button type="button" class="btn" data-next>Continue</button>
+    <button type="submit" class="btn" data-send>Send inquiry</button>
+  </div>
+</form>"""
+
+
+def inquiry_sheet(base="", kind=""):
+    """The bottom sheet every page carries (the contact page has the form
+    inline instead). Opened by any control with data-sheet; `kind` is the
+    page's own gathering type, used when the control names none."""
+    return f"""
+<div class="sheet" id="inquire" data-default="{kind}" hidden>
+  <button class="sheet__back" type="button" aria-label="Close"></button>
+  <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="inq-title">
+    <div class="sheet__grip" aria-hidden="true"></div>
+    <div class="sheet__head">
+      <div>{eyebrow("Inquiry")}<h2 id="inq-title">Check your date</h2></div>
+      <button class="sheet__x" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="sheet__body">{inquiry_form(base)}</div>
+  </div>
+</div>"""
 
 
 def spec(groups):
@@ -702,7 +791,7 @@ def stickybar(page="", base=""):
 <div class="sbar" hidden>
   <div class="wrap sbar__in">
     <p class="sbar__txt"><b>{lead}</b> <span>{tail}</span></p>
-    <a class="btn sbar__cta" href="{base}{href}">{cta}</a>
+    <a class="btn sbar__cta" href="{base}{href}" data-sheet="{href.split('=')[-1]}">{cta}</a>
     <button class="sbar__x" aria-label="Dismiss">&times;</button>
   </div>
 </div>"""
@@ -785,7 +874,7 @@ def header(current, over_hero=True, base=""):
     </a>
     <nav class="nav" aria-label="Primary">
       {links}
-      <a class="btn" href="{base}contact.html">Start Your Inquiry</a>
+      <a class="btn" href="{base}contact.html" data-sheet="">Start Your Inquiry</a>
     </nav>
     <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobnav">
       <span></span><span></span><span></span>
@@ -795,14 +884,17 @@ def header(current, over_hero=True, base=""):
 <nav class="mobnav" id="mobnav" aria-label="Mobile">
   <a href="{base}index.html">Home</a>
   {mob}
-  <a class="btn" href="{base}contact.html">Start Your Inquiry</a>
+  <a class="btn" href="{base}contact.html" data-sheet="">Start Your Inquiry</a>
 </nav>
 <main id="main">"""
 
 
-def footer(base=""):
+def footer(base="", sheet=True, kind=""):
+    """sheet=False on the contact page, which carries the form inline.
+    kind is the page's default gathering type for the sheet."""
     nav_li = "".join(f'<li><a href="{base}{h}">{l}</a></li>' for h, l in NAV)
     return f"""</main>
+{inquiry_sheet(base, kind) if sheet else ""}
 <div class="lbox" role="dialog" aria-modal="true" aria-label="Photograph">
   <button class="lbox__x" aria-label="Close">&times;</button>
   <button class="lbox__p" aria-label="Previous">&lsaquo;</button>

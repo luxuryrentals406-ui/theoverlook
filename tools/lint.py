@@ -30,8 +30,7 @@ TOTAL_WARN_KB = 3000
 # the privacy policy. The beacon is Cloudflare Web Analytics (cookieless).
 ALLOWED_HOSTS = {
     "*": {"static.cloudflareinsights.com"},
-    "contact.html": {"static.cloudflareinsights.com", "www.google.com",
-                     "theoverlookatflatheadlake.hbportal.co"},
+    "contact.html": {"static.cloudflareinsights.com", "www.google.com"},
 }
 
 
