@@ -93,6 +93,12 @@ for p in pages:
         if m.group(0).strip() not in ALLOWED_PRICES:
             FAILS.append(f"{name}: published price — '{m.group(0).strip()}'")
 
+    # 2c — no phone number anywhere (owner's call, 2026-09-28): email and the
+    #      inquiry form are the only published contact routes.
+    for m in re.finditer(r'tel:|"telephone"|\(?\b\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b',
+                         open(p, encoding="utf-8").read()):
+        FAILS.append(f"{name}: published phone number — '{m.group(0)}'")
+
     # 3 — vocabulary separation
     if name == "retreats.html":
         for w in WEDDING_WORDS:
@@ -135,6 +141,12 @@ for p in pages:
         WARNS.append(f"{name}: {raw.count('<h1')} <h1> tags")
     for m in re.finditer(r"<img (?![^>]*\balt=)[^>]*>", raw):
         FAILS.append(f"{name}: <img> without alt — {m.group(0)[:60]}")
+
+# 2c, llms.txt — the assistant brief is contact copy too
+_llms = os.path.join(ROOT, "llms.txt")
+if os.path.exists(_llms) and re.search(r'\(?\b\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b',
+                                       open(_llms, encoding="utf-8").read()):
+    FAILS.append("llms.txt: published phone number")
 
 # 6b — the deploy config must not contradict the sitemap. A redirect whose
 #      source is a real, indexed page makes that page unreachable, and a page

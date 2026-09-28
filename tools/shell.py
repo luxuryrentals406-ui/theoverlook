@@ -734,7 +734,6 @@ def footer(base=""):
         <h4>Get in touch</h4>
         <ul>
           <li><a href="mailto:{BIZ['email']}">{BIZ['email']}</a></li>
-          <li><a href="tel:{BIZ['tel']}">{BIZ['phone']}</a></li>
           <li>{BIZ['city']}, {BIZ['state']}</li>
           <li style="margin-top:1.2rem"><a href="{BIZ['ig']}" rel="noopener">Instagram {BIZ['handle']}</a></li>
           <li><a href="{BIZ['fb']}" rel="noopener">Facebook</a></li>
