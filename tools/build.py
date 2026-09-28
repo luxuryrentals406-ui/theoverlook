@@ -203,8 +203,10 @@ FAQ_MTVENUES = [
      "Most dates here book a year or more out. Send the weekend you have in mind and we "
      "will tell you honestly whether it is open."),
     ("Is pricing published?",
-     "No. Every booking is quoted against the dates and the shape of the event, with "
-     "one exception: the Ultimate Flathead Lake Wedding Weekend starts at $100,000."),
+     "Two starting figures are published: The Overlook Wedding starts at $20,000, and "
+     "the Ultimate Flathead Lake Wedding Weekend, which adds The Driftwood, starts at "
+     "$135,000. Everything beyond those is quoted against your dates and the shape of "
+     "the event."),
 ]
 
 # One page, one FAQ list. The page renders it, schema() turns it into FAQPage
@@ -537,6 +539,7 @@ def page_weddings():
       <div class="pkg">
         <div class="pkg__card rv">
           <h3>The Overlook Wedding</h3>
+          <p class="pkg__price"><small>The estate, yours alone &middot; starting at</small>$20,000</p>
           <p style="color:var(--ink-soft);margin-bottom:1.6rem">Exclusive use of the
             estate for your celebration, with the venue infrastructure in place.</p>
           {plist(["Full-property exclusivity for your booking",
@@ -550,7 +553,7 @@ def page_weddings():
         <div class="pkg__card pkg__card--feature rv">
           {eyebrow("Signature")}
           <h3>The Ultimate Flathead Lake Wedding Weekend</h3>
-          <p class="pkg__price"><small>Five nights, two estates &middot; starting at</small>$100,000</p>
+          <p class="pkg__price"><small>Five nights, two estates &middot; starting at</small>$135,000</p>
           <p style="color:#CFCabd;margin-bottom:1.6rem">Two estates, one group, five
             nights. The wedding itself at The Overlook, and
             <b style="font-weight:400;color:#fff">The Driftwood</b> waiting on the water
@@ -1093,7 +1096,7 @@ def page_gallery():
   <section class="sect sect--tight" style="padding-top:clamp(8rem,14vw,11rem)">
     <div class="wrap center rv">
       {eyebrow("Gallery")}
-      <h1 style="font-size:clamp(2rem,4.2vw,3.35rem)">{len(PHOTOS)} photographs of the property</h1>
+      <h1 style="font-size:clamp(2rem,4.2vw,3.35rem)">Photographs of the estate</h1>
       <p class="lede measure" style="margin-top:1.4rem">Everything here was shot on the
         estate. Select a photograph to open it full size.</p>
     </div>
@@ -2177,9 +2180,9 @@ def page_mt_venues(base):
         {BIZ['city']}, {FCA['time']} from {FCA['short_name']}. Up to 200 guests for the
         celebration, 28 sleeping across five accommodations, one group on the property
         at a time. Lodging is booked separately from the venue fee.</p>
-      <p style="margin-top:1rem">Pricing is quoted against your dates rather than
-        published, with a single exception: the Ultimate Flathead Lake Wedding Weekend,
-        five nights across two estates, starts at $100,000.</p>
+      <p style="margin-top:1rem">The Overlook Wedding starts at $20,000. The Ultimate
+        Flathead Lake Wedding Weekend, five nights across two estates, starts at
+        $135,000. Everything beyond those two is quoted against your dates.</p>
     </div>
   </section>
 
@@ -2519,9 +2522,12 @@ def venue_node():
          # No prices are published, so no Offer carries one — a figure here would
          # be quoted back by search and assistants as if it were on the page.
          "makesOffer": [
-             {"@type": "Offer", "name": "Wedding weekend",
-              "description": "Exclusive use of the estate for a multi-day wedding. "
-                             "Quoted against your dates."},
+             {"@type": "Offer", "name": "The Overlook Wedding",
+              "description": "Exclusive use of the estate for a multi-day wedding, with "
+                             "the pavilion, tent and bar already standing. Lodging is "
+                             "booked separately.",
+              "priceSpecification": {"@type": "PriceSpecification",
+                                     "minPrice": 20000, "priceCurrency": "USD"}},
              {"@type": "Offer", "name": "Corporate or private retreat",
               "description": "Full-property buyout. Quoted against your dates."},
              {"@type": "Offer", "name": "Private chef and catering",
@@ -2533,7 +2539,7 @@ def venue_node():
                              "Driftwood, a 14,000 sq ft lakefront home in Woods Bay — "
                              "sleeping up to 54 guests.",
               "priceSpecification": {"@type": "PriceSpecification",
-                                     "minPrice": 100000, "priceCurrency": "USD"}}],
+                                     "minPrice": 135000, "priceCurrency": "USD"}}],
          "sameAs": [BIZ["ig"], BIZ["fb"], BIZ["ig_sis"]]}
 
 
@@ -2624,9 +2630,10 @@ def llms_txt():
 - Sleeping capacity: 28 people across five accommodations (The Swan, The Glacier,
   The Lakeside, The Summit, The Ridge)
 - Exclusivity: one group on the property at a time; no shared facilities
-- Pricing: not published, with one exception below. Every other booking is quoted
+- Pricing: two starting figures are published, below. Everything else is quoted
   directly against the dates and the shape of the event.
-- The Ultimate Flathead Lake Wedding Weekend: starting at $100,000
+- The Overlook Wedding: starting at $20,000
+- The Ultimate Flathead Lake Wedding Weekend (both estates): starting at $135,000
 - That package is five nights across two estates: The Overlook (sleeps 28) plus The
   Driftwood, a 14,000 sq ft lakefront home at Woods Bay (sleeps 26), for a combined 54.
   Helicopter transfer between the two is available through WestSlope Helicopters.

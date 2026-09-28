@@ -86,8 +86,10 @@ for p in pages:
 
     # 2b — no published pricing anywhere (owner's call, 2026-09-19). Every
     #      booking is quoted directly, so a figure on the page is a regression.
-    ALLOWED_PRICES = {"$100,000"}          # the Ultimate weekend, and nothing else
-    for m in re.finditer(r"\$\s?[\d,]+", body):
+    # The Overlook weekend and the two-estate weekend (owner set both 2026-09-28).
+    ALLOWED_PRICES = {"$20,000", "$135,000"}
+    # end the match on a digit: "[\d,]+" swallows the comma in "$20,000, and"
+    for m in re.finditer(r"\$\s?[\d,]*\d", body):
         if m.group(0).strip() not in ALLOWED_PRICES:
             FAILS.append(f"{name}: published price — '{m.group(0).strip()}'")
 
@@ -127,7 +129,7 @@ for p in pages:
     elif not (70 <= len(desc.group(1)) <= 170):
         WARNS.append(f"{name}: meta description is {len(desc.group(1))} chars (aim 70–170)")
     for m in re.finditer(r'"price[A-Za-z]*"\s*:\s*"?([\d,]+)', raw):
-        if m.group(1) != "100000":
+        if m.group(1) not in ("20000", "135000"):
             FAILS.append(f"{name}: price in structured data — '{m.group(0)[:40]}'")
     if raw.count("<h1") > 1:
         WARNS.append(f"{name}: {raw.count('<h1')} <h1> tags")
