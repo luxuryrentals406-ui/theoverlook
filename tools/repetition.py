@@ -59,7 +59,7 @@ def page_text(path):
     inquiry sheet, sticky bar, aria-hidden duplicates or guest reviews."""
     s = open(path, encoding="utf-8").read()
     s = re.sub(r"<(head|header|nav|footer|script|style)\b.*?</\1>", " ", s, flags=re.S | re.I)
-    s = re.sub(r'<div class="sheet".*?</form>', " ", s, flags=re.S)
+    s = re.sub(r'<div class="sheet".*?<!-- /inquire -->', " ", s, flags=re.S)   # the inquiry window
     s = re.sub(r'<div class="sbar".*?</div>\s*</div>', " ", s, flags=re.S)
     s = re.sub(r'<div class="mq__run" aria-hidden="true">.*?</div>', " ", s, flags=re.S)
     s = re.sub(r"<blockquote.*?</blockquote>|<cite.*?</cite>", " ", s, flags=re.S | re.I)

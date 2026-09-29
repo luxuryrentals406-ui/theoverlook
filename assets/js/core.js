@@ -609,7 +609,7 @@
     document.head.appendChild(s);
   }
   window.__loadInquire = function () { load("inquire"); };
-  if (document.getElementById("inquiry") || document.querySelector("[data-sheet]")) {
+  if (document.querySelector("[data-sheet]")) {
     var idle = window.requestIdleCallback || function (fn) { setTimeout(fn, 1200); };
     idle(function () { load("inquire"); });
     document.addEventListener("pointerdown", function (e) {

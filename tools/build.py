@@ -24,10 +24,10 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    hero_preload, SZ_FULL, SZ_HALF, SZ_THIRD, SZ_GALLERY, SZ_THUMB,
                    img, imgsize, eyebrow, btn, tlink,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
-                   getting_here, switcher, rail, mosaic, inquiry_form, spec, sectnav, experiences,
+                   getting_here, switcher, rail, mosaic, hb_form, spec, sectnav, experiences,
                    weekend_builder, film,
                    driftwood, slideshow,
-                   head, header, footer)
+                   head, header, footer, CF_ANALYTICS_TOKEN)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 YEAR = datetime.date.today().year
@@ -691,8 +691,7 @@ LODGING_LINK = f'<a href="{LODGING_URL}" rel="noopener">Flathead Lake Luxury Lod
 
 def ask_btn(label, note, cls="btn btn--light btn--lg"):
     """An inquiry button that opens the sheet with the package named in the note."""
-    return (f'<a class="{cls}" href="contact.html?type=wedding" data-sheet="wedding" '
-            f'data-note="{note}">{label}</a>')
+    return btn("contact.html?type=wedding", label, cls, note=note)
 
 
 def pkg_summary(image, alt, price, lede, included):
@@ -1422,7 +1421,7 @@ def page_contact():
           </div>
         </div>
 
-        <div class="rv">{inquiry_form("", inline=True)}</div>
+        <div class="rv">{hb_form(inline=True)}</div>
       </div>
     </div>
   </section>
@@ -1432,8 +1431,8 @@ def page_contact():
 
 
 
-# The inquiry form itself lives in shell.inquiry_form(): the same three steps
-# sit inline here and in the bottom sheet on every other page.
+# The inquiry form is HoneyBook's own (shell.hb_form): inline here, and in the
+# window every other page opens from its inquiry buttons.
 
 
 
@@ -1657,18 +1656,14 @@ def page_privacy(base):
         ("Information We Collect",
          ["<p>These pages are static. This website has no database and no user "
           "accounts, and reading it sends us nothing.</p>",
-          "<p>The inquiry form is the one thing that does. When you send it, it "
-          "asks for:</p>",
-          ilist(["Name", "Email address", "Phone number, if you give it",
-                 "The dates you have in mind, and whether they are flexible",
-                 "The kind of gathering and an estimated guest count",
-                 "Anything you add in the note"]),
-          "<p>Your inquiry is handled by a small relay we run on Cloudflare, which "
-          "passes it to HoneyBook &mdash; the client-management service we run the "
-          "business on &mdash; and emails us a copy. The relay keeps its own copy for "
-          "90 days so that no inquiry can be lost, then deletes it. If the relay "
-          "cannot be reached, the form offers to send the same details as an "
-          "email from your own mail app instead.</p>",
+          "<p>The inquiry form &mdash; on the contact page, and in the window the "
+          "inquiry buttons open on every other page &mdash; is HoneyBook&rsquo;s own "
+          "form, embedded here. HoneyBook is the client-management service we run "
+          "the business on. What you enter goes straight to HoneyBook and reaches us "
+          "as an inquiry there. The form asks for:</p>",
+          ilist(["Name", "Email address", "Phone number", "Preferred event dates",
+                 "Estimated guest count",
+                 "Any additional information you provide in your message"]),
           "<p>If you would rather email, we hold what you send in our "
           "mailbox instead.</p>"]),
         ("How We Use Your Information",
@@ -1681,12 +1676,11 @@ def page_privacy(base):
         ("Information Sharing",
          ["<p>We do not sell, trade, or otherwise transfer your personal "
           "information to outside parties.</p>",
-          "<p>Your inquiry does pass through the providers we use to run the "
-          "business: Cloudflare, which hosts the relay and carries the email copy; "
-          "Zapier, which hands the inquiry to HoneyBook; HoneyBook, which holds the "
-          "inquiry itself; and the email provider behind the address on this "
-          "site. Each is bound to handle it confidentially and to use it only to "
-          "provide that service to us.</p>"]),
+          "<p>Your inquiry does sit with the providers we use to run the business: "
+          "HoneyBook, which hosts the inquiry form and holds the inquiry itself, and "
+          "the email provider behind the address on this site. Each is bound to "
+          "handle it confidentially and to use it only to provide that service to "
+          "us.</p>"]),
         ("Data Security",
          ["<p>We implement appropriate security measures to protect your personal "
           "information against unauthorized access, alteration, disclosure, or "
@@ -1695,23 +1689,31 @@ def page_privacy(base):
         # REWRITTEN: the live text hedged about first-party cookies that do not
         # exist and said nothing about the three embeds that do.
         ("Cookies and Tracking",
-         ["<p>This site sets no cookies of its own. It counts page views with "
-          "Cloudflare Web Analytics, which sets no cookie, stores nothing on your "
-          "device and does not identify you &mdash; we see how many people read a "
-          "page, not who. It runs no advertising tags and no tracking scripts, and "
-          "it does not build a profile of your visit.</p>",
+         [("<p>This site sets no cookies of its own. It counts page views with "
+           "Cloudflare Web Analytics, which sets no cookie, stores nothing on your "
+           "device and does not identify you &mdash; we see how many people read a "
+           "page, not who. It runs no advertising tags and no tracking scripts, and "
+           "it does not build a profile of your visit.</p>")
+          if CF_ANALYTICS_TOKEN else
+          ("<p>This site sets no cookies of its own. It runs no analytics, no "
+           "advertising tags and no tracking scripts, and it does not build a "
+           "profile of your visit.</p>"),
           "<p>One thing is kept in your browser: if you dismiss the inquiry bar at "
           "the foot of the page, that choice is stored in your browser&rsquo;s "
           "session storage so the bar stays closed. Your browser discards it when "
           "you close the tab, and it never leaves your device.</p>",
-          "<p>The typefaces are served from this site, not from Google, so "
-          "reading a page contacts no one but us and Cloudflare, which serves it. "
-          "One third party is embedded in these pages: <b>Google Maps</b>, on the "
-          "contact page only, for the map of Lakeside. When it loads, Google "
-          "receives your IP address and basic browser information and may set "
-          "cookies of its own under its own policy, which we neither control nor "
-          "read. You can block it in your browser; the page still works, and the "
-          "map is what changes.</p>"]),
+          "<p>The typefaces are served from this site, not from Google, so reading "
+          "a page contacts no one but us and Cloudflare, which serves it. Two third "
+          "parties are embedded. When their content loads, each receives your IP "
+          "address and basic browser information and may set cookies of its own "
+          "under its own policy, which we neither control nor read:</p>",
+          ilist(["<b>HoneyBook</b> (hbportal.co), for the inquiry form &mdash; on the "
+                 "contact page, and elsewhere only once you open the inquiry window.",
+                 "<b>Google Maps</b>, on the contact page only, for the map of "
+                 "Lakeside."]),
+          "<p>You can block either in your browser. The pages still work without "
+          "them; the map is what changes, and the inquiry form can be reached by "
+          "email instead.</p>"]),
         ("Third-Party Links",
          ["<p>Our website may contain links to third-party websites. We are not "
           "responsible for the privacy practices of these external sites and "

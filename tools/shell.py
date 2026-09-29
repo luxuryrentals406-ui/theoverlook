@@ -286,19 +286,24 @@ def eyebrow(t):
     return f'<span class="eyebrow">{t}</span>'
 
 
-def btn(href, label, cls="btn"):
-    """A button-styled link. One that points at the contact page also carries
-    data-sheet, so with JS the inquiry sheet opens in place (prefilled from
-    ?type=) and without JS the link still goes where it says."""
-    sheet = ""
+def _sheet_attrs(href, note=""):
+    """data-sheet for a link to the contact page, so with JS the inquiry
+    window opens in place and without JS the link still goes where it says.
+    note is shown above the form for the visitor to copy into it."""
     m = re.match(r"(?:\.\./)*contact\.html(?:\?type=(\w+))?$", href)
-    if m:
-        sheet = f' data-sheet="{m.group(1) or ""}"'
-    return f'<a class="{cls}" href="{href}"{sheet}>{label}</a>'
+    if not m:
+        return ""
+    return f' data-sheet="{m.group(1) or ""}"' + (f' data-note="{note}"' if note else "")
 
 
-def tlink(href, label):
-    return f'<a class="tlink" href="{href}">{label} <span>&rarr;</span></a>'
+def btn(href, label, cls="btn", note=""):
+    """A button-styled link."""
+    return f'<a class="{cls}" href="{href}"{_sheet_attrs(href, note)}>{label}</a>'
+
+
+def tlink(href, label, note=""):
+    return (f'<a class="tlink" href="{href}"{_sheet_attrs(href, note)}>{label} '
+            '<span>&rarr;</span></a>')
 
 
 def plist(items):
@@ -472,7 +477,7 @@ def getting_here():
             Lakeside, Montana. Guests can be on the property within an hour of
             landing.</p>
           <ul class="legs">{li}</ul>
-          {tlink("contact.html", "Ask about a site visit")}
+          {tlink("#inquiry-form", "Ask about a site visit")}
         </div>
       </div>
     </div>
@@ -567,16 +572,24 @@ HB_FORM_ID   = "691cc90430213200341cb152"          # "Event Inquiry Form", live
 HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
 
 
-INQUIRE_ENDPOINT = "/api/inquire"     # the Cloudflare Worker relay (worker/)
-# Set True once worker/README.md's switch-on steps are done. Until then the
-# sheet is email-first: Send opens the visitor's mail app with the inquiry
-# written out, with HoneyBook's public form offered beside it — so a relay
-# that is not there yet can never turn an inquiry into an error message.
-RELAY_LIVE = False
-TURNSTILE_SITE_KEY = ""              # set to enable Cloudflare Turnstile on the last step
+# Every inquiry goes straight into HoneyBook (owner, 2026-09-29): each inquiry
+# button opens the sheet with HoneyBook's own Event Inquiry Form in it, and
+# the contact page shows the same form inline. Nothing sits between the
+# visitor and HoneyBook. worker/ (the relay) is not used.
+#
+# HB_EMBED: paste the account's embed code here (HoneyBook > Lead capture >
+# Lead Forms > Event Inquiry Form > Share > Code > Copy code). While it is
+# empty the public form is framed directly, which delivers to the same
+# pipeline but cannot size itself, so the frame is given a measured height.
+HB_EMBED = ""
+# The public form measured 1,954px tall at 375px wide and 1,858px at 640px
+# (2026-09-29); the frame's height is set in site.css (.hbw__frame) and errs
+# tall: a gap under Submit costs nothing, a frame that cuts Submit off costs
+# a lead.
+
 # Cloudflare Web Analytics: cookieless page counting, no consent banner. The
-# token is not a secret (it is in the page); blank means no beacon at all.
-# Conversion = inquiries from the relay's /api/stats over these page views.
+# token is not a secret (it is in the page); blank means no beacon at all,
+# and the privacy page says so either way.
 CF_ANALYTICS_TOKEN = ""
 
 
@@ -586,91 +599,33 @@ def analytics():
     return ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
             f'data-cf-beacon=\'{{"token": "{CF_ANALYTICS_TOKEN}"}}\'></script>\n')
 
-INQ_TYPES = [("wedding", "Wedding"), ("corporate", "Corporate retreat"),
-             ("wellness", "Wellness retreat"), ("other", "Something else")]
 
-
-def inquiry_form(base="", inline=False):
-    """The three-step inquiry: when → what → you. One form, three sections;
-    inquire.js walks them one at a time and posts JSON to the relay. With JS
-    off every section shows and the submit opens HoneyBook's public form, so
-    nothing is ever a dead end.
-
-    inline=True is the contact page, where it sits in the layout instead of
-    the bottom sheet.
-    """
-    types = "".join(
-        f'<label class="chip"><input type="radio" name="type" value="{v}" required> {l}</label>'
-        for v, l in INQ_TYPES)
-    turnstile = (f'<div class="cf-turnstile" data-sitekey="{TURNSTILE_SITE_KEY}" data-theme="light"></div>'
-                 if TURNSTILE_SITE_KEY else "")
-    cls = "inq inq--inline" if inline else "inq"
-    return f"""<form class="{cls}" id="inquiry" method="get" action="{HB_FORM_URL}"
-      data-endpoint="{INQUIRE_ENDPOINT if RELAY_LIVE else ""}" novalidate>
-  <div class="sheet__prog" aria-hidden="true"><i class="is-on"></i><i></i><i></i></div>
-
-  <section class="sheet__step is-on" data-step="when" aria-label="Step 1 of 3">
-    <h3>When are you thinking?</h3>
-    <p class="lede">The dates you have in mind &mdash; a guess is fine.</p>
-    <div class="inq__dates">
-      <div class="field"><label for="inq-start">Arrive</label>
-        <input id="inq-start" name="start" type="date"></div>
-      <div class="field"><label for="inq-end">Leave</label>
-        <input id="inq-end" name="end" type="date"></div>
+def hb_form(inline=False):
+    """HoneyBook's Event Inquiry Form. inline=True is the contact page, where
+    it loads with the page (lazily); otherwise the frame is created by
+    inquire.js the first time the sheet opens, so no page pays for it unread."""
+    title = f"Inquiry form for {BIZ['name']}"
+    if HB_EMBED:
+        inner = HB_EMBED
+    elif inline:
+        inner = (f'<iframe class="hbw__frame" src="{HB_FORM_URL}" title="{title}" '
+                 f'loading="lazy" allow="clipboard-write"></iframe>')
+    else:
+        inner = ""
+    return f"""<div class="hbw{" hbw--inline" if inline else ""}"{' id="inquiry-form"' if inline else ""} data-src="{HB_FORM_URL}" data-title="{title}">
+      {inner}
+      <p class="hbw__wait" aria-hidden="true">Loading the inquiry form&hellip;</p>
     </div>
-    <p class="field__err" data-err="when">Leaving before you arrive &mdash; check the dates.</p>
-    <div class="chips" style="margin-top:1rem">
-      <label class="chip"><input type="checkbox" name="flexible" value="yes"> Dates are flexible</label>
-    </div>
-  </section>
-
-  <section class="sheet__step" data-step="what" aria-label="Step 2 of 3">
-    <h3>What are you planning?</h3>
-    <div class="chips" role="radiogroup" aria-label="Kind of gathering">{types}</div>
-    <p class="field__err" data-err="type">Pick the closest one.</p>
-    <div class="field" style="margin-top:1.2rem"><label for="inq-guests">About how many guests?</label>
-      <input id="inq-guests" name="guests" type="number" inputmode="numeric" min="1" max="200" placeholder="e.g. 120"></div>
-  </section>
-
-  <section class="sheet__step" data-step="you" aria-label="Step 3 of 3">
-    <h3>Where should we reply?</h3>
-    <div class="field"><label for="inq-name">Name <span class="req">*</span></label>
-      <input id="inq-name" name="name" type="text" autocomplete="name" required>
-      <p class="field__err">Your name, so we know who to write to.</p></div>
-    <div class="field"><label for="inq-email">Email <span class="req">*</span></label>
-      <input id="inq-email" name="email" type="email" autocomplete="email" inputmode="email" required>
-      <p class="field__err">That email does not look right.</p></div>
-    <div class="field"><label for="inq-phone">Phone</label>
-      <input id="inq-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"></div>
-    <div class="field"><label for="inq-note">Anything else?</label>
-      <textarea id="inq-note" name="note" rows="3" maxlength="2000"
-        placeholder="What you are picturing, and what would make the weekend work."></textarea></div>
-    <div class="inq__hp" aria-hidden="true"><label>Leave this empty
-      <input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
-    <input type="hidden" name="source" value="">
-    {turnstile}
-    <p class="form__note">We use this to answer you and nothing else. No list, no drip sequence.</p>
-  </section>
-
-  <div class="sheet__done" hidden>
-    <span class="eyebrow">Sent</span>
-    <h3>Thank you &mdash; it&rsquo;s with us.</h3>
-    <p>You&rsquo;ll hear back, usually within one business day.</p>
-  </div>
-  <div class="sheet__fallback" role="alert"></div>
-
-  <div class="sheet__nav">
-    <button type="button" class="btn btn--ghost" data-back hidden>Back</button>
-    <button type="button" class="btn" data-next>Continue</button>
-    <button type="submit" class="btn" data-send>Send inquiry</button>
-  </div>
-</form>"""
+    <p class="hbw__alt">Form not loading? <a href="{HB_FORM_URL}" rel="noopener">Open it
+      in a new tab</a>, or email <a href="mailto:{BIZ['email']}">{BIZ['email']}</a>.</p>"""
 
 
 def inquiry_sheet(base="", kind=""):
-    """The bottom sheet every page carries (the contact page has the form
-    inline instead). Opened by any control with data-sheet; `kind` is the
-    page's own gathering type, used when the control names none."""
+    """The window every page carries (the contact page has the form inline
+    instead). Opened by any control with data-sheet. A control can pass a
+    note (a package name, the weekend builder's picks); the sheet shows it
+    above the form with a Copy button, since the form itself is HoneyBook's
+    and cannot be prefilled from here."""
     return f"""
 <div class="sheet" id="inquire" data-default="{kind}" hidden>
   <button class="sheet__back" type="button" aria-label="Close"></button>
@@ -680,9 +635,13 @@ def inquiry_sheet(base="", kind=""):
       <div>{eyebrow("Inquiry")}<h2 id="inq-title">Check your date</h2></div>
       <button class="sheet__x" type="button" aria-label="Close">&times;</button>
     </div>
-    <div class="sheet__body">{inquiry_form(base)}</div>
+    <div class="sheet__note" hidden>
+      <p><b>Add this to your message:</b> <span data-note-text></span></p>
+      <button type="button" class="sheet__copy" data-copy>Copy</button>
+    </div>
+    <div class="sheet__body">{hb_form()}</div>
   </div>
-</div>"""
+</div><!-- /inquire -->"""
 
 
 def spec(groups):
@@ -731,7 +690,7 @@ def weekend_builder():
       {days}
       <div class="wk__sum">
         <p data-wk-sum>Pick a few things and the weekend writes itself.</p>
-        <button type="button" class="btn" data-wk-send>Send this weekend as my inquiry</button>
+        <button type="button" class="btn" data-wk-send>Add this weekend to my inquiry</button>
       </div>
     </div>"""
 
@@ -862,7 +821,7 @@ def driftwood(shots, kind="wedding"):
           <p style="color:var(--ink-soft)">{body}</p>
           <ul class="add__specs">{li}</ul>
           <p class="dw__foot">
-            {tlink(ask, "Ask about adding The Driftwood")}
+            {tlink(ask, "Ask about adding The Driftwood", note="Interested in: adding The Driftwood")}
             <span class="dw__note">Availability is separate from the venue, so ask
               early if you want both estates on the same dates.</span>
           </p>
