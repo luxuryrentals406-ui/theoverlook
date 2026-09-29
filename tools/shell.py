@@ -985,6 +985,7 @@ def header(current, over_hero=True, base=""):
 <nav class="mobnav" id="mobnav" aria-label="Mobile">
   <a href="{base}index.html">Home</a>
   {mob}
+  <a href="{base}things-to-do">The Area</a>
   <a class="btn" href="{base}contact.html" data-sheet="">Start Your Inquiry</a>
 </nav>
 <main id="main">"""
@@ -1014,7 +1015,8 @@ def footer(base="", sheet=True, kind=""):
       </div>
       <div>
         <h4>Explore</h4>
-        <ul>{nav_li}<li><a href="{base}journal">Journal</a></li>
+        <ul>{nav_li}<li><a href="{base}things-to-do">The Area</a></li>
+            <li><a href="{base}journal">Journal</a></li>
             <li><a href="{base}contact.html">Contact</a></li></ul>
       </div>
       <div>

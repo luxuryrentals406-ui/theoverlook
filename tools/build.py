@@ -179,6 +179,15 @@ FAQ_AREA = [
      f"{cap(WHITEFISH['time'])} from the estate."),
     ("Which airport do guests fly into?",
      f"{FCA['name']}, {FCA['time']} away."),
+    ("Is there skiing near the estate?",
+     "Blacktail Mountain Ski Area is on the mountain above Lakeside, 14 miles up "
+     f"Blacktail Road. {WHITEFISH['name']} is {WHITEFISH['time']} away."),
+    ("Where can guests stay if the estate is full?",
+     "The estate sleeps 28. Nearby, Flathead Harbor in Lakeside has cabins and condos "
+     "on the lake, and Whitefish and Kalispell have hotels."),
+    ("What is the museum in Polson?",
+     "The Miracle of America Museum, at the south end of Flathead Lake: a museum of "
+     "Americana with a village of more than 40 historic buildings."),
 ]
 
 FAQ_MTVENUES = [
@@ -1914,47 +1923,98 @@ def page_journal(base):
 
 # ============================================ PORTED: /things-to-do
 def page_area(base):
-    """Ported from the live /things-to-do.
+    """Ported from the live /things-to-do — the URL stays. Since 2026-09-28 it is
+    the local attractions page (owner's brief): the lake, the mountains, the
+    museum in Polson and the resorts nearby.
 
-    This page exists for the guest question rather than the couple's — "what is
-    there to do around here" is asked of assistants constantly, and answering it
-    with real drive times is what gets the estate named in the reply.
+    Every fact about a place comes from that place's own site or Montana's
+    tourism listings; the source sits in a comment beside each entry. No hours
+    or prices: they change, and the link out is the answer. Territory 1889 is
+    listed as a nearby resort, not a thing to do (owner's call), and described
+    as what it is today — planned, private, awaiting county approval.
     """
+    groups = [
+        ("On the lake", [
+            ("Flathead Lake",
+             "The largest natural freshwater lake west of the Mississippi in the lower "
+             "48 sits below the property, and the pavilion looks out over it. Boating "
+             "and swimming are minutes away.", None),
+            # glaciermt.com/listing/miracle-of-america-museum (read 2026-09-28)
+            ("Miracle of America Museum, Polson",
+             "At the south end of the lake, a 4.5-acre museum of Americana: a main "
+             "building and a village of more than 40 historic structures, from a "
+             "blacksmith&rsquo;s shop to a 1912 one-room schoolhouse, with vintage "
+             "motorcycles, military vehicles and aircraft. A good half-day for guests "
+             "of any age.",
+             "https://glaciermt.com/listing/miracle-of-america-museum"),
+        ]),
+        ("In the mountains", [
+            # blacktailmountain.com (read 2026-09-28): "located in Lakeside, Montana,
+            # and overlooks Flathead Lake"; "Blacktail Road 14 miles to the mountaintop"
+            ("Blacktail Mountain Ski Area",
+             "The closest skiing to the estate. The ski area overlooks Flathead Lake "
+             "from the top of the mountain above Lakeside, 14 miles up Blacktail Road "
+             "from Highway 93.",
+             "https://blacktailmountain.com/"),
+            (WHITEFISH["name"],
+             f"{cap(WHITEFISH['time'])} from the estate. Skiing in winter, lift-served "
+             "hiking and biking in summer, and the town of Whitefish below it.",
+             None),
+            (GLACIER["name"],
+             f"{cap(GLACIER['drive'])} to {GLACIER['entrance']}, the west entrance "
+             f"&mdash; {GLACIER['miles']}. It makes a good day trip before or after the "
+             "weekend; plan a full day. Going-to-the-Sun Road is seasonal, so check the "
+             "park&rsquo;s website before you go.",
+             "https://www.nps.gov/glac/"),
+        ]),
+        ("Nearby resorts", [
+            # visitmt.com/listing/flathead-harbor-at-lakeside-21509 (read 2026-09-28);
+            # lodging types from flatheadharbor.com/rv-resort and the Whitefish Chamber
+            ("Flathead Harbor, Lakeside",
+             "A resort and marina on the lake in Lakeside, with cabins, condos and RV "
+             "sites &mdash; somewhere for guests beyond the ones staying on the estate. "
+             "It is home to the Far West, Montana&rsquo;s largest charter boat, rents "
+             "boats and jet skis, and has waterfront dining at the Harbor Grille and "
+             "the Anchor Bar.",
+             "https://www.flatheadharbor.com/"),
+            # territory1889.com; Daily Inter Lake 2026-09-23 and 2026-09-27
+            ("Territory 1889",
+             "A private golf and lake club planned by Discovery Land Company on 1,700 "
+             "acres near Blacktail Mountain, with golf, a lake club and a marina. It is "
+             "still in planning: as of September 2026 Flathead County had not yet "
+             "approved its first phase.",
+             "https://territory1889.com/"),
+        ]),
+    ]
+    body = ""
+    for gi, (head, places) in enumerate(groups):
+        body += (f'<h2 style="margin-top:{"0" if gi == 0 else "3.4rem"}">{head}</h2>')
+        for name, text, url in places:
+            link = (f' <a href="{url}" rel="noopener" style="white-space:nowrap">Their site '
+                    f'&rarr;</a>' if url else "")
+            body += (f'<h3 style="margin-top:1.8rem;font-size:1.35rem">{name}</h3>'
+                     f'<p style="margin-top:.6rem;color:var(--ink-soft)">{text}{link}</p>')
     on_site = ["A heated pool and a hot tub", "A barrel sauna",
                "A fitness room and a games room", "A fire pit",
                "A putting green", "Walking trails across the fifteen acres"]
     items = "".join(f"<li>{i}</li>" for i in on_site)
-    return (doc_head(base, "The Area", "Things to do around Flathead Lake",
-                     "What is nearby for guests who want to get out and explore, "
-                     "with drive times from the estate.",
+    return (doc_head(base, "The Area", "Around Lakeside and Flathead Lake",
+                     "What is near the estate for guests who want to get out and "
+                     "explore &mdash; and where extra guests can stay.",
                      trail=[("Things to Do", None)])
             + f"""
   <section class="sect" style="padding-top:clamp(2rem,4vw,3rem)">
     <div class="wrap wrap--narrow rv">
-      <h2>Flathead Lake</h2>
-      <p style="margin-top:1rem">The largest natural freshwater lake west of the
-        Mississippi in the lower 48 sits below the property, and the pavilion looks out
-        over it. Boating and swimming are minutes away.</p>
+      {body}
 
-      <h2 style="margin-top:2.8rem">{GLACIER['name']}</h2>
-      <p style="margin-top:1rem">{cap(GLACIER['drive'])} to {GLACIER['entrance']}, the
-        west entrance &mdash; {GLACIER['miles']}. It makes a good day trip before or
-        after the weekend; plan a full day. Going-to-the-Sun Road is seasonal, so check
-        the park&rsquo;s website before you go.</p>
-
-      <h2 style="margin-top:2.8rem">{WHITEFISH['name']}</h2>
-      <p style="margin-top:1rem">{cap(WHITEFISH['time'])} from the estate. Skiing in
-        winter, lift-served hiking and biking in summer. Whitefish is also a good
-        place for extra guests to stay.</p>
-
-      <h2 style="margin-top:2.8rem">Arriving by air</h2>
+      <h2 style="margin-top:3.4rem">Arriving by air</h2>
       <p style="margin-top:1rem">{FCA['name']} is {FCA['time']} away. Helicopter
         arrivals and private flights over the lake can be arranged through WestSlope
         Helicopters, who also run the transfer in the two-estate weekend package.</p>
 
-      <h2 style="margin-top:2.8rem">Without leaving the property</h2>
-      <p style="margin-top:1rem">On the estate itself:</p>
+      <h2 style="margin-top:3.4rem">Without leaving the property</h2>
       <ul style="margin-top:1rem;color:var(--ink-soft);line-height:2">{items}</ul>
+      <p style="margin-top:1rem">{tlink(base + "estate.html", "See the estate")}</p>
     </div>
   </section>
 
@@ -2147,10 +2207,10 @@ DOCS = [
 DOCS.append(
     {"path": "things-to-do/index.html", "fn": page_area,
      "og": "lake-sunset-boat.jpg", "sticky": True, "priority": "0.7",
-     "title": "Things to Do Near Flathead Lake | The Overlook",
-     "desc": "What is within reach of the estate — Flathead Lake, Glacier National "
-             "Park about an hour away, Whitefish Mountain Resort, and what is already "
-             "on the property.",
+     "title": "Things to Do Near Flathead Lake & Lakeside | The Overlook",
+     "desc": "Near the estate in Lakeside, Montana: Flathead Lake, Blacktail and "
+             "Whitefish skiing, Glacier National Park, the Miracle of America Museum "
+             "and nearby resorts.",
      "trail": [("Things to Do", "things-to-do/index.html")]})
 
 DOCS.append(
