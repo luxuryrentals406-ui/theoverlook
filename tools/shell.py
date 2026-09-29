@@ -528,7 +528,7 @@ def rail(eyeb, title, lede, items):
     buttons and the keyboard all move it without any of them being special-cased.
     """
     cards = "".join(
-        f'<figure class="rail__item"><div class="rail__shot">{img(f, a)}</div>'
+        f'<figure class="rail__item"><div class="rail__shot">{img(f, a, sizes="(min-width:861px) 400px, 78vw")}</div>'
         f'<figcaption>{c}</figcaption></figure>' for f, a, c in items)
     return f"""<section class="sect rail">
     <div class="wrap rail__head rv">

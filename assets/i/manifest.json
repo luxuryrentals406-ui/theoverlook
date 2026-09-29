@@ -754,6 +754,136 @@
    1920
   ]
  },
+ "lodging-glacier-house-exterior-lit.jpg": {
+  "h": 1000,
+  "hash": "731baf8c",
+  "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAACQAwCdASoUAA0APu1iqU2ppaQiMAgBMB2JZwAATvCmOLPYdaUAAP7bW5ayoca1Y2Xiz9qVsSlQLCmXvZ1aACFMHHQhBl+qdNSpKLZohEftiwqqOp9zsJcc8kwuZF3f5iWZobwKZKZeAA==",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-glacier-house-living-seating.jpg": {
+  "h": 1000,
+  "hash": "8af14c34",
+  "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADQAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JYgCdAB+NsN4CJJyyHAAAzcsWOOcuR+Z/5c1Qj7ZPVHAbit8g3/SgtoRUqvqJYL6AOqa+yJFi605PdxZNwrnkeA/1pJaAHR/6CW8MpK9fxacfsCTiBYSZ7OcV4+5+BaM6Ul8AAAA=",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-lakeside-house-bed-gold-accent-wall.jpg": {
+  "h": 1000,
+  "hash": "356dfd1e",
+  "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JQBYdhHpBdVIUMwYwLPfgAP2ZdB5qpCyUkT6sdSCpVNdcpkqeUzB7TEMy7WIAIiD5ywn5stva912WqP4zxCYwq4jM40U7dRNbsI+QAK+gbAL29Z3l79Ot5EMtr4/uwAA=",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-lakeside-house-patio-guests.jpg": {
+  "h": 1000,
+  "hash": "abe5d7c3",
+  "lqip": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAACwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JZQCw7BmJ/lP/WikZAAD+Tcx3NnpYkOKkDHACKyBoAp47r15XHnApPMLlb2ebANQ+TOFjWbfB/Jc8h/qrJVp151FEb8Nkk2Xelc5x6FuGRlMGY4TO/umTDgAAAA==",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-swan-house-exterior-drive.jpg": {
+  "h": 1000,
+  "hash": "74ea8c95",
+  "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JZQC+SCLW/xH3+6J0jHAAAPwsWS0Af4i7muvf3q272FfC7mqFZ4g5NaP8wY9S5NV/64SgU9qsdpxZ5LYFV1etHqmVk2INyCVD2pR1m7pJUqYJCFHJU+5vU7FTP0tkDsMi4ifAAAA=",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-swan-house-upper-deck-guests.jpg": {
+  "h": 1000,
+  "hash": "fa22b9f8",
+  "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBACdASoUAA0APu1iqU2ppaOiMAgBMB2JYgCdMoRwACHT0XlznNqOegD4yDojcQBdLDoiXeXE4Cn6Nl/fp/Hrm/ShtZcglfyb/ZH20f9ubpGieDCaHCfGFdal4FNAf4Mrl3B4mKpSb4Ip13mk6BuKg2JlpcAbvDgr3+PwuxC8tX2RbPEOIAAA",
+  "v": 2,
+  "w": 1500,
+  "widths": [
+   480,
+   800,
+   1200,
+   1500
+  ]
+ },
+ "lodging-the-ridge-exterior.jpg": {
+  "h": 2160,
+  "hash": "f2565491",
+  "lqip": "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAABwBQCdASoUAB4APu1sq06ppqOiMBgIATAdiWMAyJ2rgKWef5Qr4rRCqpeQ5u6QoJVeHlbQAP4lF+NoyIys15DZn1oO5LYZMIUTLPnSBMSnrfW51gqe2HTFI4t8gaZcC3LKJDL0i3L7QIjApm3iBjRCNM1lNgY9ccUnreZ60Nd8az4aXufqDXVw4puja4ghoyaNkVDRD/OYtMrKl+b5vPHYk2uo+edCBB7oo3rxDoX8iTtCGuwfsxvPI0QQMNSGaAA=",
+  "v": 2,
+  "w": 1440,
+  "widths": [
+   480,
+   800,
+   1200,
+   1440
+  ]
+ },
+ "lodging-the-ridge-king-bed.jpg": {
+  "h": 1920,
+  "hash": "64040daa",
+  "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADwBACdASoUABsAPu1qrlCppaQiqAqpMB2JYwDE2ApEWqjSDv3aT6O9vz1kEj/0q4AA3+bhXLSEYzd6O5SrfCz9dIVS3eUsICY5s6EHnDlyC2nfvXaYu7jrzWeRuQIkgztc2CwLZugF3lUX4repOFrDa/DcpLcuNZDFb4wvcxanJYbOY1IkEPYmE6ZwPZPv7i1G9raiTwUWg9gAAAA=",
+  "v": 2,
+  "w": 1440,
+  "widths": [
+   480,
+   800,
+   1200,
+   1440
+  ]
+ },
+ "lodging-the-summit-exterior.jpg": {
+  "h": 960,
+  "hash": "a5685c50",
+  "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADQAwCdASoUAA0APu1iqU2ppaQiMAgBMB2JQAHOAH9jIvi0nN7XQoAA/n6tEdiDYCzgcSStXqU4ftpDN76vqVmHGM/QPQR8I5oldUObv1OoLrCxEAQLCreRDTD4uiM4wXJtBx0bPF3lxGOUPYTEAAAA",
+  "v": 2,
+  "w": 1440,
+  "widths": [
+   480,
+   800,
+   1200,
+   1440
+  ]
+ },
+ "lodging-the-summit-living-area.jpg": {
+  "h": 1920,
+  "hash": "462a0524",
+  "lqip": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAAAQBQCdASoUABsAPu1irE+ppSQiMBgIATAdiWMAvzgR5+Shv/tOIlJX6dSrPqcC480AAPXQDVrqy/rpHZRxn8TlAQguUBQHApEbf9lpgO1llfhCEEOYetu3YJyWoxNbNKg+Z8LdLvUMh1krWVKgQNxN8+jxP5AEvkLoyIv/++njb5g8RJmGzdQo8oOeRpLU3uOXrb07wTwjB5oDwFsAAA==",
+  "v": 2,
+  "w": 1440,
+  "widths": [
+   480,
+   800,
+   1200,
+   1440
+  ]
+ },
  "lounge-interior.jpg": {
   "h": 1920,
   "hash": "d76823fc",

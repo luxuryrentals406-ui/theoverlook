@@ -659,6 +659,36 @@ def page_weddings():
 # in photographs. Facts are the ones the weddings page and the Driftwood block
 # already state — nothing new is claimed here.
 
+# The five houses as Flathead Lake Luxury Lodging rents them. Names, sleeping
+# counts and the Compound / Full Estate groupings are copied from that site's
+# content/properties.py (checked against the owner's Guesty listings on
+# 2026-09-25); the photographs are the owner's own, from the same site.
+LODGING_URL = "https://flatheadlakeluxurylodging.com/"
+LODGING = [
+    ("lodging-swan-house-exterior-drive.jpg", "The Swan House from the drive",
+     "The Swan House &middot; sleeps 14"),
+    ("lodging-swan-house-upper-deck-guests.jpg", "Guests on the Swan House's upper deck",
+     "The Swan House, the upper deck"),
+    ("lodging-glacier-house-exterior-lit.jpg", "The Glacier House lit up at dusk",
+     "The Glacier House &middot; sleeps 4"),
+    ("lodging-glacier-house-living-seating.jpg", "The living room in the Glacier House",
+     "The Glacier House, inside"),
+    ("lodging-lakeside-house-patio-guests.jpg", "The Lakeside House with its glass door open onto the patio",
+     "The Lakeside House &middot; sleeps 4"),
+    ("lodging-lakeside-house-bed-gold-accent-wall.jpg", "The Lakeside House bedroom and its gold accent wall",
+     "The Lakeside House, inside"),
+    ("lodging-the-summit-exterior.jpg", "The Summit treehouse among the pines",
+     "The Summit &middot; sleeps 3"),
+    ("lodging-the-summit-living-area.jpg", "Inside The Summit",
+     "The Summit, inside"),
+    ("lodging-the-ridge-exterior.jpg", "The Ridge treehouse on its stilts",
+     "The Ridge &middot; sleeps 3"),
+    ("lodging-the-ridge-king-bed.jpg", "The bedroom in The Ridge",
+     "The Ridge, inside"),
+]
+LODGING_LINK = f'<a href="{LODGING_URL}" rel="noopener">Flathead Lake Luxury Lodging</a>'
+
+
 def ask_btn(label, note, cls="btn btn--light btn--lg"):
     """An inquiry button that opens the sheet with the package named in the note."""
     return (f'<a class="{cls}" href="contact.html?type=wedding" data-sheet="wedding" '
@@ -689,7 +719,8 @@ def page_pkg_overlook():
                 "Parking for 75 cars on the property",
                 "Your onsite venue coordinator",
                 "Up to <b>200</b> guests, with an 11:00 p.m. end",
-                "Lodging on the property quoted separately"]
+                "The five houses on the property, booked separately through "
+                "Flathead Lake Luxury Lodging"]
     day = [("ceremony-aisle-view.jpg", "The aisle on the ceremony lawn, looking toward the water",
             "Afternoon", "Vows on the lawn above the lake, with the trees on either side "
             "and the sun behind your guests."),
@@ -733,6 +764,12 @@ def page_pkg_overlook():
                "From the first chair on the lawn to breakfast the next morning, all of it "
                "on one hillside.", day)}
 
+  {rail("Where everyone stays", "Five houses, a short walk from the tent",
+        f"Your wedding party can sleep on the property. The houses are booked through "
+        f"our lodging company, {LODGING_LINK}: The Compound &mdash; the Swan, Glacier "
+        f"and Lakeside houses, sleeping 22 &mdash; or The Full Estate, all five, "
+        f"sleeping 28.", LODGING)}
+
   <section class="sect sect--forest">
     <div class="wrap wrap--narrow">
       {quote(*R_OLIVIA)}
@@ -754,7 +791,8 @@ def page_pkg_ultimate():
                 "for the wedding",
                 "The Driftwood &mdash; a <b>14,000 sq ft</b> lakefront home at Woods Bay "
                 "with <b>7</b> bedrooms, <b>9</b> baths, a private cove and boat slips",
-                "Room for <b>54</b> to stay: 28 at The Overlook, 26 at The Driftwood",
+                "Room for <b>54</b> to stay: 28 across The Overlook&rsquo;s five houses, "
+                "26 at The Driftwood",
                 "Helicopter transfer between the two, through WestSlope",
                 "Planning support from the first call to the send-off"]
     heli_body = (f'{eyebrow("Between the two")}'
@@ -813,6 +851,11 @@ def page_pkg_ultimate():
       <div class="rv" style="margin-top:2rem">{tlink("overlook-wedding.html", "See The Overlook Wedding")}</div>
     </div>
   </section>
+
+  {rail("Where everyone stays", "The five houses up on the hill",
+        f"While the closest family takes The Driftwood, the rest of the party sleeps in "
+        f"the estate&rsquo;s houses, which our lodging company, {LODGING_LINK}, runs "
+        f"the rest of the year.", LODGING)}
 
   {band("driftwood-dock-slips.jpg", "The Driftwood's dock and private boat slips",
         "Both estates, one weekend",
