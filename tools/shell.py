@@ -568,6 +568,11 @@ HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
 
 
 INQUIRE_ENDPOINT = "/api/inquire"     # the Cloudflare Worker relay (worker/)
+# Set True once worker/README.md's switch-on steps are done. Until then the
+# sheet is email-first: Send opens the visitor's mail app with the inquiry
+# written out, with HoneyBook's public form offered beside it — so a relay
+# that is not there yet can never turn an inquiry into an error message.
+RELAY_LIVE = False
 TURNSTILE_SITE_KEY = ""              # set to enable Cloudflare Turnstile on the last step
 # Cloudflare Web Analytics: cookieless page counting, no consent banner. The
 # token is not a secret (it is in the page); blank means no beacon at all.
@@ -601,7 +606,7 @@ def inquiry_form(base="", inline=False):
                  if TURNSTILE_SITE_KEY else "")
     cls = "inq inq--inline" if inline else "inq"
     return f"""<form class="{cls}" id="inquiry" method="get" action="{HB_FORM_URL}"
-      data-endpoint="{INQUIRE_ENDPOINT}" novalidate>
+      data-endpoint="{INQUIRE_ENDPOINT if RELAY_LIVE else ""}" novalidate>
   <div class="sheet__prog" aria-hidden="true"><i class="is-on"></i><i></i><i></i></div>
 
   <section class="sheet__step is-on" data-step="when" aria-label="Step 1 of 3">
@@ -700,14 +705,14 @@ def spec(groups):
 
 WEEKEND = [
     ("Friday", "Arrive and settle in",
-     ["Guests settle into the five houses", "Rehearsal dinner in the pavilion",
-      "Welcome drinks at the fire pit", "Arrive by helicopter"]),
+     ["Guests settle in on the property", "Rehearsal dinner in the pavilion",
+      "Welcome drinks on the lawn"]),
     ("Saturday", "The wedding",
-     ["Ceremony on the lawn above the water", "Cocktail hour on the grounds, built-in bar",
+     ["Ceremony on the lawn above the water", "Cocktail hour on the grounds",
       "Dinner and dancing under the tent", "Late night at the fire pit"]),
     ("Sunday", "The last morning",
-     ["Brunch cooked in the Swan", "Pool, hot tub and the sauna",
-      "Putting green and the trails", "Nobody drives home"]),
+     ["Brunch cooked in the Swan", "An afternoon at the pool",
+      "Putting green and the trails"]),
 ]
 
 
@@ -824,7 +829,7 @@ def driftwood(shots, kind="wedding"):
            else "contact.html?type=wedding")
     if kind == "retreat":
         title = "The Driftwood,<br>for a larger team"
-        lede = ("The Overlook houses 28. For a bigger group, The Driftwood can be "
+        lede = ("For a bigger group than The Overlook houses, The Driftwood can be "
                 "added alongside it &mdash; a 14,000 sq ft lakefront home at Woods Bay, "
                 "with private lake access, a cove and boat slips.")
         body = ("About twenty minutes around the lake, or a few minutes by air &mdash; we "
@@ -832,8 +837,8 @@ def driftwood(shots, kind="wedding"):
                 "estates sit under one booking, so the whole team stays together.")
     else:
         title = "The Driftwood,<br>down on the water"
-        lede = ("The Overlook sleeps 28 up on the hill. When the guest list runs past "
-                "that, The Driftwood can be added to your booking &mdash; a 14,000 sq ft "
+        lede = ("When the guest list runs past what The Overlook sleeps, The "
+                "Driftwood can be added to your booking &mdash; a 14,000 sq ft "
                 "lakefront home at Woods Bay that sleeps 26, with its own cove and "
                 "private boat slips.")
         body = ("It is about twenty minutes around the lake from the venue, or a few "

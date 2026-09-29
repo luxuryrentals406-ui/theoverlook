@@ -207,6 +207,21 @@ if n_dream > 1:
     FAILS.append(f"site-wide: 'dream' appears {n_dream}x (max 1)")
 
 # ---------------------------------------------------------------- report
+# 8 — the site does not repeat itself (owner's brief, 2026-09-28). Each thing
+#     the estate offers has one home per page; tools/repetition.py holds the
+#     list and the budget. Guest reviews and aria-hidden text are exempt.
+import repetition
+_texts = {}
+for _p in repetition.FUNNEL:
+    _full = os.path.join(ROOT, _p)
+    if not os.path.exists(_full):
+        continue
+    _texts[_p] = repetition.page_text(_full)
+    for _k, _n, _cap in repetition.over_budget(_texts[_p]):
+        FAILS.append(f"{_p}: says '{_k}' {_n} times (max {_cap}) — give it one home on the page")
+for _s, _ps in repetition.shared_sentences(_texts).items():
+    FAILS.append(f"same sentence on {', '.join(_ps)}: '{_s[:70]}…'")
+
 print(f"\n  linted {len(pages)} pages\n")
 for w in WARNS:
     print(f"  warn  {w}")

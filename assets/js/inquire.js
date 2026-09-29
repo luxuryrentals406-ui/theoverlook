@@ -122,16 +122,40 @@
       fallback.classList.add("is-on");
       fallback.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
+    /* Before the relay is switched on (shell.RELAY_LIVE) the form carries no
+       endpoint, and Send is email-first: the visitor's mail app opens with the
+       inquiry written out, and the sheet says plainly that pressing Send there
+       is what delivers it — with the address and the HoneyBook form beside it
+       for anyone whose device opens nothing. */
+    function emailFirst(d) {
+      var link = mailto(d);
+      var addr = link.replace(/^mailto:/, "").split("?")[0];
+      sent = true;
+      steps.forEach(function (s) { s.classList.remove("is-on"); });
+      prog.forEach(function (p) { p.classList.add("is-on"); });
+      nav.hidden = true;
+      fallback.classList.remove("is-on");
+      done.innerHTML =
+        '<span class="eyebrow">One more tap</span>' +
+        "<h3>Your email is ready to send</h3>" +
+        "<p>It opened in your mail app with everything filled in &mdash; press Send " +
+        "there and it reaches us. Nothing opened? " +
+        '<a href="' + link + '">Try again</a>, email <a href="mailto:' + addr + '">' + addr +
+        '</a>, or use <a href="' + form.getAttribute("action") + '" rel="noopener">our inquiry form</a>.</p>';
+      done.hidden = false;
+      if (window.__inquirySent) window.__inquirySent("email");
+      window.location.href = link;
+    }
     function submit() {
       if (sent) return;
       var d = payload();
+      var endpoint = form.dataset.endpoint;
+      if (!endpoint) { emailFirst(d); return; }
       send.disabled = true;
       send.textContent = "Sending…";
       fallback.classList.remove("is-on");
       var ctl = "AbortController" in window ? new AbortController() : null;
       var timer = setTimeout(function () { if (ctl) ctl.abort(); }, TIMEOUT);
-      var endpoint = form.dataset.endpoint;
-      if (!endpoint) { clearTimeout(timer); fail(d); return; }
       fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

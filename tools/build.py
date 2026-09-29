@@ -99,16 +99,14 @@ FAQ_WEDDINGS = [
      "sleep on the property across the five accommodations &mdash; usually the couple "
      "and their closest family and wedding party.</p>"),
     ("What does a booking include?",
-     "<p>The Overlook Wedding starts at $20,000. A booking covers exclusive use of the "
-     "grounds, the "
-     "pavilion and tent, the built-in bar, onsite tables and chairs, four head "
-     "tables, "
-     "the fire pit, parking for 75 cars and your onsite venue coordinator. "
-     "<a href='#included'>See the full list of what is included.</a></p>"),
+     "<p>The Overlook Wedding starts at $20,000. A booking covers exclusive use of "
+     "the whole venue &mdash; everything listed under What&rsquo;s included, and "
+     "your onsite venue coordinator. "
+     "<a href='#included'>See what is included.</a></p>"),
     ("Is lodging included or separate?",
      "<p>Separate. Lodging is booked apart from the venue fee, so you only take the "
      "houses you need. "
-     "<a href='estate.html'>See the five accommodations.</a></p>"),
+     "<a href='estate.html'>See where everyone stays.</a></p>"),
     ("What is the payment schedule?",
      "<p>50% at signing, 25% at 120 days out, and the final 25% at 60 days out. A "
      "refundable security deposit is due 30 days before the event. Contracts are "
@@ -154,8 +152,8 @@ FAQ_WELLNESS = [
      "far more than that for daytime sessions if part of your group is coming in "
      "from town.</p>"),
     ("Is the whole property really private?",
-     "<p>Yes. One group is on the estate at a time, for the length of the booking. "
-     "There is no other party on the far lawn and nobody crossing to a pool.</p>"),
+     "<p>Yes. For the length of the booking the estate is yours alone &mdash; "
+     "nobody on the far lawn and nobody crossing to the pool.</p>"),
     ("Can you handle specific diets?",
      "<p>Yes. A private chef cooks for your group alone, so the menu can be built "
      "around whatever the week requires.</p>"),
@@ -257,8 +255,9 @@ DRIFTWOOD_SHOTS = [
 
 # ================================================================== HOME
 def page_home():
-    facts = [("15", "Private acres"), ("200", "Event guests"),
-             ("28", "Sleep onsite"), ("One", "Group at a time")]
+    # the headline already says fifteen acres; the strip says something new
+    facts = [("200", "Event guests"), ("28", "Sleep onsite"),
+             (FCA["brief"].split()[0], "Min from the airport"), ("One", "Group at a time")]
     parts = []
     for n, l in facts:
         attr = ' data-count="%s"' % n if n.isdigit() else ""
@@ -279,8 +278,8 @@ def page_home():
          "Plan a retreat"),
         ("estate.html", "treehouse-sunset.jpg",
          "A treehouse at sunset, the light coming through the pines", "The Estate",
-         "Five accommodations, a heated pool, sauna, fitness room and trails across "
-         "fifteen acres. This is what your group has to itself.",
+         "Five places to sleep and the grounds between them &mdash; what your group "
+         "has to itself.",
          "Tour the property"),
     ]
     chtml = "".join(f"""<a class="card" href="{h}">
@@ -306,17 +305,17 @@ def page_home():
     <div class="facts__grid rv rv--stagger">{fhtml}</div>
   </section>
 
-  {marquee(["Lakeside, Montana", "Flathead Lake", "Fifteen private acres",
-            "One group at a time", "Glacier Country", "Weddings &amp; Retreats"])}
+  {marquee(["Lakeside, Montana", "Flathead Lake", "Glacier Country",
+            "Weddings", "Retreats", "Wellness"])}
 
   <section class="sect">
     <div class="wrap">
       <div class="center rv" style="margin-bottom:clamp(3rem,6vw,4.5rem)">
         {eyebrow("Two ways to use the estate")}
         <h2>One property. No overlap.</h2>
-        <p class="lede measure" style="margin-top:1.4rem">Because only one group is on
-          the property at a time, the estate becomes whatever that group needs it to be
-          &mdash; a wedding weekend in July, a leadership offsite in October.</p>
+        <p class="lede measure" style="margin-top:1.4rem">The estate becomes whatever
+          the group booking it needs &mdash; a wedding weekend in July, a leadership
+          offsite in October.</p>
       </div>
       <div class="cards rv rv--stagger">{chtml}</div>
     </div>
@@ -361,41 +360,15 @@ def page_home():
 
 # ================================================================== WEDDINGS
 def page_weddings():
+    # Only what the ledger below does not already cover: each offering has one
+    # home on this page (tools/repetition.py enforces it).
     included = [
-        ("The spaces", [
-            "<b>3,200 sq ft</b> reception pavilion with panoramic lake views",
-            "<b>40 &times; 80 ft</b> tent &mdash; clear-top or white-top, full sides",
-            "Separate ceremony, cocktail and reception areas",
-            "Fire pit for evening gatherings",
-        ]),
-        ("Capacity", [
-            "<b>200</b> guests for the celebration",
-            "Sleeps <b>28</b> across five accommodations",
-            "<b>One</b> group on the property at a time",
-        ]),
-        ("Power &amp; access", [
-            "<b>200 AMP</b> electrical service, permanently installed",
-            "On-site water",
-            "Vendor load-in within <b>50 ft</b> of the venue",
-            "Parking for <b>75 cars</b> on site",
-            "Starlink at the venue and in all five houses",
-        ]),
-        ("Already on site", [
-            "Built-in bar",
-            "Tables and chairs available on site",
-            "<b>Four</b> head tables",
-            "Dedicated onsite venue coordinator",
-            "Preferred vendor partnerships, with partner discounts",
-        ]),
-        ("The setting", [
+        ("On the grounds", [
             "<b>15</b> private acres above Flathead Lake",
             "Estate grounds with walking trails",
             "Heated pool, hot tub, barrel sauna and putting green",
-        ]),
-        ("Getting here", [
-            f"<b>{FCA['brief']}</b> from {FCA['name']}",
-            f"<b>{WHITEFISH['brief']}</b> from {WHITEFISH['name']}",
-            f"<b>{GLACIER['brief']}</b> to {GLACIER['entrance']}, the park&rsquo;s west entrance",
+            "Fire pit for evening gatherings",
+            "Starlink at the venue and in every house",
         ]),
     ]
 
@@ -407,15 +380,13 @@ def page_weddings():
         ("Bar", "Built or rented, then staffed and stocked.",
          "Built-in bar, in place and ready to run."),
         ("Tables &amp; chairs", "Ordered, delivered and collected.",
-         "On the property."),
-        ("Head tables", "Part of the same rental order.",
-         "Four head tables included."),
+         "On the property, with four head tables."),
         ("Guest parking", "Arranged on site, or a shuttle from town.",
          "Parking for 75 cars on site."),
         ("Vendor access", "Depends on where a truck can reach.",
          "Load-in within 50 feet of the venue."),
         ("Where guests stay", "In town, travelling in each morning.",
-         "Up to 28 people sleep on the property and walk to breakfast."),
+         "On the property, a short walk from breakfast."),
     ]
     trows = "".join(
         f'<tr><th scope="row">{r}</th>'
@@ -426,8 +397,8 @@ def page_weddings():
     spots = [
         (15, 54, "Arrival",
          "Guests park on the property",
-         "There is room for 75 cars on site, and the lake is in view from the "
-         "moment guests arrive.",
+         "No shuttle and no field: guests park on site, and the lake is in view "
+         "from the moment they arrive.",
          "venue-overview.jpg", "The estate grounds and tent from the lawn"),
         (52, 17, "Ceremony",
          "The lawn faces the lake",
@@ -441,13 +412,13 @@ def page_weddings():
          "ceremony-tent-wide.jpg", "Ceremony seating with the tent below"),
         (84, 40, "Cocktails",
          "Drinks on the grounds",
-         "The built-in bar opens after the ceremony, and guests spread out across "
-         "the lawn.",
+         "The bar opens after the ceremony, and guests spread out across the "
+         "lawn.",
          "bar-cheers-setup.jpg", "The built-in bar set for service"),
         (52, 68, "Reception",
          "Dinner under the tent",
-         "A 40 by 80 ft tent, clear-top or white-top with full sides. Tables, chairs "
-         "and four head tables are already on the property.",
+         "Clear-top or white-top with full sides, set with the estate&rsquo;s own "
+         "tables and chairs.",
          "reception-tent-full.jpg", "The reception tent set for dinner"),
     ]
 
@@ -467,7 +438,7 @@ def page_weddings():
       portrait=HERO_PORTRAIT["weddings.html"],
       )}
 
-  {sectnav([("weekend", "Weekend"), ("film", "Watch"), ("your-weekend", "Your weekend"), ("included", "Included"), ("compare", "Compare"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
+  {sectnav([("weekend", "Weekend"), ("film", "Watch"), ("your-weekend", "Your weekend"), ("included", "Included"), ("packages", "Packages"), ("lodging", "Lodging"), ("reviews", "Reviews"), ("faq", "FAQ")])}
 
   <section class="sect" id="weekend">
     <div class="wrap">
@@ -530,23 +501,12 @@ def page_weddings():
 
   <section class="sect sect--paper2" id="included">
     <div class="wrap">
-      <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:52ch">
+      <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:56ch">
         {eyebrow("What&rsquo;s included")}
         <h2>What comes with the venue</h2>
-        <p class="lede" style="margin-top:1.4rem">The pavilion, tent, power and bar are
-          permanent. They are here when you arrive, not delivered for the weekend.</p>
-      </div>
-      {spec(included)}
-    </div>
-  </section>
-
-  <section class="sect" id="compare">
-    <div class="wrap">
-      <div class="rv" style="margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:58ch">
-        {eyebrow("Why The Overlook")}
-        <h2>What is already here</h2>
         <p class="lede" style="margin-top:1.4rem">Much of what a wedding needs usually
-          has to be rented and delivered. Here it is already in place.</p>
+          has to be rented and delivered. Here the pavilion, tent, power and bar are
+          permanent &mdash; line by line, against what it takes elsewhere.</p>
       </div>
       <div class="tbl-scroll rv">
         <table class="tbl">
@@ -554,6 +514,10 @@ def page_weddings():
             <th scope="col" class="col-ours">The Overlook</th></tr></thead>
           <tbody>{trows}</tbody>
         </table>
+      </div>
+      <div class="rv" style="margin-top:clamp(2.5rem,5vw,3.5rem)">
+        <h3 style="margin-bottom:1.1rem">Also on the property</h3>
+        {spec(included)}
       </div>
     </div>
   </section>
@@ -570,11 +534,9 @@ def page_weddings():
           <p class="pkg__price"><small>The estate, yours alone &middot; starting at</small>$20,000</p>
           <p style="color:var(--ink-soft);margin-bottom:1.6rem">Exclusive use of the
             estate for your celebration, with the venue infrastructure in place.</p>
-          {plist(["Full-property exclusivity for your booking",
-                  "Pavilion, tent and built-in bar",
+          {plist(["Every venue space on the property, already standing",
                   "Ceremony, cocktail and reception areas",
-                  "Onsite venue coordinator",
-                  "Parking for 75 cars",
+                  "Your onsite venue coordinator",
                   "Lodging booked separately"])}
           {btn("contact.html?type=wedding", "Check Your Date", "btn btn--ghost")}
         </div>
@@ -586,7 +548,7 @@ def page_weddings():
             nights. The wedding is at The Overlook, and
             <b style="font-weight:400;color:#fff">The Driftwood</b>, on the water at
             Woods Bay, gives more of your guests a place to stay.</p>
-          {plist(["The Overlook &mdash; fifteen acres, pavilion and tent, yours alone",
+          {plist(["The Overlook &mdash; the pavilion, the tent and the grounds, yours alone",
                   "The Driftwood &mdash; 14,000 sq ft on the lake, private cove and boat slips",
                   "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
                   "Helicopter transfer between them, through WestSlope",
@@ -603,8 +565,8 @@ def page_weddings():
         f'''{eyebrow("Onsite lodging")}
         <h2>Stay on the property</h2>
         <p class="lede" style="margin:1.4rem 0">Five accommodations sit on the same
-          fifteen acres as the ceremony lawn: a four-bedroom main house, a cabin, a
-          pair of tiny homes and two treehouses. Together they sleep 28.</p>
+          hillside as the ceremony lawn: a four-bedroom main house, a cabin, a pair of
+          tiny homes and two treehouses.</p>
         <p>Getting ready happens here, and so does breakfast the next morning. Lodging
           is quoted separately from the venue fee.</p>
         <div style="margin-top:2rem">{tlink("estate.html", "See all five")}</div>''',
@@ -684,16 +646,15 @@ def page_weddings():
 def page_retreats():
     why = [
         ("Total exclusivity",
-         "The entire fifteen-acre estate is booked for your group alone &mdash; the "
-         "pavilion, all five houses, the pool, the sauna, the trails and the fire pit. "
-         "For the length of your booking it belongs to you."),
+         "The entire fifteen-acre estate is booked for your group alone. For the "
+         "length of your booking, every building and every acre belongs to you."),
         ("Everyone stays where you meet",
          "Your team works, eats and stays in the same place. The conversation carries "
          "from the pavilion to dinner to the fire pit, and nobody has to drive "
          "anywhere."),
         ("A place people want to travel to",
-         f"Flathead Lake is out the window. {WHITEFISH['name']} is "
-         f"{WHITEFISH['time']} away and {GLACIER['name']} {GLACIER['time']}."),
+         f"Flathead Lake is out the window, and Whitefish and {GLACIER['name']} are "
+         f"close enough to extend the trip."),
         ("Built as a venue",
          "The meeting space, the power, the internet and the grounds are permanent, "
          "so nothing has to be brought in for your week."),
@@ -714,8 +675,8 @@ def page_retreats():
          "Heated pool and cabana, hot tub, barrel sauna, fitness room, fire pit, putting "
          "green, lawn games and walking trails for the hours between sessions."),
         ("Connectivity", "swan-kitchen-new.jpg", "The kitchen in the Swan",
-         "Starlink is installed in all five houses and at the venue, so people can "
-         "stay on calls and keep working."),
+         "Starlink is installed in every house and at the venue, so people can stay "
+         "on calls and keep working."),
     ]
     spacehtml = ""
     for i, (t, im, alt, d) in enumerate(space):
@@ -785,9 +746,7 @@ def page_retreats():
         {ilist(["200 AMP electrical service",
                 "On-site water",
                 "Parking for 75 cars",
-                "Vendor and load-in access within 50 feet of the venue",
-                f"{FCA['time']} from {FCA['name']}",
-                "Starlink internet in all five houses and the venue"])}
+                "Vendor and load-in access within 50 feet of the venue"])}
       </div>
     </div>
   </section>
@@ -819,9 +778,8 @@ def page_retreats():
         <p class="lede" style="margin:1.4rem 0">{FCA["short_name"]} is {FCA["time"]}
           away by car. A team on a morning flight can be working by the
           afternoon.</p>
-        <p>{GLACIER["entrance"]}, the west entrance to {GLACIER["name"]}, is
-          {GLACIER["time"]} out for groups extending the trip, and helicopter arrivals
-          are available through WestSlope Helicopters.</p>''',
+        <p>{GLACIER["name"]} is {GLACIER["time"]} out for groups extending the
+          trip.</p>''',
         flip=True)}
     </div>
   </section>
@@ -852,8 +810,8 @@ def page_retreats():
           {eyebrow("Also here")}
           <h2>Wellness retreats</h2>
           <p class="lede" style="margin-top:1.3rem">The estate also hosts yoga,
-            movement and recovery retreats, with the pavilion as open floor space, a
-            sauna and hot tub nearby, and nobody else on the property.</p>
+            movement and recovery retreats, with the pavilion as open floor space and
+            the heat and water a few steps away.</p>
           {tlink("wellness.html", "See wellness retreats")}
         </div>
       </div>
@@ -862,7 +820,7 @@ def page_retreats():
 
   {experiences(
       "Food and time off the clock",
-      "Private chefs, catering and what the group does after",
+      "How the group eats, and what it does after",
       "Tell us how you want the group fed and what you want to do between sessions, "
       "and we will help you arrange it.",
       [("swan-kitchen-new.jpg", "The kitchen in the Swan",
@@ -880,14 +838,7 @@ def page_retreats():
         "On the lake",
         "Flathead Lake is minutes down the hill, with boating, swimming and sunset "
         "cruises."),
-       ("heli-new.jpg", "A helicopter over the Flathead valley",
-        "Helicopter arrivals",
-        "Helicopter arrivals and private lake flights are available through WestSlope "
-        "Helicopters."),
-       ("pool-hottub-wide.jpg", "The pool and hot tub above the lake",
-        "The property itself",
-        "Heated pool, hot tub, barrel sauna, fitness room, games room, putting green, "
-        "lawn games and walking trails, a short walk from where you are working.")])}
+       ])}
 
   {driftwood(DRIFTWOOD_SHOTS, "retreat")}
 
@@ -986,9 +937,8 @@ def page_estate():
     }
     hhtml = switcher(
         "Where everyone sleeps",
-        "Five buildings, sleeps twenty-eight",
-        "Choose a building to look through it. Everything here is on the same fifteen "
-        "acres, a short walk from the pavilion.",
+        "Choose a building",
+        "Look through each one. Every building is a short walk from the pavilion.",
         [(t, sub, d, shots[t]) for t, sub, im, alt, d in houses])
 
     grounds = [
@@ -1015,8 +965,7 @@ def page_estate():
     <div class="wrap wrap--narrow center rv">
       <h2>Twenty-eight people, one property</h2>
       <p class="lede" style="margin-top:1.4rem">The estate sleeps 28 across five separate
-        accommodations, all on the same fifteen acres. Nobody has to drive between
-        them.</p>
+        accommodations. Nobody has to drive between them.</p>
     </div>
   </section>
 
@@ -1035,7 +984,7 @@ def page_estate():
       <div class="cards cards--3 cards--tiles">{ghtml}</div>
       <div class="rv" style="margin-top:clamp(2.5rem,5vw,3.5rem);border-top:1px solid var(--line);padding-top:2.5rem">
         {ilist(["Walking trails across the property",
-                "Starlink internet in all five houses and the venue",
+                "Starlink internet in every house and at the venue",
                 "200 AMP electrical service and on-site water",
                 "Parking for 75 cars",
                 "3,200 sq ft pavilion and 40&times;80 ft tent",
@@ -1298,28 +1247,15 @@ def page_wellness():
         f'<div class="exp__card"><div class="exp__img">{img(f, a, sizes=SZ_THIRD)}</div>'
         f'<h3>{t}</h3><p>{d}</p></div>' for f, a, t, d in cards)
 
+    # the cards above already describe the pavilion, heat and water, fitness
+    # room, trails and food; this is only what they leave out
     spec_groups = [
-        ("The space", [
-            "<b>3,200 sq ft</b> pavilion, clear floor, lake views",
+        ("On the property", [
             "<b>40 &times; 80 ft</b> tent &mdash; clear-top or enclosed with sides",
-            "Fitness room in the pool house",
             "Fire pit",
+            "Starlink at the venue and in every house",
         ]),
-        ("Water and heat", [
-            "Heated pool",
-            "Hot tub",
-            "Cedar barrel sauna",
-            "Flathead Lake, minutes down the hill",
-        ]),
-        ("The group", [
-            "Sleeps <b>28</b> across five accommodations",
-            "<b>One</b> group on the property at a time",
-            "Private chef or full catering, arranged",
-            "Starlink at the venue and in all five houses",
-        ]),
-        ("The setting", [
-            "<b>15</b> private acres above Flathead Lake",
-            "Walking trails across the property",
+        ("Getting here", [
             f"<b>{FCA['brief']}</b> from {FCA['short_name']}",
             f"<b>{GLACIER['brief']}</b> to {GLACIER['entrance']}, the park&rsquo;s west entrance",
         ]),
@@ -1332,8 +1268,8 @@ def page_wellness():
       "The heated pool and terrace above Flathead Lake",
       "Wellness Retreats",
       "A private estate<br>for wellness retreats",
-      "Fifteen private acres above Flathead Lake, closed to everyone but your group. "
-      "For yoga, movement and recovery retreats.",
+      "Fifteen private acres above Flathead Lake, for yoga, movement and recovery "
+      "retreats.",
       btn("contact.html?type=wellness", "Check Availability", "btn btn--light btn--lg")
       + btn("#what", "What Is Here", "btn btn--outline-light btn--lg"),
       slides=[("pool-hottub-wide.jpg", "The pool and hot tub on the terrace"),
@@ -1347,11 +1283,9 @@ def page_wellness():
         {eyebrow("Why here")}
         <h2>What a retreat needs, in one place</h2>
         <p class="lede" style="margin-top:1.4rem">A room you can keep set up all week,
-          a sauna, hot tub and pool close by, food cooked for your group, and no other
-          guests.</p>
+          heat and water close by, and food cooked for your group.</p>
         <p style="color:var(--ink-soft);max-width:62ch">We book one group at a time,
-          so the pavilion, the sauna and the grounds are yours for the whole
-          stay.</p>
+          so all of it is yours for the whole stay.</p>
       </div>
     </div>
   </section>
