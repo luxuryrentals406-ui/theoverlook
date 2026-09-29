@@ -26,7 +26,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    plist, ilist, quote, faq, hero, band, split, vmap, stickybar, marquee,
                    getting_here, switcher, rail, mosaic, inquiry_form, spec, sectnav, experiences,
                    weekend_builder, film,
-                   driftwood,
+                   driftwood, slideshow,
                    head, header, footer)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,10 +99,10 @@ FAQ_WEDDINGS = [
      "sleep on the property across the five accommodations &mdash; usually the couple "
      "and their closest family and wedding party.</p>"),
     ("What does a booking include?",
-     "<p>The Overlook Wedding starts at $20,000. A booking covers exclusive use of "
-     "the whole venue &mdash; everything listed under What&rsquo;s included, and "
-     "your onsite venue coordinator. "
-     "<a href='#included'>See what is included.</a></p>"),
+     "<p>A booking covers exclusive use of the whole venue &mdash; everything "
+     "listed under What&rsquo;s included, and your onsite venue coordinator. The "
+     "figure depends on your dates and the shape of the weekend. "
+     "<a href='overlook-wedding.html'>See the package in full.</a></p>"),
     ("Is lodging included or separate?",
      "<p>Separate. Lodging is booked apart from the venue fee, so you only take the "
      "houses you need. "
@@ -540,19 +540,19 @@ def page_weddings():
       <div class="pkg">
         <div class="pkg__card rv">
           <h3>The Overlook Wedding</h3>
-          <p class="pkg__price"><small>The estate, yours alone &middot; starting at</small>$20,000</p>
+          <p class="pkg__meta">The estate, yours alone</p>
           <p style="color:var(--ink-soft);margin-bottom:1.6rem">Exclusive use of the
             estate for your celebration, with the venue infrastructure in place.</p>
           {plist(["Every venue space on the property, already standing",
                   "Ceremony, cocktail and reception areas",
                   "Your onsite venue coordinator",
                   "Lodging booked separately"])}
-          {btn("contact.html?type=wedding", "Check Your Date", "btn btn--ghost")}
+          {btn("overlook-wedding.html", "See the Full Experience", "btn btn--ghost")}
         </div>
         <div class="pkg__card pkg__card--feature rv">
           {eyebrow("Signature")}
           <h3>The Ultimate Flathead Lake Wedding Weekend</h3>
-          <p class="pkg__price"><small>Five nights, two estates &middot; starting at</small>$135,000</p>
+          <p class="pkg__meta">Five nights, two estates</p>
           <p style="color:#CFCabd;margin-bottom:1.6rem">Two estates, one group, five
             nights. The wedding is at The Overlook, and
             <b style="font-weight:400;color:#fff">The Driftwood</b>, on the water at
@@ -562,7 +562,7 @@ def page_weddings():
                   "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
                   "Helicopter transfer between them, through WestSlope",
                   "Planning support from the first call to the send-off"])}
-          {btn("contact.html?type=wedding", "Request the Details", "btn btn--light")}
+          {btn("ultimate-wedding-weekend.html", "See the Full Experience", "btn btn--light")}
         </div>
       </div>
     </div>
@@ -648,6 +648,177 @@ def page_weddings():
         "We hold a limited number of weddings each season, and every inquiry is "
         "answered personally.",
         btn("contact.html?type=wedding", "Start Your Inquiry", "btn btn--light btn--lg"))}
+"""
+
+
+
+# ================================================================== PACKAGES
+# One page per wedding package (owner's brief, 2026-09-28): the weddings page
+# shows the two packages without prices; each "See the full experience" button
+# opens its page, which carries the price, what is in it, and the weekend told
+# in photographs. Facts are the ones the weddings page and the Driftwood block
+# already state — nothing new is claimed here.
+
+def ask_btn(label, note, cls="btn btn--light btn--lg"):
+    """An inquiry button that opens the sheet with the package named in the note."""
+    return (f'<a class="{cls}" href="contact.html?type=wedding" data-sheet="wedding" '
+            f'data-note="{note}">{label}</a>')
+
+
+def pkg_summary(image, alt, price, lede, included):
+    """The package block: photograph, starting price, one line, what is in it."""
+    body = (f'{eyebrow("The package")}'
+            f'<p class="pkg__price" style="margin-top:.4rem"><small>Starting at</small>{price}</p>'
+            f'<p class="lede" style="margin:1.2rem 0 1.6rem">{lede}</p>'
+            f'{plist(included)}')
+    return f"""  <section class="sect" id="package">
+    <div class="wrap">
+      {split(img(image, alt, sizes=SZ_HALF), body, wide=True)}
+    </div>
+  </section>"""
+
+
+def page_pkg_overlook():
+    note = "Interested in: The Overlook Wedding package"
+    included = ["The whole estate for your booking &mdash; one wedding, no other events",
+                "The <b>3,200 sq ft</b> pavilion and the <b>40 &times; 80 ft</b> tent, "
+                "clear-top or white-top with full sides",
+                "Separate ceremony, cocktail and reception areas",
+                "The built-in bar, the estate&rsquo;s tables and chairs, and four head tables",
+                "<b>200 AMP</b> power and water on site; vendors load in within 50 feet",
+                "Parking for 75 cars on the property",
+                "Your onsite venue coordinator",
+                "Up to <b>200</b> guests, with an 11:00 p.m. end",
+                "Lodging on the property quoted separately"]
+    day = [("ceremony-aisle-view.jpg", "The aisle on the ceremony lawn, looking toward the water",
+            "Afternoon", "Vows on the lawn above the lake, with the trees on either side "
+            "and the sun behind your guests."),
+           ("bar-cheers-setup.jpg", "Glasses raised at the bar",
+            "Early evening", "Drinks out on the grass while the tent is made ready; "
+            "nobody is herded into a hallway."),
+           ("tent-long-table-roses.jpg", "Long tables under the clear tent, set with white roses and candles",
+            "Dinner", "The tables laid under the tent, the lake through the walls, and "
+            "the light going gold."),
+           ("evening-dinner-candlelight.jpg", "Dinner by candlelight after dark",
+            "After dark", "Candles, speeches and the dance floor, until the end time your "
+            "contract sets."),
+           ("treehouse-sunset.jpg", "A treehouse at sunset, the light coming through the pines",
+            "The morning after", "The people staying on the property wake up a short walk "
+            "from where the night ended.")]
+    return f"""
+{hero("reception-mountain-view.jpg", "Reception tables set against the mountains",
+      "Wedding package", "The Overlook Wedding",
+      "The whole estate for your celebration, with everything a wedding needs "
+      "already standing when you arrive.",
+      ask_btn("Check Your Date", note)
+      + btn("weddings.html#packages", "Both Packages", "btn btn--outline-light btn--lg"),
+      portrait=HERO_PORTRAIT["overlook-wedding.html"])}
+
+{pkg_summary("tent-interior-lake-view.jpg",
+             "Inside the clear tent with the tables set and Flathead Lake beyond",
+             "$20,000",
+             "Exclusive use of the estate, with the venue already built. The final figure "
+             "depends on your dates and the shape of the weekend, so we quote it against both.",
+             included)}
+
+  <section class="sect sect--paper2">
+    <div class="wrap">
+      {film("ceremony-lawn", "film-ceremony-lawn.jpg",
+            "The ceremony lawn set for a wedding, with the trees and the lake beyond",
+            "Thirty-five seconds on the property, set for a wedding.")}
+    </div>
+  </section>
+
+  {experiences("The day", "How the day moves",
+               "From the first chair on the lawn to breakfast the next morning, all of it "
+               "on one hillside.", day)}
+
+  <section class="sect sect--forest">
+    <div class="wrap wrap--narrow">
+      {quote(*R_OLIVIA)}
+    </div>
+  </section>
+
+  {band("tent-exterior-sunflare.jpg", "The clear-top tent on its stone terrace in afternoon sun",
+        "Hold your date",
+        "Tell us the weekend you have in mind and we will tell you honestly whether it "
+        "is open.",
+        ask_btn("Check Your Date", note))}
+"""
+
+
+def page_pkg_ultimate():
+    note = "Interested in: The Ultimate Flathead Lake Wedding Weekend"
+    included = ["<b>Five nights</b> across two estates, for one group",
+                "The Overlook &mdash; the pavilion, the tent and the grounds, yours alone "
+                "for the wedding",
+                "The Driftwood &mdash; a <b>14,000 sq ft</b> lakefront home at Woods Bay "
+                "with <b>7</b> bedrooms, <b>9</b> baths, a private cove and boat slips",
+                "Room for <b>54</b> to stay: 28 at The Overlook, 26 at The Driftwood",
+                "Helicopter transfer between the two, through WestSlope",
+                "Planning support from the first call to the send-off"]
+    heli_body = (f'{eyebrow("Between the two")}'
+                 '<h2>Twenty minutes by road, a few by air</h2>'
+                 '<p class="lede" style="margin:1.4rem 0">The estates are about twenty '
+                 'minutes apart around the lake. WestSlope can fly your group between '
+                 'them, so the rehearsal dinner can be at one and the last night at the '
+                 'other.</p>')
+    tiles = "".join(
+        f'<div class="card rv"><div class="card__img" style="aspect-ratio:4/5">'
+        f'{img(f, a, sizes=SZ_THIRD)}</div></div>'
+        for f, a in [("tent-interior-lake-view.jpg", "Inside the clear tent with Flathead Lake beyond"),
+                     ("ceremony-aisle-view.jpg", "The aisle on the ceremony lawn"),
+                     ("tent-long-table-roses.jpg", "Long tables set with white roses under the tent")])
+    return f"""
+{hero("driftwood-exterior-dusk.jpg", "The Driftwood from the water at dusk",
+      "Signature package", "The Ultimate Flathead Lake<br>Wedding Weekend",
+      "Five nights, two estates, one group &mdash; the wedding up on the hill at The "
+      "Overlook, and The Driftwood down on the water.",
+      ask_btn("Request the Details", note)
+      + btn("weddings.html#packages", "Both Packages", "btn btn--outline-light btn--lg"))}
+
+{pkg_summary("driftwood-great-room.jpg", "The Driftwood's great room, opening to the lake",
+             "$135,000",
+             "The whole of The Overlook for the celebration and a lakefront home for the "
+             "people closest to you, under one booking.",
+             included)}
+
+  <section class="sect sect--paper2">
+    <div class="wrap">
+      <div class="rv" style="margin-bottom:clamp(2rem,4vw,3rem);max-width:54ch">
+        {eyebrow("The Driftwood")}
+        <h2>Down on the water at Woods Bay</h2>
+        <p class="lede" style="margin-top:1.2rem">Where the wedding party wakes up: the
+          great room opens to the lake, the dock runs out to the boat slips, and the
+          deck looks straight down the water.</p>
+      </div>
+      {slideshow(DRIFTWOOD_SHOTS, "Photographs of The Driftwood")}
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="wrap">
+      {split(img("heli-new.jpg", "A helicopter over the Flathead valley", sizes=SZ_HALF),
+             heli_body, flip=True)}
+    </div>
+  </section>
+
+  <section class="sect sect--paper2">
+    <div class="wrap">
+      <div class="rv" style="margin-bottom:clamp(2rem,4vw,3rem);max-width:54ch">
+        {eyebrow("The Overlook")}
+        <h2>Up on the hill, for the wedding itself</h2>
+      </div>
+      <div class="cards cards--3 cards--tiles">{tiles}</div>
+      <div class="rv" style="margin-top:2rem">{tlink("overlook-wedding.html", "See The Overlook Wedding")}</div>
+    </div>
+  </section>
+
+  {band("driftwood-dock-slips.jpg", "The Driftwood's dock and private boat slips",
+        "Both estates, one weekend",
+        "Availability for the two estates is separate, so ask early if you want them "
+        "on the same dates.",
+        ask_btn("Request the Details", note))}
 """
 
 
@@ -2119,7 +2290,9 @@ def page_mt_venues(base):
 CRUMB = {"weddings.html": "Weddings", "retreats.html": "Corporate Retreats",
          "wellness.html": "Wellness Retreats",
          "estate.html": "The Estate", "gallery.html": "Gallery",
-         "story.html": "Our Story", "contact.html": "Contact"}
+         "story.html": "Our Story", "contact.html": "Contact",
+         "overlook-wedding.html": "The Overlook Wedding",
+         "ultimate-wedding-weekend.html": "The Ultimate Wedding Weekend"}
 
 PAGES = [
     ("index.html", page_home, "hero-pavilion-lake.jpg", True,
@@ -2158,6 +2331,16 @@ PAGES = [
      "How Claudia and Eric went from hosting guests on Flathead Lake in 2021 to building "
      "The Overlook venue in 2025."),
 
+    ("overlook-wedding.html", page_pkg_overlook, "reception-mountain-view.jpg", True,
+     "The Overlook Wedding Package | The Overlook at Flathead Lake",
+     "The whole Flathead Lake estate for your wedding, with the pavilion, tent, bar and "
+     "power already in place. What is included, starting price and the day in photos."),
+
+    ("ultimate-wedding-weekend.html", page_pkg_ultimate, "driftwood-exterior-dusk.jpg", True,
+     "The Ultimate Flathead Lake Wedding Weekend | The Overlook",
+     "Five nights across two Flathead Lake estates — The Overlook and The Driftwood at "
+     "Woods Bay — sleeping 54, with helicopter transfer. What is included, in photos."),
+
     ("contact.html", page_contact, "hero-pavilion-lake.jpg", False,
      "Contact | The Overlook at Flathead Lake",
      "Start an inquiry for a wedding, corporate retreat or private event at The Overlook "
@@ -2175,7 +2358,8 @@ PRELOAD = {"gallery.html": PHOTOS[0][0],
 
 # A vertical photograph that phones get as the hero instead of the landscape
 # one — a 3:2 frame cropped into a phone screen shows a sliver of itself.
-HERO_PORTRAIT = {"weddings.html": "tent-interior-lake-view.jpg"}
+HERO_PORTRAIT = {"weddings.html": "tent-interior-lake-view.jpg",
+                 "overlook-wedding.html": "tent-long-table-roses.jpg"}
 
 
 # The six ported URLs. `fn` takes the depth prefix and returns the body; the
@@ -2692,6 +2876,8 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
             + header(current, over_hero=over, base=base) + body
             + footer(base, sheet=(current != "contact.html"),
                      kind={"weddings.html": "wedding", "retreats.html": "corporate",
+                           "overlook-wedding.html": "wedding",
+                           "ultimate-wedding-weekend.html": "wedding",
                            "wellness.html": "wellness"}.get(current, "")).replace("{year}", str(YEAR))
                           .replace("{STICKYBAR}",
                                    stickybar(current, base) if sticky else ""))

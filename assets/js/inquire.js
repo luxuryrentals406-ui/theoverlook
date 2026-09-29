@@ -235,7 +235,7 @@
     var a = e.target.closest && e.target.closest("[data-sheet]");
     if (!a) return;
     e.preventDefault();
-    open(a.dataset.sheet, a);
+    open(a.dataset.sheet, a, a.dataset.note);
   });
   sheet.querySelector(".sheet__x").addEventListener("click", close);
   sheet.querySelector(".sheet__back").addEventListener("click", close);

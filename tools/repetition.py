@@ -19,7 +19,8 @@ import os, re, html, glob, collections
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # the pages that sell; journal and legal pages are reference text
-FUNNEL = ["index.html", "weddings.html", "retreats.html", "wellness.html", "estate.html"]
+FUNNEL = ["index.html", "weddings.html", "retreats.html", "wellness.html", "estate.html",
+          "overlook-wedding.html", "ultimate-wedding-weekend.html"]
 
 OFFERINGS = {
     "15 acres":            r"\b(15|fifteen)[ -](private )?acres?\b",
