@@ -1,4 +1,8 @@
-# The inquiry relay
+# The inquiry relay (not in use)
+
+> Retired 2026-09-29: every inquiry now goes straight into HoneyBook through its
+> own Event Inquiry Form (see `HB_FORM_URL` in `tools/shell.py`). Nothing on the
+> site posts to `/api/inquire`. Kept only for reference.
 
 The sheet on every page posts to `/api/inquire`. This Worker answers it. It
 validates the inquiry, limits each address to five an hour, checks Turnstile
