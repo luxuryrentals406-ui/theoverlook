@@ -6,6 +6,22 @@
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var fine = !window.matchMedia || window.matchMedia("(hover: hover)").matches;
 
+  /* ---- scroll a horizontal strip to one of its children, sideways only ---
+     scrollIntoView also scrolls the page to reach an element below the fold:
+     the slideshow calling it on load dropped readers of the weddings page 76%
+     of the way down, onto The Driftwood (2026-09-28). center: put the child in
+     the middle; otherwise move only as far as it takes to show it. */
+  function stripTo(strip, el, center) {
+    if (!strip || !el) return;
+    var sr = strip.getBoundingClientRect(), er = el.getBoundingClientRect();
+    var left;
+    if (center) left = strip.scrollLeft + (er.left - sr.left) - (strip.clientWidth - er.width) / 2;
+    else if (er.left < sr.left) left = strip.scrollLeft + (er.left - sr.left);
+    else if (er.right > sr.right) left = strip.scrollLeft + (er.right - sr.right);
+    else return;
+    strip.scrollTo({ left: Math.max(0, left), behavior: reduced ? "auto" : "smooth" });
+  }
+
   /* ---- one rAF-batched scroll bus for everything that watches scroll --- */
   var subs = [], queued = false;
   function onScroll(fn) { subs.push(fn); }
@@ -248,7 +264,7 @@
       map.classList.add("is-touched");
       mark(i);
       if (isRail()) {
-        if (!fromScroll && panels[i]) panels[i].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+        if (!fromScroll && panels[i]) stripTo(rail, panels[i], true);
       } else {
         layout();
       }
@@ -455,7 +471,7 @@
       if (cap) cap.textContent = caps[i] || "";
       if (cnt) cnt.textContent = pad(pos + 1) + " / " + pad(live.length);
       var t = thumbs[i];
-      if (t) t.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+      if (t) stripTo(t.parentNode, t);
     }
     function filter(key) {
       live = [];
@@ -513,7 +529,7 @@
     var light = function (i) {
       links.forEach(function (a, n) { a.classList.toggle("is-on", n === i); });
       var a = links[i];
-      if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      if (a) stripTo(a.parentNode, a, true);
     };
     var sio = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
