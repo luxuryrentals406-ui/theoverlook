@@ -510,13 +510,13 @@ body.menu-open .hdr--over .brand img{filter:none}
 /* HoneyBook's inquiry form, in the window and inline on the contact page.
    The public form cannot size itself, so the frame is given a measured height
    (measured 2026-09-29: 1,954px at 375 wide, 1,858px at 640) and the window's body scrolls it. */
-.hbw{position:relative;background:var(--paper);min-height:14rem}
-.hbw__frame{display:block;width:100%;height:2300px;border:0;background:var(--paper)}
+/* HoneyBook's form scrolls inside a fixed box; its 68px top bar (an arrow copy of Submit) sits above the box */
+.hbw{position:relative;background:var(--paper);min-height:14rem;overflow:hidden;height:78vh;height:78svh;max-width:720px}
+.hbw__frame{display:block;width:100%;height:calc(100% + 68px);border:0;background:var(--paper);margin-top:-68px}
 .hbw__wait{position:absolute;top:3rem;left:0;right:0;text-align:center;color:var(--muted);font-size:.92rem;margin:0}
 .hbw.is-loaded .hbw__wait,.hbw--inline .hbw__wait{display:none}
 .hbw__alt{font-size:.86rem;color:var(--muted);margin-top:1rem;line-height:1.6}
 .hbw__alt a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;display:inline-block;padding-block:.35rem}
-@media (min-width:641px){.hbw__frame{height:2100px}}
 .sheet__note{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;margin-bottom:.8rem;
   border-left:2px solid var(--gold);background:var(--paper-2);font-size:.9rem;line-height:1.5}
 .sheet__note[hidden]{display:none}
@@ -531,7 +531,7 @@ body.menu-open .hdr--over .brand img{filter:none}
   opacity:0;transition:opacity .3s var(--ease)}
 .sheet.is-in .sheet__back{opacity:1}
 .sheet__panel{
-  position:relative;width:100%;max-width:640px;max-height:92svh;background:var(--paper);color:var(--ink);
+  position:relative;width:100%;max-width:640px;height:92svh;background:var(--paper);color:var(--ink);
   border-radius:18px 18px 0 0;padding:.6rem var(--gut) calc(1.2rem + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;overflow:hidden;
   transform:translateY(100%);transition:transform .42s var(--ease);box-shadow:0 -20px 60px rgba(0,0,0,.25)
@@ -542,10 +542,11 @@ body.menu-open .hdr--over .brand img{filter:none}
 .sheet__head h2{font-size:clamp(1.6rem,6.5vw,2.1rem)}
 .sheet__x{background:none;border:0;cursor:pointer;font-size:1.8rem;line-height:1;width:var(--tap);height:var(--tap);
   display:grid;place-items:center;margin:-.4rem -.6rem 0 0;color:var(--muted)}
-.sheet__body{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0;padding-bottom:.5rem}
+.sheet__body{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0;padding-bottom:.5rem;display:flex;flex-direction:column}
+.sheet .hbw{flex:1 0 20rem;height:auto}
 @media (min-width:641px){
   .sheet{align-items:center}
-  .sheet__panel{border-radius:6px;max-height:88vh;padding:1rem clamp(1.4rem,4vw,2.4rem) 1.4rem}
+  .sheet__panel{border-radius:6px;height:88vh;padding:1rem clamp(1.4rem,4vw,2.4rem) 1.4rem}
   .sheet__grip{display:none}
 }
 

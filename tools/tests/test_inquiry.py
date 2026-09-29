@@ -27,12 +27,12 @@ class StraightIntoHoneyBook(unittest.TestCase):
             if 'id="inquire"' not in h:
                 continue
             n += 1
-            self.assertIn(f'data-src="{shell.HB_EMBED_URL}"', h, os.path.relpath(p, ROOT))
+            self.assertIn(f'data-src="{shell.HB_FORM_URL}"', h, os.path.relpath(p, ROOT))
         self.assertGreater(n, 10)
 
     def test_contact_page_shows_the_form_inline(self):
         h = read(os.path.join(ROOT, "contact.html"))
-        self.assertIn(f'src="{shell.HB_EMBED_URL}" name="{shell.HB_FORM_ID}"', h)
+        self.assertIn(f'<iframe class="hbw__frame" src="{shell.HB_FORM_URL}"', h)
         self.assertNotIn('id="inquire"', h)
 
     def test_no_other_inquiry_route_survives(self):
@@ -68,24 +68,36 @@ class StraightIntoHoneyBook(unittest.TestCase):
         self.assertIn('id="inquiry-form"', h)
         self.assertNotRegex(h, r'<a class="tlink" href="contact\.html')
 
-    def test_the_form_is_framed_the_way_honeybooks_widget_frames_it(self):
-        # HoneyBook's widget frames /embed/, not /public/: only the embed page
-        # reports its height, so only it can size itself. The new-tab
-        # fallback keeps the public address, which works on its own.
-        self.assertEqual(shell.HB_EMBED_URL, shell.HB_FORM_URL.replace("/public/", "/embed/"))
-        for p in PAGES:
-            h = read(p)
-            if "hbw__alt" in h:
-                self.assertIn(f'<a href="{shell.HB_FORM_URL}" rel="noopener">Open it', h,
-                              os.path.relpath(p, ROOT))
-
-    def test_the_page_answers_the_forms_messages(self):
+    def test_package_pages_name_their_package_in_honeybook(self):
+        # Owner, 2026-09-29: "if they inquire for the ultimate weekend we need
+        # to know that". The package page's form carries the package as its
+        # campaign, which HoneyBook records with the lead.
+        for page, slug in shell.PACKAGE_CAMPAIGN.items():
+            h = read(os.path.join(ROOT, page))
+            self.assertIn(f'data-campaign="{slug}"', h, page)
+        h = read(os.path.join(ROOT, "weddings.html"))
+        self.assertNotIn("data-campaign=", h)
         js = read(os.path.join(ROOT, "assets", "js", "inquire.js"))
-        for event in ("hb_resize", "hb_scroll_to_top", "hb_scroll_to_element"):
-            self.assertIn(event, js)
-        self.assertIn("e.origin", js, "messages must be checked against the form's origin")
-        self.assertIn("scrollTo", js)
-        self.assertNotIn("scrollIntoView", js)
+        self.assertIn("dataset.campaign", js)
+
+    def test_the_public_form_is_framed_not_the_embed(self):
+        # Below 768px wide HoneyBook's /embed/ version shows Submit as a bare
+        # arrow (owner, 2026-09-29); the public version has a real button.
+        for p in PAGES:
+            self.assertNotIn(".hbportal.co/embed/", read(p), os.path.relpath(p, ROOT))
+        css = read(os.path.join(ROOT, "assets", "css", "site.css"))
+        self.assertRegex(css, r"\.hbw__frame\{[^}]*height:calc\(100% \+ 68px\)")
+        # the frame must stay narrower than HoneyBook's 768px desktop layout,
+        # whose top bar is 82px tall and would show under a 68px trim
+        self.assertRegex(css, r"\.hbw\{[^}]*max-width:720px")
+
+    def test_honeybooks_arrow_bar_is_trimmed_off(self):
+        # On a phone HoneyBook's form opens with a 68px bar whose only
+        # content is an arrow-shaped copy of Submit (measured 334-700px wide,
+        # 2026-09-29); the frame is pulled up so the bar sits outside the box.
+        css = read(os.path.join(ROOT, "assets", "css", "site.css"))
+        self.assertRegex(css, r"\.hbw\{[^}]*overflow:hidden")
+        self.assertRegex(css, r"\.hbw__frame\{[^}]*margin-top:-68px")
 
 
 if __name__ == "__main__":

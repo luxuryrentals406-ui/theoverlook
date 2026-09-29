@@ -27,7 +27,7 @@ from shell import (SITE, BIZ, NAV, IMG, THMB, rel, FCA, WHITEFISH, GLACIER, cap,
                    getting_here, switcher, rail, mosaic, hb_form, spec, sectnav, experiences,
                    weekend_builder, film,
                    driftwood, slideshow,
-                   head, header, footer, CF_ANALYTICS_TOKEN)
+                   head, header, footer, CF_ANALYTICS_TOKEN, PACKAGE_CAMPAIGN)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 YEAR = datetime.date.today().year
@@ -2923,7 +2923,8 @@ def write_page(path, body, title, desc, og, over, current, sticky, ld, lcp,
                      kind={"weddings.html": "wedding", "retreats.html": "corporate",
                            "overlook-wedding.html": "wedding",
                            "ultimate-wedding-weekend.html": "wedding",
-                           "wellness.html": "wellness"}.get(current, "")).replace("{year}", str(YEAR))
+                           "wellness.html": "wellness"}.get(current, ""),
+                     campaign=PACKAGE_CAMPAIGN.get(current, "")).replace("{year}", str(YEAR))
                           .replace("{STICKYBAR}",
                                    stickybar(current, base) if sticky else ""))
     full = os.path.join(ROOT, path)

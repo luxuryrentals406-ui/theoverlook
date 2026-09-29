@@ -570,22 +570,26 @@ def mosaic(items):
 HB_SUBDOMAIN = "theoverlookatflatheadlake"
 HB_FORM_ID   = "691cc90430213200341cb152"          # "Event Inquiry Form", live
 HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
-# What HoneyBook's own embed widget frames (its placement-controller.js swaps
-# /public/ for /embed/). Only the embed page reports its height to the page
-# (hb_resize), so only it can size itself; inquire.js answers those messages
-# the way the widget does, without loading the widget's scripts.
-HB_EMBED_URL = HB_FORM_URL.replace("/public/", "/embed/")
+# The public address is framed, not HoneyBook's /embed/ one: below 768px
+# wide the embed version's only Submit is a bare 34px arrow (owner: "the
+# submit button is just an arrow", 2026-09-29), while the public version has
+# a real Submit button. Its one extra, a 68px bar holding an arrow copy of
+# Submit, is trimmed off by site.css (.hbw__frame margin-top), and the form
+# scrolls inside a fixed-height box, as it does on HoneyBook's own page.
+# Inquiries sent from a package page carry the package as utm_campaign, which
+# HoneyBook's form records with the lead (its lead attribution), so Eric can
+# tell an Ultimate Weekend inquiry from any other (owner, 2026-09-29). A
+# campaign the visitor arrived with from an ad is kept instead.
+PACKAGE_CAMPAIGN = {
+    "overlook-wedding.html": "overlook-wedding",
+    "ultimate-wedding-weekend.html": "ultimate-wedding-weekend",
+}
 
 
 # Every inquiry goes straight into HoneyBook (owner, 2026-09-29): each inquiry
 # button opens the sheet with HoneyBook's own Event Inquiry Form in it, and
 # the contact page shows the same form inline. Nothing sits between the
 # visitor and HoneyBook. worker/ (the relay) is not used.
-#
-# Until the form first reports its height the frame uses the one in site.css
-# (.hbw__frame), measured at 1,954px tall at 375px wide and 1,858px at 640px
-# (2026-09-29). It errs tall: a gap under Submit costs nothing, a frame that
-# cuts Submit off costs a lead.
 
 # Cloudflare Web Analytics: cookieless page counting, no consent banner. The
 # token is not a secret (it is in the page); blank means no beacon at all,
@@ -600,16 +604,14 @@ def analytics():
             f'data-cf-beacon=\'{{"token": "{CF_ANALYTICS_TOKEN}"}}\'></script>\n')
 
 
-def hb_form(inline=False):
+def hb_form(inline=False, campaign=""):
     """HoneyBook's Event Inquiry Form. inline=True is the contact page, where
     it loads with the page (lazily); otherwise the frame is created by
-    inquire.js the first time the sheet opens, so no page pays for it unread.
-    The frame is named after the form, as HoneyBook's widget names it."""
+    inquire.js the first time the sheet opens, so no page pays for it unread."""
     title = f"Inquiry form for {BIZ['name']}"
-    frame = (f'<iframe class="hbw__frame" src="{HB_EMBED_URL}" name="{HB_FORM_ID}" '
-             f'title="{title}" loading="lazy" allow="clipboard-write"></iframe>'
-             if inline else "")
-    return f"""<div class="hbw{" hbw--inline" if inline else ""}"{' id="inquiry-form"' if inline else ""} data-src="{HB_EMBED_URL}" data-id="{HB_FORM_ID}" data-title="{title}">
+    frame = (f'<iframe class="hbw__frame" src="{HB_FORM_URL}" title="{title}" '
+             f'loading="lazy" allow="clipboard-write"></iframe>' if inline else "")
+    return f"""<div class="hbw{" hbw--inline" if inline else ""}"{' id="inquiry-form"' if inline else ""} data-src="{HB_FORM_URL}"{f' data-campaign="{campaign}"' if campaign else ""} data-title="{title}">
       {frame}
       <p class="hbw__wait" aria-hidden="true">Loading the inquiry form&hellip;</p>
     </div>
@@ -617,7 +619,7 @@ def hb_form(inline=False):
       in a new tab</a>, or email <a href="mailto:{BIZ['email']}">{BIZ['email']}</a>.</p>"""
 
 
-def inquiry_sheet(base="", kind=""):
+def inquiry_sheet(base="", kind="", campaign=""):
     """The window every page carries (the contact page has the form inline
     instead). Opened by any control with data-sheet. A control can pass a
     note (a package name, the weekend builder's picks); the sheet shows it
@@ -636,7 +638,7 @@ def inquiry_sheet(base="", kind=""):
       <p><b>Add this to your message:</b> <span data-note-text></span></p>
       <button type="button" class="sheet__copy" data-copy>Copy</button>
     </div>
-    <div class="sheet__body">{hb_form()}</div>
+    <div class="sheet__body">{hb_form(campaign=campaign)}</div>
   </div>
 </div><!-- /inquire -->"""
 
@@ -947,12 +949,13 @@ def header(current, over_hero=True, base=""):
 <main id="main">"""
 
 
-def footer(base="", sheet=True, kind=""):
+def footer(base="", sheet=True, kind="", campaign=""):
     """sheet=False on the contact page, which carries the form inline.
-    kind is the page's default gathering type for the sheet."""
+    kind is the page's default gathering type for the sheet; campaign names
+    the package a package page's inquiries are about."""
     nav_li = "".join(f'<li><a href="{base}{h}">{l}</a></li>' for h, l in NAV)
     return f"""</main>
-{inquiry_sheet(base, kind) if sheet else ""}
+{inquiry_sheet(base, kind, campaign) if sheet else ""}
 <div class="lbox" role="dialog" aria-modal="true" aria-label="Photograph">
   <button class="lbox__x" aria-label="Close">&times;</button>
   <button class="lbox__p" aria-label="Previous">&lsaquo;</button>

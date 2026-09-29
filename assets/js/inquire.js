@@ -7,69 +7,29 @@
    name, the weekend builder's picks — which the window shows above the form
    with a Copy button, because HoneyBook's form cannot be prefilled from here.
 
-   The form is framed at its /embed/ address and this file does what
-   HoneyBook's embed widget does, without loading the widget: it passes ad
-   and campaign tags through to HoneyBook, sizes the frame to the height the
-   form reports, and scrolls to where the form asks (the top of the next page,
-   the thank-you after Submit). */
+   The form scrolls inside the window, as it does on HoneyBook's own page.
+   Ad and campaign tags pass through to HoneyBook (the list its own embed
+   widget forwards), and a package page adds its package as the campaign, so
+   HoneyBook's lead record says which package the inquiry came from. */
 (function () {
   "use strict";
   var smooth = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  /* ---- HoneyBook's side of the frame ------------------------------------ */
   // The tags HoneyBook's widget forwards (placement-controller.js), so a lead
   // from an ad or a campaign link is attributed in HoneyBook.
   var FORWARD = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
                  "gclid", "fbclid", "msclkid", "ttclid", "li_fat_id"];
-  function tagged(src) {
+  // campaign: the package a package page's inquiries are about, recorded by
+  // HoneyBook as the lead's campaign unless an ad already named one.
+  function tagged(src, campaign) {
     var kept = location.search.replace(/^\?/, "").split("&").filter(function (pair) {
       return FORWARD.indexOf(pair.split("=")[0]) !== -1;
     });
+    if (campaign && !kept.some(function (p) { return p.split("=")[0] === "utm_campaign"; })) {
+      kept.push("utm_campaign=" + encodeURIComponent(campaign));
+    }
     return kept.length ? src + (src.indexOf("?") === -1 ? "?" : "&") + kept.join("&") : src;
   }
-
-  function frameFor(win) {
-    var frames = document.querySelectorAll(".hbw__frame");
-    for (var i = 0; i < frames.length; i++) {
-      if (frames[i].contentWindow === win) return frames[i];
-    }
-    return null;
-  }
-
-  // Bring a point inside the form into view: y is measured from the top of
-  // the form, h is the height of what should be centred (0 = align to top).
-  function bring(f, y, h) {
-    var box = f.closest(".sheet__body");
-    var top, view, pad;
-    if (box) {
-      top = box.scrollTop + f.getBoundingClientRect().top - box.getBoundingClientRect().top + y;
-      view = box.clientHeight;
-      pad = 12;
-    } else {
-      var hdr = document.querySelector(".hdr");
-      top = window.pageYOffset + f.getBoundingClientRect().top + y;
-      view = window.innerHeight;
-      pad = (hdr ? hdr.offsetHeight : 0) + 16;
-    }
-    var to = h ? top - view / 2 + h / 2 : top - pad;
-    (box || window).scrollTo({ top: Math.max(0, to), behavior: smooth ? "smooth" : "auto" });
-  }
-
-  window.addEventListener("message", function (e) {
-    var ev = e.data && e.data.hbEvent;
-    if (!ev) return;
-    var f = frameFor(e.source);
-    if (!f || e.origin !== new URL(f.src).origin) return;
-    if (ev.type === "hb_resize") {
-      // The form reports ~20px while it is still loading; keep the measured
-      // height from site.css until it reports a real one.
-      if (ev.height >= 320) f.style.height = Math.ceil(ev.height) + "px";
-    } else if (ev.type === "hb_scroll_to_top") {
-      bring(f, 0, 0);
-    } else if (ev.type === "hb_scroll_to_element" && ev.elementBoundingClientRect) {
-      bring(f, ev.elementBoundingClientRect.y, ev.elementBoundingClientRect.height || 1);
-    }
-  });
 
   var sheet = document.getElementById("inquire");
   if (!sheet) {
@@ -82,7 +42,11 @@
     document.addEventListener("click", function (e) {
       if (!(e.target.closest && e.target.closest("[data-sheet]"))) return;
       e.preventDefault();
-      bring(own || inline, 0, 0);
+      var hdr = document.querySelector(".hdr");
+      window.scrollTo({
+        top: inline.getBoundingClientRect().top + window.pageYOffset - (hdr ? hdr.offsetHeight : 0) - 16,
+        behavior: smooth ? "smooth" : "auto"
+      });
     });
     return;
   }
@@ -99,8 +63,7 @@
     if (!holder || holder.querySelector("iframe")) return;
     var f = document.createElement("iframe");
     f.className = "hbw__frame";
-    f.name = holder.dataset.id || "";
-    f.src = tagged(holder.dataset.src);
+    f.src = tagged(holder.dataset.src, holder.dataset.campaign);
     f.title = holder.dataset.title || "Inquiry form";
     f.setAttribute("allow", "clipboard-write");
     f.addEventListener("load", function () { holder.classList.add("is-loaded"); });
