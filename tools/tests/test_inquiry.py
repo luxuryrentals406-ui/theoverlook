@@ -27,12 +27,12 @@ class StraightIntoHoneyBook(unittest.TestCase):
             if 'id="inquire"' not in h:
                 continue
             n += 1
-            self.assertIn(f'data-src="{shell.HB_FORM_URL}"', h, os.path.relpath(p, ROOT))
+            self.assertIn(f'data-src="{shell.HB_EMBED_URL}"', h, os.path.relpath(p, ROOT))
         self.assertGreater(n, 10)
 
     def test_contact_page_shows_the_form_inline(self):
         h = read(os.path.join(ROOT, "contact.html"))
-        self.assertTrue(f'src="{shell.HB_FORM_URL}"' in h or shell.HB_EMBED, "contact.html")
+        self.assertIn(f'src="{shell.HB_EMBED_URL}" name="{shell.HB_FORM_ID}"', h)
         self.assertNotIn('id="inquire"', h)
 
     def test_no_other_inquiry_route_survives(self):
@@ -67,6 +67,25 @@ class StraightIntoHoneyBook(unittest.TestCase):
         h = read(os.path.join(ROOT, "contact.html"))
         self.assertIn('id="inquiry-form"', h)
         self.assertNotRegex(h, r'<a class="tlink" href="contact\.html')
+
+    def test_the_form_is_framed_the_way_honeybooks_widget_frames_it(self):
+        # HoneyBook's widget frames /embed/, not /public/: only the embed page
+        # reports its height, so only it can size itself. The new-tab
+        # fallback keeps the public address, which works on its own.
+        self.assertEqual(shell.HB_EMBED_URL, shell.HB_FORM_URL.replace("/public/", "/embed/"))
+        for p in PAGES:
+            h = read(p)
+            if "hbw__alt" in h:
+                self.assertIn(f'<a href="{shell.HB_FORM_URL}" rel="noopener">Open it', h,
+                              os.path.relpath(p, ROOT))
+
+    def test_the_page_answers_the_forms_messages(self):
+        js = read(os.path.join(ROOT, "assets", "js", "inquire.js"))
+        for event in ("hb_resize", "hb_scroll_to_top", "hb_scroll_to_element"):
+            self.assertIn(event, js)
+        self.assertIn("e.origin", js, "messages must be checked against the form's origin")
+        self.assertIn("scrollTo", js)
+        self.assertNotIn("scrollIntoView", js)
 
 
 if __name__ == "__main__":

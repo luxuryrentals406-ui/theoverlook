@@ -570,6 +570,11 @@ def mosaic(items):
 HB_SUBDOMAIN = "theoverlookatflatheadlake"
 HB_FORM_ID   = "691cc90430213200341cb152"          # "Event Inquiry Form", live
 HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
+# What HoneyBook's own embed widget frames (its placement-controller.js swaps
+# /public/ for /embed/). Only the embed page reports its height to the page
+# (hb_resize), so only it can size itself; inquire.js answers those messages
+# the way the widget does, without loading the widget's scripts.
+HB_EMBED_URL = HB_FORM_URL.replace("/public/", "/embed/")
 
 
 # Every inquiry goes straight into HoneyBook (owner, 2026-09-29): each inquiry
@@ -577,15 +582,10 @@ HB_FORM_URL  = f"https://{HB_SUBDOMAIN}.hbportal.co/public/{HB_FORM_ID}"
 # the contact page shows the same form inline. Nothing sits between the
 # visitor and HoneyBook. worker/ (the relay) is not used.
 #
-# HB_EMBED: paste the account's embed code here (HoneyBook > Lead capture >
-# Lead Forms > Event Inquiry Form > Share > Code > Copy code). While it is
-# empty the public form is framed directly, which delivers to the same
-# pipeline but cannot size itself, so the frame is given a measured height.
-HB_EMBED = ""
-# The public form measured 1,954px tall at 375px wide and 1,858px at 640px
-# (2026-09-29); the frame's height is set in site.css (.hbw__frame) and errs
-# tall: a gap under Submit costs nothing, a frame that cuts Submit off costs
-# a lead.
+# Until the form first reports its height the frame uses the one in site.css
+# (.hbw__frame), measured at 1,954px tall at 375px wide and 1,858px at 640px
+# (2026-09-29). It errs tall: a gap under Submit costs nothing, a frame that
+# cuts Submit off costs a lead.
 
 # Cloudflare Web Analytics: cookieless page counting, no consent banner. The
 # token is not a secret (it is in the page); blank means no beacon at all,
@@ -603,17 +603,14 @@ def analytics():
 def hb_form(inline=False):
     """HoneyBook's Event Inquiry Form. inline=True is the contact page, where
     it loads with the page (lazily); otherwise the frame is created by
-    inquire.js the first time the sheet opens, so no page pays for it unread."""
+    inquire.js the first time the sheet opens, so no page pays for it unread.
+    The frame is named after the form, as HoneyBook's widget names it."""
     title = f"Inquiry form for {BIZ['name']}"
-    if HB_EMBED:
-        inner = HB_EMBED
-    elif inline:
-        inner = (f'<iframe class="hbw__frame" src="{HB_FORM_URL}" title="{title}" '
-                 f'loading="lazy" allow="clipboard-write"></iframe>')
-    else:
-        inner = ""
-    return f"""<div class="hbw{" hbw--inline" if inline else ""}"{' id="inquiry-form"' if inline else ""} data-src="{HB_FORM_URL}" data-title="{title}">
-      {inner}
+    frame = (f'<iframe class="hbw__frame" src="{HB_EMBED_URL}" name="{HB_FORM_ID}" '
+             f'title="{title}" loading="lazy" allow="clipboard-write"></iframe>'
+             if inline else "")
+    return f"""<div class="hbw{" hbw--inline" if inline else ""}"{' id="inquiry-form"' if inline else ""} data-src="{HB_EMBED_URL}" data-id="{HB_FORM_ID}" data-title="{title}">
+      {frame}
       <p class="hbw__wait" aria-hidden="true">Loading the inquiry form&hellip;</p>
     </div>
     <p class="hbw__alt">Form not loading? <a href="{HB_FORM_URL}" rel="noopener">Open it
