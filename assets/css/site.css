@@ -993,7 +993,7 @@ html:not(.js) .rule{transform:none}
 .wk__sum{border-top:1px solid var(--line);padding-top:1rem;margin-top:.4rem;display:flex;flex-direction:column;gap:.9rem}
 .wk__sum p{font-size:.95rem;color:var(--ink-soft);min-height:1.5em}
 .wk__sum .btn{align-self:stretch}
-@media (min-width:641px){.wk{grid-template-columns:repeat(3,1fr)}.wk__sum{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}.wk__sum .btn{align-self:auto}}
+@media (min-width:641px){.wk{grid-template-columns:repeat(auto-fit,minmax(12.5rem,1fr))}.wk__sum{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}.wk__sum .btn{align-self:auto}}
 @media (min-width:861px){.wk__day{padding:1.4rem 1.3rem 1.5rem}.wk__day h3{font-size:1.35rem}}
 
 /* ================================================================ 25. respect the setting */

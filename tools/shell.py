@@ -661,21 +661,27 @@ def spec(groups):
     return f'<div class="spec rv rv--stagger">{"".join(out)}</div>'
 
 
+# Thursday arrival to Monday check-out (owner, 2026-09-29).
 WEEKEND = [
-    ("Friday", "Arrive and settle in",
-     ["Guests settle in on the property", "Rehearsal dinner in the pavilion",
-      "Welcome drinks on the lawn"]),
+    ("Thursday", "Arrive and settle in",
+     ["Guests arrive and settle in", "Welcome drinks on the lawn",
+      "Welcome dinner from a private chef"]),
+    ("Friday", "The day before",
+     ["Rehearsal dinner in the pavilion", "An afternoon at the pool",
+      "Putting green and the trails"]),
     ("Saturday", "The wedding",
      ["Ceremony on the lawn above the water", "Cocktail hour on the grounds",
       "Dinner and dancing under the tent", "Late night at the fire pit"]),
-    ("Sunday", "The last morning",
-     ["Brunch cooked in the Swan", "An afternoon at the pool",
-      "Putting green and the trails"]),
+    ("Sunday", "The day after",
+     ["Brunch cooked in the Swan", "An easy afternoon in the games room",
+      "A slow last evening together"]),
+    ("Monday", "Check out",
+     ["A last breakfast before everyone heads home"]),
 ]
 
 
 def weekend_builder():
-    """Your weekend: three days, pick what happens, and the choices become the
+    """Your weekend: Thursday to Monday, pick what happens, and the choices become the
     note on the inquiry. Every option is something the estate already offers
     elsewhere on this page; nothing here is a promise the copy does not make."""
     days = ""
