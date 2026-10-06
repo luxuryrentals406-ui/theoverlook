@@ -631,7 +631,7 @@ def inquiry_sheet(base="", kind="", campaign=""):
   <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="inq-title">
     <div class="sheet__grip" aria-hidden="true"></div>
     <div class="sheet__head">
-      <div>{eyebrow("Inquiry")}<h2 id="inq-title">Check your date</h2></div>
+      <div>{eyebrow("Inquiry")}<h2 id="inq-title">{'Ask about your date' if kind == 'wedding' else 'Your inquiry'}</h2></div>
       <button class="sheet__x" type="button" aria-label="Close">&times;</button>
     </div>
     <div class="sheet__note" hidden>
@@ -850,8 +850,8 @@ def stickybar(page="", base=""):
         lead, tail = "Planning a retreat?", "Tell us the dates and what the week is for."
         cta, href = "Check Availability", "contact.html?type=wellness"
     else:
-        lead, tail = "Limited weekends each season.", "Tell us the one you have in mind."
-        cta, href = "Check Your Date", "contact.html?type=wedding"
+        lead, tail = "Your wedding at The Overlook", "A personal reply with availability and details."
+        cta, href = "Ask About Your Date", "contact.html?type=wedding"
     return f"""
 <div class="sbar" hidden>
   <div class="wrap sbar__in">
@@ -925,6 +925,9 @@ def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base="")
 
 def header(current, over_hero=True, base=""):
     """over_hero: page opens on a full-bleed image, so the header sits on top of it."""
+    wedding = current in {"weddings.html", "overlook-wedding.html", "ultimate-wedding-weekend.html"}
+    inquiry_label = "Ask About Your Date" if wedding else "Start Your Inquiry"
+    inquiry_kind = "wedding" if wedding else ""
     cls = "hdr hdr--over" if over_hero else "hdr"
     links = ""
     for href, label in NAV:
@@ -939,7 +942,7 @@ def header(current, over_hero=True, base=""):
     </a>
     <nav class="nav" aria-label="Primary">
       {links}
-      <a class="btn" href="{base}contact.html" data-sheet="">Start Your Inquiry</a>
+      <a class="btn" href="{base}contact.html" data-sheet="{inquiry_kind}">{inquiry_label}</a>
     </nav>
     <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobnav">
       <span></span><span></span><span></span>
@@ -950,7 +953,7 @@ def header(current, over_hero=True, base=""):
   <a href="{base}index.html">Home</a>
   {mob}
   <a href="{base}things-to-do">The Area</a>
-  <a class="btn" href="{base}contact.html" data-sheet="">Start Your Inquiry</a>
+  <a class="btn" href="{base}contact.html" data-sheet="{inquiry_kind}">{inquiry_label}</a>
 </nav>
 <main id="main">"""
 

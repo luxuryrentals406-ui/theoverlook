@@ -440,8 +440,9 @@ def page_weddings():
       "A weekend, not an afternoon",
       "The entire fifteen-acre estate for a multi-day wedding on Flathead Lake &mdash; "
       "yours from the rehearsal to the last morning.",
-      btn("contact.html", "Check Your Date", "btn btn--light btn--lg")
-      + btn("#included", "What&rsquo;s Included", "btn btn--outline-light btn--lg"),
+      btn("contact.html", "Ask About Your Date", "btn btn--light btn--lg")
+      + btn("#packages", "Explore Wedding Packages", "btn btn--outline-light btn--lg"),
+      extra='<p class="hero__help">Share your dates and guest count. We&rsquo;ll reply personally with availability and package details.</p>',
       slides=[("ceremony-aisle-view.jpg", "The aisle looking toward the ceremony site"),
               ("venue-wide.jpg", "The estate grounds from across the lawn")],
       portrait=HERO_PORTRAIT["weddings.html"],
@@ -499,10 +500,10 @@ def page_weddings():
     <div class="wrap">
       <div class="rv" style="margin-bottom:clamp(1.6rem,4vw,2.6rem);max-width:54ch">
         {eyebrow("Your weekend")}
-        <h2>Build the weekend, then send it</h2>
-        <p class="lede" style="margin-top:1.2rem">Everything below is already on the
-          property. Pick what you picture happening each day and it becomes the note
-          on your inquiry &mdash; we answer with how it would work.</p>
+        <h2>Picture your wedding weekend</h2>
+        <p class="lede" style="margin-top:1.2rem">This step is optional. Choose the moments you have in mind, then copy
+          your selections into the inquiry form. You can also ask about dates
+          without planning the weekend first.</p>
       </div>
       <div class="rv">{weekend_builder()}</div>
     </div>
@@ -547,7 +548,7 @@ def page_weddings():
                   "Ceremony, cocktail and reception areas",
                   "Your onsite venue coordinator",
                   "Lodging booked separately"])}
-          {btn("overlook-wedding.html", "See the Full Experience", "btn btn--ghost")}
+          {btn("overlook-wedding.html", "Explore This Package", "btn btn--ghost")}
         </div>
         <div class="pkg__card pkg__card--feature rv">
           {eyebrow("Signature")}
@@ -562,7 +563,7 @@ def page_weddings():
                   "Sleeps 54 across both estates &mdash; 28 at The Overlook, 26 at The Driftwood",
                   "Helicopter transfer between them, through WestSlope",
                   "Planning support from the first call to the send-off"])}
-          {btn("ultimate-wedding-weekend.html", "See the Full Experience", "btn btn--light")}
+          {btn("ultimate-wedding-weekend.html", "Explore This Package", "btn btn--light")}
         </div>
       </div>
     </div>
@@ -644,10 +645,10 @@ def page_weddings():
   </section>
 
   {band("reception-mountain-view.jpg", "Reception tables set against the mountains",
-        "Start your inquiry",
-        "We hold a limited number of weddings each season, and every inquiry is "
-        "answered personally.",
-        btn("contact.html?type=wedding", "Start Your Inquiry", "btn btn--light btn--lg"))}
+        "Let&rsquo;s talk about your wedding",
+        "Send your preferred dates and approximate guest count. We&rsquo;ll help you "
+        "understand availability, package options and lodging for your guests.",
+        btn("contact.html?type=wedding", "Ask About Your Date", "btn btn--light btn--lg"))}
 """
 
 
@@ -740,7 +741,7 @@ def page_pkg_overlook():
       "Wedding package", "The Overlook Wedding",
       "The whole estate for your celebration, with everything a wedding needs "
       "already standing when you arrive.",
-      ask_btn("Check Your Date", note)
+      ask_btn("Ask About This Package", note)
       + btn("weddings.html#packages", "Both Packages", "btn btn--outline-light btn--lg"),
       portrait=HERO_PORTRAIT["overlook-wedding.html"])}
 
@@ -779,7 +780,7 @@ def page_pkg_overlook():
         "Hold your date",
         "Tell us the weekend you have in mind and we will tell you honestly whether it "
         "is open.",
-        ask_btn("Check Your Date", note))}
+        ask_btn("Ask About This Package", note))}
 """
 
 
@@ -811,7 +812,7 @@ def page_pkg_ultimate():
       "Signature package", "The Ultimate Flathead Lake<br>Wedding Weekend",
       "Five nights, two estates, one group &mdash; the wedding up on the hill at The "
       "Overlook, and The Driftwood down on the water.",
-      ask_btn("Request the Details", note)
+      ask_btn("Ask About This Package", note)
       + btn("weddings.html#packages", "Both Packages", "btn btn--outline-light btn--lg"))}
 
 {pkg_summary("driftwood-great-room.jpg", "The Driftwood's great room, opening to the lake",
@@ -860,7 +861,7 @@ def page_pkg_ultimate():
         "Both estates, one weekend",
         "Availability for the two estates is separate, so ask early if you want them "
         "on the same dates.",
-        ask_btn("Request the Details", note))}
+        ask_btn("Ask About This Package", note))}
 """
 
 
@@ -2018,7 +2019,7 @@ ARTICLES = [
      "cta": ("See what your weekend would look like",
              "Tell us your guest count and your season, and we will send details "
              "and current availability.",
-             "Check Your Date", "contact.html?type=wedding"),
+             "Ask About Your Date", "contact.html?type=wedding"),
      "summary": "How an estate buyout differs from a traditional venue rental, and "
                 "what is and is not included at The Overlook.",
      "related": [A_SEASON, A_TRAVEL]},
@@ -2039,7 +2040,7 @@ ARTICLES = [
      "cta": ("Tell us the season you have in mind",
              "Tell us the season you have in mind and we will let you know which "
              "dates are open.",
-             "Check Your Date", "contact.html?type=wedding"),
+             "Ask About Your Date", "contact.html?type=wedding"),
      "summary": "What summer, the shoulder seasons and winter each give you for a "
                 "wedding in northwest Montana.",
      "related": [A_BUYOUT, A_TRAVEL]},

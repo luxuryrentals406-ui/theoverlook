@@ -1010,3 +1010,5 @@ html:not(.js) .rule{transform:none}
   .veil{display:none}
   .imove img{transform:none!important}
 }
+
+.hero__help{font-size:.9rem;line-height:1.5;max-width:48ch;margin-top:1rem;color:#fff}
