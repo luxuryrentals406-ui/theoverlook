@@ -1,0 +1,36 @@
+{
+  "photographer": "J. Annalise Photography",
+  "source": "Owner-provided Dropbox Summit Highlights and Ridge Highlights - Singles; full-resolution rendered photo assets",
+  "images": [
+    {
+      "file": "summit-annalise-exterior.jpg",
+      "original_stem": "DJI_20261005163157_0824_D",
+      "alt": "The Summit treehouse and its deck among the pines"
+    },
+    {
+      "file": "summit-annalise-bedroom.jpg",
+      "original_stem": "DSC09533",
+      "alt": "The Summit bedroom with the bathroom beyond"
+    },
+    {
+      "file": "summit-annalise-open-living.jpg",
+      "original_stem": "DSC09553",
+      "alt": "The Summit living area with its glass door raised to the trees"
+    },
+    {
+      "file": "summit-annalise-bathroom.jpg",
+      "original_stem": "DSC09548_2",
+      "alt": "The Summit bathroom with its vanity and glass shower"
+    },
+    {
+      "file": "summit-annalise-deck.jpg",
+      "original_stem": "DSC09558",
+      "alt": "Dining table and lounge chairs on the Summit deck"
+    },
+    {
+      "file": "ridge-annalise-lake-aerial.jpg",
+      "original_stem": "DJI_20261005162432_0814_D",
+      "alt": "The treehouses among the pines with Flathead Lake beyond"
+    }
+  ]
+}

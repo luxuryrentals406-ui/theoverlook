@@ -678,10 +678,12 @@ LODGING = [
      "The Lakeside House &middot; sleeps 4"),
     ("lodging-lakeside-house-bed-gold-accent-wall.jpg", "The Lakeside House bedroom and its gold accent wall",
      "The Lakeside House, inside"),
-    ("lodging-the-summit-exterior.jpg", "The Summit treehouse among the pines",
+    ("summit-annalise-exterior.jpg", "The Summit treehouse and deck among the pines",
      "The Summit &middot; sleeps 3"),
-    ("lodging-the-summit-living-area.jpg", "Inside The Summit",
+    ("summit-annalise-open-living.jpg", "The Summit living area open to the trees",
      "The Summit, inside"),
+    ("summit-annalise-bedroom.jpg", "The Summit bedroom", "The Summit, the bedroom"),
+    ("summit-annalise-deck.jpg", "Dining and seating on the Summit deck", "The Summit, the deck"),
     ("lodging-the-ridge-exterior.jpg", "The Ridge treehouse on its stilts",
      "The Ridge &middot; sleeps 3"),
     ("lodging-the-ridge-king-bed.jpg", "The bedroom in The Ridge",
@@ -1150,12 +1152,15 @@ def page_estate():
             ("lakeside-exterior.jpg", "A Lakeside tiny home from outside"),
         ],
         "The Treehouses": [
-            ("treehouse-sunset.jpg", "A treehouse at sunset, the light coming through the pines"),
-            ("treehouse-deck-evening.jpg", "A treehouse on its stilts in evening light"),
-            ("treehouses-among-pines.jpg", "The treehouses among the pines in evening light"),
-            ("treehouse-sauna-evening.jpg", "A treehouse and the cedar barrel sauna at golden hour"),
-            ("summit-exterior.jpg", "The Summit treehouse in the canopy"),
-            ("ridge-exterior.jpg", "The Ridge treehouse at the edge of the trees"),
+            ('summit-annalise-exterior.jpg', 'The Summit treehouse and its deck among the pines'),
+            ('summit-annalise-bedroom.jpg', 'The Summit bedroom with the bathroom beyond'),
+            ('summit-annalise-open-living.jpg', 'The Summit living area with its glass door raised to the trees'),
+            ('summit-annalise-bathroom.jpg', 'The Summit bathroom with its vanity and glass shower'),
+            ('summit-annalise-deck.jpg', 'Dining table and lounge chairs on the Summit deck'),
+            ('ridge-annalise-lake-aerial.jpg', 'The treehouses among the pines with Flathead Lake beyond'),
+            ('ridge-exterior.jpg', 'The Ridge treehouse at the edge of the trees'),
+            ('lodging-the-ridge-king-bed.jpg', 'The bedroom in The Ridge'),
+            ('treehouse-sauna-evening.jpg', 'A treehouse and the cedar barrel sauna at golden hour'),
         ],
     }
     hhtml = switcher(
@@ -1227,6 +1232,14 @@ def page_estate():
 # ================================================================== GALLERY
 # (file, alt, category) — category: weddings | estate | grounds
 PHOTOS = [
+    # Owner-provided J. Annalise photography: distinct interiors and setting.
+    ('summit-annalise-exterior.jpg', 'The Summit treehouse and its deck among the pines', 'estate'),
+    ('summit-annalise-bedroom.jpg', 'The Summit bedroom with the bathroom beyond', 'estate'),
+    ('summit-annalise-open-living.jpg', 'The Summit living area with its glass door raised to the trees', 'estate'),
+    ('summit-annalise-bathroom.jpg', 'The Summit bathroom with its vanity and glass shower', 'estate'),
+    ('summit-annalise-deck.jpg', 'Dining table and lounge chairs on the Summit deck', 'estate'),
+    ('ridge-annalise-lake-aerial.jpg', 'The treehouses among the pines with Flathead Lake beyond', 'estate'),
+
     # added 2026-09-28 from the new shoot — these open the gallery
     ("tent-interior-lake-view.jpg", "Inside the clear tent with the tables set and Flathead Lake beyond", "weddings"),
     ("treehouse-sunset.jpg", "A treehouse at sunset, the light coming through the pines", "estate"),
@@ -1289,7 +1302,7 @@ PHOTOS = [
     ("lakeside-bedroom.jpg", "A bedroom in the Lakeside", "estate"),
     ("lakeside-loft.jpg", "The loft in the Lakeside", "estate"),
     ("lakeside-bathroom.jpg", "The bathroom in the Lakeside", "estate"),
-    ("summit-exterior.jpg", "The Summit treehouse", "estate"),
+
     ("ridge-exterior.jpg", "The Ridge treehouse", "estate"),
 
     ("pool-wide.jpg", "The heated pool and cabana", "grounds"),

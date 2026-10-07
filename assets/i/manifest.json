@@ -1064,12 +1064,90 @@
    1280
   ]
  },
+ "ridge-annalise-lake-aerial.jpg": {
+  "h": 1800,
+  "hash": "63cced57",
+  "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADQAwCdASoUAA8APu1iqU2ppaOiMAgBMB2JbACdH8ADAT65cy8vobAA/rAVi4mNdGgoukSugS77kGMl5pWWnu8yrV+9bAhfyQSsy8XKcGkUxbqp02vrjN9HW5JXbFKN7qoMHx1Bg9ENHHvjotQAAA==",
+  "v": 2,
+  "w": 2400,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
  "ridge-exterior.jpg": {
   "h": 1080,
   "hash": "9c1cfe9b",
   "lqip": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAABQBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JYgC/cUE4AAr7Vko2+o4bR3KAAPEj7T/3I86BBuAGeFq6jMzRtg5hJLmcUNTTIk18sECd7Ww8NRPUfuBljbSMcYBWDAfwpAYgAA==",
   "v": 2,
   "w": 1920,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
+ "summit-annalise-bathroom.jpg": {
+  "h": 1601,
+  "hash": "eca62a3f",
+  "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACQAwCdASoUAA0APu1iqU2ppaQiMAgBMB2JYwCw7AequERSz9ooAP6vjHcWR7hUHkuve2SzlIkj+GNpZB7QDMl0SpfEVmxYpzWSMQAUcauk7wuGsfqsqkj8eyhSSJ9OPMeINv3PInNpxQ2yOYkNgxW4AAA=",
+  "v": 2,
+  "w": 2400,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
+ "summit-annalise-bedroom.jpg": {
+  "h": 1617,
+  "hash": "cb2689d0",
+  "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JYwC7AB50SAO8p8mWcDgAAP7gg0sc7D7K6ZK5ZpcLpsYs5RJOSCejXr7Nfd8xPTHSb5Eg2ov+59R75niArqieiuMWvZDQew1tJEAVdlljB3cAAAA=",
+  "v": 2,
+  "w": 2400,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
+ "summit-annalise-deck.jpg": {
+  "h": 1601,
+  "hash": "e742a94c",
+  "lqip": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAABQBACdASoUAA0APu1iqU2ppaOiMAgBMB2JZAC7MoGv/gPJBx8V8LVQCi4gAM3PcZ61oKPNZRHlnLDzk+En0i5ixxVeL32+6kRZSvburaBX/5vF/3MH07/PJkErBAsBhcW/fTMc/sFjVgFo1xqe/JCo4ibuKO9PqwoqIIAA",
+  "v": 2,
+  "w": 2400,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
+ "summit-annalise-exterior.jpg": {
+  "h": 1800,
+  "hash": "57cf48a6",
+  "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAACwAwCdASoUAA8APu1iqU2ppaOiMAgBMB2JbAC06AsLmAfKbPm04ADKB7nbT8b8AlZsVoFGvBCYtqStJFsz+7FXGO/RMCVMc37kSZ5Qi4Wr37kyXz7h1U0ZioIl4RegFFbQ++7jV5JAMSBl8ZWPRD8q+B2BesCPCjmKOhlAAAA=",
+  "v": 2,
+  "w": 2400,
+  "widths": [
+   480,
+   800,
+   1200,
+   1920
+  ]
+ },
+ "summit-annalise-open-living.jpg": {
+  "h": 1607,
+  "hash": "12924c09",
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADwAwCdASoUAA0APu1iqU2ppaOiMAgBMB2JZwAAVKGzxiHABB0gBE5QAPkj3O70lgSCgsimBdhbU+a1bFDU/U0AmKV032mmSSfFneXugv9o/lMCanmtLSa4/oUWmRVjlCxXHidvDlPoIPt1r5sLANRhyDnWAAAA",
+  "v": 2,
+  "w": 2400,
   "widths": [
    480,
    800,
