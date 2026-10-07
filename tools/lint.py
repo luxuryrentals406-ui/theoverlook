@@ -29,8 +29,9 @@ TOTAL_WARN_KB = 3000
 # Third parties a page may contact on load. Every host here must be named in
 # the privacy policy. The beacon is Cloudflare Web Analytics (cookieless).
 ALLOWED_HOSTS = {
-    "*": {"static.cloudflareinsights.com"},
+    "*": {"static.cloudflareinsights.com", "connect.facebook.net", "www.facebook.com"},
     "contact.html": {"static.cloudflareinsights.com", "www.google.com",
+                     "connect.facebook.net", "www.facebook.com",
                      "theoverlookatflatheadlake.hbportal.co"},
 }
 

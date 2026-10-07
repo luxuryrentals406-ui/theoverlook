@@ -863,6 +863,28 @@ def stickybar(page="", base=""):
 
 
 # ------------------------------------------------------------------ chrome
+# Owner-requested Meta Pixel, installed through the shared document template.
+META_PIXEL_ID = "1113575654229940"
+META_PIXEL_HEAD = """<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1113575654229940');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->"""
+# An image is valid in the body, not inside a head/noscript element.
+META_PIXEL_NOSCRIPT = """<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=1113575654229940&amp;ev=PageView&amp;noscript=1"
+/></noscript>"""
+
+
 def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base=""):
     """url is the absolute canonical URL; base is the depth prefix from rel()."""
     alt = f"{BIZ['name']}, Lakeside, Montana"
@@ -915,8 +937,10 @@ def head(title, desc, url, og_image="hero-pavilion-lake.jpg", extra="", base="")
 <link rel="stylesheet" href="{base}assets/fonts/fonts.css?v={_ver("assets/fonts/fonts.css")}">
 <link rel="stylesheet" href="{base}assets/css/site.css?v={_ver("assets/css/site.css")}">
 {extra}
+{META_PIXEL_HEAD}
 </head>
 <body>
+{META_PIXEL_NOSCRIPT}
 <a class="skip" href="#main">Skip to content</a>
 {BOOT}
 <div class="veil" aria-hidden="true"></div>

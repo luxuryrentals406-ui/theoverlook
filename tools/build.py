@@ -1700,34 +1700,33 @@ def page_privacy(base):
           "information against unauthorized access, alteration, disclosure, or "
           "destruction. All data is stored securely and access is restricted to "
           "authorized personnel only.</p>"]),
-        # REWRITTEN: the live text hedged about first-party cookies that do not
-        # exist and said nothing about the three embeds that do.
         ("Cookies and Tracking",
-         [("<p>This site sets no cookies of its own. It counts page views with "
-           "Cloudflare Web Analytics, which sets no cookie, stores nothing on your "
-           "device and does not identify you &mdash; we see how many people read a "
-           "page, not who. It runs no advertising tags and no tracking scripts, and "
-           "it does not build a profile of your visit.</p>")
-          if CF_ANALYTICS_TOKEN else
-          ("<p>This site sets no cookies of its own. It runs no analytics, no "
-           "advertising tags and no tracking scripts, and it does not build a "
-           "profile of your visit.</p>"),
+         ["<p>We use the Meta Pixel to measure page visits and advertising performance, "
+          "build audiences for advertising on Facebook and Instagram, and support "
+          "retargeting. Meta receives information about the pages you visit, your "
+          "IP address, browser and device, and cookie identifiers. The pixel uses "
+          "first-party cookies and may associate activity with your Meta account. "
+          "See <a href='https://www.facebook.com/privacy/policy/' rel='noopener'>Meta&rsquo;s "
+          "Privacy Policy</a> for information about its use of this data.</p>",
+          ("<p>We also use Cloudflare Web Analytics to count page views without "
+           "analytics cookies.</p>" if CF_ANALYTICS_TOKEN else ""),
           "<p>One thing is kept in your browser: if you dismiss the inquiry bar at "
           "the foot of the page, that choice is stored in your browser&rsquo;s "
           "session storage so the bar stays closed. Your browser discards it when "
           "you close the tab, and it never leaves your device.</p>",
           "<p>The typefaces are served from this site, not from Google, so reading "
-          "a page contacts no one but us and Cloudflare, which serves it. Two third "
-          "parties are embedded. When their content loads, each receives your IP "
+          "a page does not load Google Fonts. Alongside Meta, the following third "
+          "parties provide embedded content. When that content loads, each receives your IP "
           "address and basic browser information and may set cookies of its own "
           "under its own policy, which we neither control nor read:</p>",
           ilist(["<b>HoneyBook</b> (hbportal.co), for the inquiry form &mdash; on the "
                  "contact page, and elsewhere only once you open the inquiry window.",
                  "<b>Google Maps</b>, on the contact page only, for the map of "
                  "Lakeside."]),
-          "<p>You can block either in your browser. The pages still work without "
-          "them; the map is what changes, and the inquiry form can be reached by "
-          "email instead.</p>"]),
+          "<p>You can manage cookies in your browser and advertising preferences in "
+          "your Meta account. Blocking Meta tracking does not prevent browsing or "
+          "sending an inquiry. If embedded content is blocked, you can contact us "
+          "by email instead.</p>"]),
         ("Third-Party Links",
          ["<p>Our website may contain links to third-party websites. We are not "
           "responsible for the privacy practices of these external sites and "
