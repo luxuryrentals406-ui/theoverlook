@@ -1115,13 +1115,14 @@ def page_estate():
          "The two Lakeside tiny homes side by side",
          "A pair of modern tiny homes, each with a full bath, a loft and a view down "
          "toward the water."),
-        # one tab for both, as The Lakeside is for the two tiny homes; the new
-        # photographs are of the treehouses but not labelled by building. The
-        # wording is main's fact-corrected copy (2026-09-28), joined.
-        ("The Treehouses", "The Summit &amp; The Ridge", "treehouse-sunset.jpg",
-         "A treehouse at sunset, the light coming through the pines",
-         "Two treehouses: The Summit, raised up among the trees, and The Ridge, set "
-         "along the ridge line with its own deck."),
+        ("The Summit", "Treehouse &middot; sleeps 3", "summit-annalise-exterior.jpg",
+         "The Summit treehouse and its deck among the pines",
+         "Raised among the pines, with a bedroom, bathroom and living area opening "
+         "to a deck with outdoor dining and lounge seating."),
+        ("The Ridge", "Treehouse &middot; sleeps 3", "lodging-the-ridge-exterior.jpg",
+         "The Ridge treehouse with its own deck",
+         "Set along the ridge line, with its own deck and a bedroom tucked among "
+         "the trees. Browse the exterior, bedroom and aerial view below."),
     ]
     # every photograph we hold of each building, not just the one exterior
     shots = {
@@ -1151,16 +1152,17 @@ def page_estate():
             ("lakeside-bathroom.jpg", "The bathroom in a Lakeside tiny home"),
             ("lakeside-exterior.jpg", "A Lakeside tiny home from outside"),
         ],
-        "The Treehouses": [
+        "The Summit": [
             ('summit-annalise-exterior.jpg', 'The Summit treehouse and its deck among the pines'),
             ('summit-annalise-bedroom.jpg', 'The Summit bedroom with the bathroom beyond'),
             ('summit-annalise-open-living.jpg', 'The Summit living area with its glass door raised to the trees'),
             ('summit-annalise-bathroom.jpg', 'The Summit bathroom with its vanity and glass shower'),
             ('summit-annalise-deck.jpg', 'Dining table and lounge chairs on the Summit deck'),
-            ('ridge-annalise-lake-aerial.jpg', 'The treehouses among the pines with Flathead Lake beyond'),
-            ('ridge-exterior.jpg', 'The Ridge treehouse at the edge of the trees'),
-            ('lodging-the-ridge-king-bed.jpg', 'The bedroom in The Ridge'),
-            ('treehouse-sauna-evening.jpg', 'A treehouse and the cedar barrel sauna at golden hour'),
+        ],
+        "The Ridge": [
+            ("lodging-the-ridge-exterior.jpg", "The Ridge treehouse with its own deck"),
+            ("lodging-the-ridge-king-bed.jpg", "The bedroom in The Ridge"),
+            ("ridge-annalise-lake-aerial.jpg", "The wooded setting around The Ridge with Flathead Lake beyond"),
         ],
     }
     hhtml = switcher(
